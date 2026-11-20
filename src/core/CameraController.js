@@ -32,6 +32,21 @@ export class CameraController {
 
     // Speed FOV
     this.targetFOV = CONFIG.CAMERA.BASE_FOV;
+    this.currentVehicleType = 'truck';
+  }
+
+  setVehicleType(type) {
+    this.currentVehicleType = type;
+    if (type === 'rickshaw') {
+      this.defaultOffset.set(0, 2.2, 4.8);
+      this.lookOffset.set(0, 1.15, -2.2);
+    } else if (type === 'cng') {
+      this.defaultOffset.set(0, 2.4, 5.2);
+      this.lookOffset.set(0, 1.2, -2.4);
+    } else {
+      this.defaultOffset.set(0, 3.2, 6.8);
+      this.lookOffset.set(0, 1.2, -3.0);
+    }
   }
 
   init(playerVehicle) {
@@ -124,10 +139,12 @@ export class CameraController {
     );
   }
 
-  // Showcase orbit camera during Main Menu (adjusted for Deshi Truck)
+  // Showcase orbit camera during Main Menu (dynamically framed for Truck, Rickshaw & CNG)
   orbitMenu(time) {
-    const radius = 8.5;
-    const height = 2.8 + Math.sin(time * 0.5) * 0.4;
+    const isSmall = this.currentVehicleType === 'rickshaw' || this.currentVehicleType === 'cng';
+    const radius = isSmall ? 4.8 : 8.2;
+    const height = isSmall ? (1.65 + Math.sin(time * 0.5) * 0.22) : (2.7 + Math.sin(time * 0.5) * 0.35);
+    const targetY = isSmall ? 1.05 : 1.35;
     const angle = time * 0.35;
 
     this.camera.position.set(
@@ -135,6 +152,6 @@ export class CameraController {
       height,
       Math.cos(angle) * radius
     );
-    this.camera.lookAt(0, 1.4, 0);
+    this.camera.lookAt(0, targetY, 0);
   }
 }

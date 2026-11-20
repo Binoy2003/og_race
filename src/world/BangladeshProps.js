@@ -498,6 +498,240 @@ export class BangladeshProps {
   }
 
   // ========================================================
+  // 4B. AUTHENTIC BANGLADESHI JATRI CHAWNI (যাত্রী ছাউনি / BUS STOP)
+  // Features a Romantic Teenage Couple Holding Hands on the Bench!
+  // ========================================================
+  createJatriChawni() {
+    const chawni = new THREE.Group();
+    chawni.name = 'jatri_chawni';
+
+    // 1. Raised Concrete Platform with Curb
+    const platformGeo = new THREE.BoxGeometry(5.6, 0.35, 2.8);
+    const platform = new THREE.Mesh(platformGeo, this.concreteMat);
+    platform.position.set(0, 0.175, 0);
+    platform.receiveShadow = true;
+    chawni.add(platform);
+
+    // Platform step curb (red/white roadside warning)
+    const curbGeo = new THREE.BoxGeometry(5.8, 0.12, 0.2);
+    const curb = new THREE.Mesh(curbGeo, this.brickMat);
+    curb.position.set(0, 0.06, -1.4);
+    chawni.add(curb);
+
+    // 2. Back Brick Wall
+    const wallGeo = new THREE.BoxGeometry(5.2, 2.4, 0.2);
+    const wall = new THREE.Mesh(wallGeo, this.brickMat);
+    wall.position.set(0, 1.4, 1.25);
+    wall.castShadow = true;
+    chawni.add(wall);
+
+    // Whitewashed inner surface of wall
+    const innerWallGeo = new THREE.PlaneGeometry(5.0, 2.2);
+    const innerWall = new THREE.Mesh(innerWallGeo, this.culvertRailingMaterial);
+    innerWall.position.set(0, 1.4, 1.14);
+    chawni.add(innerWall);
+
+    // 3. Four Concrete / Steel Support Pillars
+    const pillarPositions = [
+      [-2.4, -1.15],
+      [2.4, -1.15],
+      [-2.4, 1.15],
+      [2.4, 1.15]
+    ];
+    pillarPositions.forEach(([px, pz]) => {
+      const pGeo = new THREE.CylinderGeometry(0.08, 0.09, 2.6, 12);
+      const pillar = new THREE.Mesh(pGeo, this.culvertRailingMaterial);
+      pillar.position.set(px, 1.45, pz);
+      pillar.castShadow = true;
+      chawni.add(pillar);
+
+      // Dark green base collar
+      const collarGeo = new THREE.CylinderGeometry(0.12, 0.12, 0.35, 12);
+      const collar = new THREE.Mesh(collarGeo, new THREE.MeshStandardMaterial({ color: 0x15803d }));
+      collar.position.set(px, 0.45, pz);
+      chawni.add(collar);
+    });
+
+    // 4. Curved Tin / Concrete Roof
+    const roofGeo = new THREE.CylinderGeometry(2.6, 2.6, 5.8, 20, 1, true, Math.PI * 0.2, Math.PI * 0.6);
+    roofGeo.rotateZ(Math.PI / 2);
+    const roof = new THREE.Mesh(roofGeo, this.tinRoofMat);
+    roof.position.set(0, 2.7, 0.1);
+    roof.castShadow = true;
+    chawni.add(roof);
+
+    // 5. Authentic Signboard: "যাত্রী ছাউনি | বাস স্টপ"
+    const signCanvas = document.createElement('canvas');
+    signCanvas.width = 512;
+    signCanvas.height = 128;
+    const sCtx = signCanvas.getContext('2d');
+
+    // Deep Green background
+    sCtx.fillStyle = '#15803d';
+    sCtx.fillRect(0, 0, 512, 128);
+
+    // Gold border
+    sCtx.strokeStyle = '#f59e0b';
+    sCtx.lineWidth = 8;
+    sCtx.strokeRect(6, 6, 500, 116);
+
+    // White / Yellow Bengali Calligraphy
+    sCtx.fillStyle = '#ffffff';
+    sCtx.font = 'bold 44px sans-serif';
+    sCtx.textAlign = 'center';
+    sCtx.fillText('যাত্রী ছাউনি', 256, 62);
+
+    sCtx.fillStyle = '#fde047';
+    sCtx.font = 'bold 26px sans-serif';
+    sCtx.fillText('বাস স্টপ', 256, 102);
+
+    const signTexture = new THREE.CanvasTexture(signCanvas);
+    const signGeo = new THREE.PlaneGeometry(3.2, 0.85);
+    const signMat = new THREE.MeshStandardMaterial({ map: signTexture, roughness: 0.5 });
+    const sign = new THREE.Mesh(signGeo, signMat);
+    sign.position.set(0, 2.55, -1.22);
+    chawni.add(sign);
+
+    // 6. Long Wooden / Concrete Bench Inside
+    const benchGeo = new THREE.BoxGeometry(3.6, 0.12, 0.6);
+    const bench = new THREE.Mesh(benchGeo, this.woodMat);
+    bench.position.set(0, 0.65, 0.6);
+    bench.castShadow = true;
+    chawni.add(bench);
+
+    // Bench legs
+    [-1.5, 1.5].forEach((bx) => {
+      const legGeo = new THREE.BoxGeometry(0.12, 0.35, 0.5);
+      const leg = new THREE.Mesh(legGeo, this.concreteMat);
+      leg.position.set(bx, 0.45, 0.6);
+      chawni.add(leg);
+    });
+
+    // 7. CUTE TEENAGE COUPLE SITTING ON THE BENCH HOLDING HANDS!
+    const coupleGroup = new THREE.Group();
+    coupleGroup.position.set(0, 0.71, 0.6);
+
+    const skinMat = new THREE.MeshStandardMaterial({ color: 0xf5c396, roughness: 0.6 });
+    const boyShirtMat = new THREE.MeshStandardMaterial({ color: 0x0284c7, roughness: 0.7 }); // sky-blue casual shirt
+    const boyPantsMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.8 }); // navy denim
+    const boyHairMat = new THREE.MeshStandardMaterial({ color: 0x1c1917, roughness: 0.5 });
+
+    const girlDressMat = new THREE.MeshStandardMaterial({ color: 0xdb2777, roughness: 0.6 }); // romantic magenta kurti
+    const girlDupattaMat = new THREE.MeshStandardMaterial({ color: 0xfde047, roughness: 0.7 }); // yellow orna
+    const girlPantsMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.8 }); // white salwar
+    const girlHairMat = new THREE.MeshStandardMaterial({ color: 0x0f0e0e, roughness: 0.4 });
+
+    // A. Boy (sitting on left)
+    const boy = new THREE.Group();
+    boy.position.set(-0.35, 0, 0);
+
+    const boyTorso = new THREE.Mesh(new THREE.BoxGeometry(0.36, 0.46, 0.24), boyShirtMat);
+    boyTorso.position.set(0, 0.25, 0);
+    boyTorso.rotation.y = 0.2; // angled towards girl
+    boyTorso.rotation.z = -0.06;
+    boy.add(boyTorso);
+
+    const boyHead = new THREE.Mesh(new THREE.SphereGeometry(0.12, 14, 14), skinMat);
+    boyHead.position.set(0.04, 0.58, 0.02);
+    boyHead.rotation.y = 0.3; // looking fondly at girl
+    boy.add(boyHead);
+
+    const boyHair = new THREE.Mesh(new THREE.SphereGeometry(0.13, 14, 14), boyHairMat);
+    boyHair.scale.set(1.02, 1.05, 1.02);
+    boyHair.position.set(0.04, 0.61, 0.01);
+    boy.add(boyHair);
+
+    // Boy sitting legs
+    const boyLegs = new THREE.Mesh(new THREE.BoxGeometry(0.34, 0.16, 0.44), boyPantsMat);
+    boyLegs.position.set(0, -0.02, -0.15);
+    boy.add(boyLegs);
+
+    // Boy lower legs dropping down
+    [-0.1, 0.1].forEach((lx) => {
+      const calve = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.045, 0.38, 8), boyPantsMat);
+      calve.position.set(lx, -0.22, -0.32);
+      boy.add(calve);
+    });
+
+    // Boy arm reaching right holding girl's hand
+    const boyArm = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.04, 0.34, 8), boyShirtMat);
+    boyArm.position.set(0.22, 0.14, -0.05);
+    boyArm.rotation.z = -Math.PI / 4;
+    boyArm.rotation.x = -0.2;
+    boy.add(boyArm);
+
+    coupleGroup.add(boy);
+
+    // B. Girl (sitting on right)
+    const girl = new THREE.Group();
+    girl.position.set(0.35, 0, 0);
+
+    const girlTorso = new THREE.Mesh(new THREE.BoxGeometry(0.32, 0.42, 0.22), girlDressMat);
+    girlTorso.position.set(0, 0.23, 0);
+    girlTorso.rotation.y = -0.2; // angled towards boy
+    girlTorso.rotation.z = 0.08;
+    girl.add(girlTorso);
+
+    // Yellow Orna draped over shoulder
+    const dupatta = new THREE.Mesh(new THREE.BoxGeometry(0.34, 0.36, 0.24), girlDupattaMat);
+    dupatta.position.set(0, 0.24, 0.02);
+    girl.add(dupatta);
+
+    const girlHead = new THREE.Mesh(new THREE.SphereGeometry(0.11, 14, 14), skinMat);
+    girlHead.position.set(-0.04, 0.54, 0.02);
+    girlHead.rotation.y = -0.3; // looking fondly at boy
+    girl.add(girlHead);
+
+    const girlHair = new THREE.Mesh(new THREE.SphereGeometry(0.12, 14, 14), girlHairMat);
+    girlHair.scale.set(1.04, 1.06, 1.08);
+    girlHair.position.set(-0.04, 0.57, 0);
+    girl.add(girlHair);
+
+    // Ponytail trailing down
+    const ponytail = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.02, 0.34, 8), girlHairMat);
+    ponytail.position.set(-0.02, 0.42, 0.16);
+    ponytail.rotation.x = -0.35;
+    girl.add(ponytail);
+
+    // Girl sitting legs
+    const girlLegs = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.15, 0.42), girlPantsMat);
+    girlLegs.position.set(0, -0.02, -0.15);
+    girl.add(girlLegs);
+
+    [-0.08, 0.08].forEach((lx) => {
+      const calve = new THREE.Mesh(new THREE.CylinderGeometry(0.042, 0.038, 0.38, 8), girlPantsMat);
+      calve.position.set(lx, -0.22, -0.32);
+      girl.add(calve);
+    });
+
+    // Girl arm reaching left holding boy's hand
+    const girlArm = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.035, 0.32, 8), girlDressMat);
+    girlArm.position.set(-0.2, 0.14, -0.05);
+    girlArm.rotation.z = Math.PI / 4;
+    girlArm.rotation.x = -0.2;
+    girl.add(girlArm);
+
+    coupleGroup.add(girl);
+
+    // C. CLASPED HANDS ON THE BENCH (HOLDING HANDS ROMANTICALLY!)
+    const claspedHands = new THREE.Mesh(new THREE.SphereGeometry(0.05, 10, 10), skinMat);
+    claspedHands.scale.set(1.5, 0.9, 1.1);
+    claspedHands.position.set(0, 0.08, -0.08);
+    coupleGroup.add(claspedHands);
+
+    chawni.add(coupleGroup);
+
+    // Register animated couple for subtle romantic breathing
+    this.animatedAnimals.push({
+      type: 'couple',
+      mesh: coupleGroup,
+      seed: Math.random() * 10
+    });
+
+    return chawni;
+  }
+
+  // ========================================================
   // 5. BANGLADESHI FLORA (Coconut Palm, Banana, Bamboo)
   // ========================================================
 
@@ -747,6 +981,10 @@ export class BangladeshProps {
         anim.mesh.position.x = anim.startX + Math.sin(time * 0.8 + anim.seed) * 0.6;
         anim.mesh.position.z = anim.startZ + Math.cos(time * 0.8 + anim.seed) * 0.6;
         anim.mesh.rotation.y = time * 0.8 + anim.seed;
+      } else if (anim.type === 'couple') {
+        // Subtle romantic breathing and head tilt
+        const breath = Math.sin(time * 2.2 + anim.seed) * 0.015;
+        anim.mesh.position.y = 0.71 + breath;
       }
     });
 

@@ -167,6 +167,51 @@ export class DeshiRickshaw {
     }
     const cushionTexture = new THREE.CanvasTexture(cushionCanvas);
 
+    // D. Side Body Art Texture (Sunflower + Turquoise Diamond Lattice) from reference pic
+    const sideArtCanvas = document.createElement('canvas');
+    sideArtCanvas.width = 512;
+    sideArtCanvas.height = 256;
+    const saCtx = sideArtCanvas.getContext('2d');
+
+    // Yellow background
+    saCtx.fillStyle = '#f59e0b';
+    saCtx.fillRect(0, 0, 512, 256);
+
+    // Sunflower in center
+    saCtx.fillStyle = '#ea580c';
+    saCtx.beginPath();
+    saCtx.arc(256, 105, 45, 0, Math.PI * 2);
+    saCtx.fill();
+    // Sun rays
+    for (let a = 0; a < Math.PI * 2; a += Math.PI / 8) {
+      saCtx.fillStyle = '#dc2626';
+      saCtx.beginPath();
+      saCtx.arc(256 + Math.cos(a) * 62, 105 + Math.sin(a) * 62, 14, 0, Math.PI * 2);
+      saCtx.fill();
+    }
+    // Sunflower yellow center
+    saCtx.fillStyle = '#fde047';
+    saCtx.beginPath();
+    saCtx.arc(256, 105, 26, 0, Math.PI * 2);
+    saCtx.fill();
+
+    // Turquoise diamond cross lattice (Diamond Rail) on lower part
+    saCtx.fillStyle = '#0d9488';
+    saCtx.fillRect(0, 185, 512, 71);
+    saCtx.strokeStyle = '#fde047';
+    saCtx.lineWidth = 5;
+    for (let x = -20; x <= 530; x += 32) {
+      saCtx.beginPath();
+      saCtx.moveTo(x, 185);
+      saCtx.lineTo(x + 32, 256);
+      saCtx.stroke();
+      saCtx.beginPath();
+      saCtx.moveTo(x + 32, 185);
+      saCtx.lineTo(x, 256);
+      saCtx.stroke();
+    }
+    const sideArtTexture = new THREE.CanvasTexture(sideArtCanvas);
+
     // ----------------------------------------------------
     // 2. Shared Materials
     // ----------------------------------------------------
@@ -176,6 +221,7 @@ export class DeshiRickshaw {
     const tealFenderMat = new THREE.MeshStandardMaterial({ color: 0x0284c7, metalness: 0.5, roughness: 0.4 });
     const woodTinMat = new THREE.MeshStandardMaterial({ color: 0x15803d, roughness: 0.6 });
     const backArtMat = new THREE.MeshStandardMaterial({ map: backTexture, roughness: 0.4 });
+    const sideArtMat = new THREE.MeshStandardMaterial({ map: sideArtTexture, roughness: 0.5, side: THREE.DoubleSide });
     const hoodMat = new THREE.MeshStandardMaterial({ map: hoodTexture, roughness: 0.7, side: THREE.DoubleSide });
     const cushionMat = new THREE.MeshStandardMaterial({ map: cushionTexture, roughness: 0.6 });
 
@@ -243,6 +289,14 @@ export class DeshiRickshaw {
     saddle.position.set(0, 1.08, -0.15);
     frameGroup.add(saddle);
 
+    // Chrome coil springs under saddle (from reference picture)
+    [-0.08, 0.08].forEach((sx) => {
+      const springGeo = new THREE.CylinderGeometry(0.02, 0.02, 0.12, 8);
+      const spring = new THREE.Mesh(springGeo, chromeMat);
+      spring.position.set(sx, 0.98, -0.15);
+      frameGroup.add(spring);
+    });
+
     // Pedal Crank Hub
     const crankHubGeo = new THREE.CylinderGeometry(0.06, 0.06, 0.28, 12);
     crankHubGeo.rotateZ(Math.PI / 2);
@@ -256,11 +310,17 @@ export class DeshiRickshaw {
     // 4. Wheels (1 Front Bicycle Wheel, 2 Big Rear Wheels)
     // ----------------------------------------------------
 
-    // Front Wheel (z = -1.05)
+    // Front Wheel (z = -1.05) with teal mudguard
     this.frontWheel = this.createRickshawWheel(0.42, redFrameMat, chromeMat, blackRubberMat);
     this.frontWheel.position.set(0, 0.42, -1.05);
     this.bodyGroup.add(this.frontWheel);
     this.wheels.push(this.frontWheel);
+
+    const fMudGeo = new THREE.CylinderGeometry(0.46, 0.46, 0.12, 16, 1, true, 0, Math.PI * 0.8);
+    fMudGeo.rotateZ(Math.PI / 2);
+    const fMud = new THREE.Mesh(fMudGeo, tealFenderMat);
+    fMud.position.set(0, 0.44, -1.05);
+    this.bodyGroup.add(fMud);
 
     // Rear Wheels (x = ±0.78, z = 0.95)
     [-0.78, 0.78].forEach((x) => {
@@ -300,16 +360,25 @@ export class DeshiRickshaw {
     seatBox.position.set(0, 0.86, 0.88);
     carriageGroup.add(seatBox);
 
+    // Authentic Side Art Plates (Sunflower + Turquoise Diamond Lattice)
+    [-0.62, 0.62].forEach((x, idx) => {
+      const sidePlateGeo = new THREE.PlaneGeometry(1.15, 0.52);
+      const sidePlate = new THREE.Mesh(sidePlateGeo, sideArtMat);
+      sidePlate.position.set(x, 0.96, 0.75);
+      sidePlate.rotation.y = idx === 0 ? -Math.PI / 2 : Math.PI / 2;
+      carriageGroup.add(sidePlate);
+    });
+
     // Red Patterned Seat Cushion
     const cushionGeo = new THREE.BoxGeometry(1.18, 0.14, 0.56);
     const cushion = new THREE.Mesh(cushionGeo, cushionMat);
     cushion.position.set(0, 1.08, 0.88);
     carriageGroup.add(cushion);
 
-    // Backrest Cushion
-    const backCushionGeo = new THREE.BoxGeometry(1.18, 0.52, 0.12);
+    // Backrest Cushion (supporting mid-back so couple is clearly visible!)
+    const backCushionGeo = new THREE.BoxGeometry(1.18, 0.34, 0.12);
     const backCushion = new THREE.Mesh(backCushionGeo, cushionMat);
-    backCushion.position.set(0, 1.38, 1.15);
+    backCushion.position.set(0, 1.20, 1.12);
     carriageGroup.add(backCushion);
 
     // Side Armrests with decorative carved wood
@@ -327,12 +396,21 @@ export class DeshiRickshaw {
     backPlate.rotation.y = Math.PI; // Face backwards toward oncoming rear traffic!
     carriageGroup.add(backPlate);
 
-    // Traditional Arched Rickshaw Hood / Canopy
+    // Traditional Arched Rickshaw Hood / Canopy with Red Struts
     const hoodGeo = new THREE.CylinderGeometry(0.68, 0.68, 1.26, 24, 1, true, Math.PI * 0.1, Math.PI * 0.85);
     hoodGeo.rotateZ(Math.PI / 2);
     const hood = new THREE.Mesh(hoodGeo, hoodMat);
-    hood.position.set(0, 1.58, 0.85);
+    hood.position.set(0, 1.62, 0.85);
     carriageGroup.add(hood);
+
+    // Thin Red Metal Support Struts connecting Hood to Carriage (from reference picture)
+    [-0.62, 0.62].forEach((x) => {
+      const strutGeo = new THREE.CylinderGeometry(0.015, 0.015, 1.05, 8);
+      strutGeo.rotateX(0.35);
+      const strut = new THREE.Mesh(strutGeo, redFrameMat);
+      strut.position.set(x, 1.42, 0.65);
+      carriageGroup.add(strut);
+    });
 
     // Rear Taillights on carriage
     [-0.48, 0.48].forEach((x) => {
@@ -466,30 +544,31 @@ export class DeshiRickshaw {
     const girlPantsMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.8 });
 
     // ----------------------------------------------------
-    // A. BOY (Sitting on the Left, x ~ -0.26)
+    // A. BOY (Sitting on the Left, x ~ -0.25)
     // ----------------------------------------------------
     const boyGroup = new THREE.Group();
-    boyGroup.position.set(-0.26, 1.15, 0.88);
+    boyGroup.position.set(-0.25, 1.18, 0.82);
 
     // Boy Torso
     const boyTorsoGeo = new THREE.BoxGeometry(0.32, 0.42, 0.24);
     const boyTorso = new THREE.Mesh(boyTorsoGeo, boyShirtMat);
     boyTorso.position.set(0, 0.22, 0);
-    boyTorso.rotation.y = 0.12; // Gently turned toward girl!
+    boyTorso.rotation.y = 0.16; // Gently turned toward girl!
+    boyTorso.rotation.z = -0.06;
     boyGroup.add(boyTorso);
 
     // Boy Head & Hair
     const boyHeadGeo = new THREE.SphereGeometry(0.12, 14, 14);
     const boyHead = new THREE.Mesh(boyHeadGeo, skinMat);
-    boyHead.position.set(0, 0.52, 0.02);
-    boyHead.rotation.y = 0.2; // Looking fondly toward girl!
+    boyHead.position.set(0.02, 0.52, 0.02);
+    boyHead.rotation.y = 0.26; // Looking fondly toward girl!
     boyHead.rotation.z = -0.08;
     boyGroup.add(boyHead);
 
     const boyHairGeo = new THREE.SphereGeometry(0.13, 14, 14);
     boyHairGeo.scale(1.02, 1.05, 1.02);
     const boyHair = new THREE.Mesh(boyHairGeo, boyHairMat);
-    boyHair.position.set(0, 0.55, 0.01);
+    boyHair.position.set(0.02, 0.55, 0.01);
     boyGroup.add(boyHair);
 
     // Boy Legs (Sitting on cushion with knees bent forward)
@@ -506,26 +585,27 @@ export class DeshiRickshaw {
     boyGroup.add(boyLeftArm);
 
     // BOY'S RIGHT ARM: Reaching into center holding girl's hand!
-    const boyRightArmGeo = new THREE.CylinderGeometry(0.04, 0.035, 0.32, 8);
+    const boyRightArmGeo = new THREE.CylinderGeometry(0.04, 0.035, 0.34, 8);
     boyRightArmGeo.rotateZ(-Math.PI / 4);
-    boyRightArmGeo.rotateX(-0.2);
+    boyRightArmGeo.rotateX(-0.18);
     const boyRightArm = new THREE.Mesh(boyRightArmGeo, boyShirtMat);
-    boyRightArm.position.set(0.18, 0.12, -0.08);
+    boyRightArm.position.set(0.18, 0.14, -0.07);
     boyGroup.add(boyRightArm);
 
     this.coupleGroup.add(boyGroup);
 
     // ----------------------------------------------------
-    // B. GIRL (Sitting on the Right, x ~ +0.26)
+    // B. GIRL (Sitting on the Right, x ~ +0.25)
     // ----------------------------------------------------
     const girlGroup = new THREE.Group();
-    girlGroup.position.set(0.26, 1.15, 0.88);
+    girlGroup.position.set(0.25, 1.18, 0.82);
 
     // Girl Torso (Pretty kurti)
     const girlTorsoGeo = new THREE.BoxGeometry(0.28, 0.38, 0.22);
     const girlTorso = new THREE.Mesh(girlTorsoGeo, girlDressMat);
     girlTorso.position.set(0, 0.2, 0);
-    girlTorso.rotation.y = -0.15; // Turned toward boy!
+    girlTorso.rotation.y = -0.18; // Turned toward boy!
+    girlTorso.rotation.z = 0.08;
     girlGroup.add(girlTorso);
 
     // Yellow Dupatta / Orna draped gracefully over shoulder
@@ -537,22 +617,22 @@ export class DeshiRickshaw {
     // Girl Head with Long Hair / Cute Ponytail
     const girlHeadGeo = new THREE.SphereGeometry(0.11, 14, 14);
     const girlHead = new THREE.Mesh(girlHeadGeo, skinMat);
-    girlHead.position.set(0, 0.48, 0.02);
-    girlHead.rotation.y = -0.25; // Looking happily toward boy!
+    girlHead.position.set(-0.02, 0.48, 0.02);
+    girlHead.rotation.y = -0.3; // Looking happily toward boy!
     girlHead.rotation.z = 0.1;
     girlGroup.add(girlHead);
 
     const girlHairGeo = new THREE.SphereGeometry(0.12, 14, 14);
     girlHairGeo.scale(1.04, 1.06, 1.08);
     const girlHair = new THREE.Mesh(girlHairGeo, girlHairMat);
-    girlHair.position.set(0, 0.51, 0);
+    girlHair.position.set(-0.02, 0.51, 0);
     girlGroup.add(girlHair);
 
     // Ponytail trailing down
     const ponytailGeo = new THREE.CylinderGeometry(0.04, 0.02, 0.32, 8);
     ponytailGeo.rotateX(-0.4);
     const ponytail = new THREE.Mesh(ponytailGeo, girlHairMat);
-    ponytail.position.set(0.02, 0.38, 0.15);
+    ponytail.position.set(-0.01, 0.38, 0.15);
     girlGroup.add(ponytail);
 
     // Girl Legs
@@ -569,11 +649,11 @@ export class DeshiRickshaw {
     girlGroup.add(girlRightArm);
 
     // GIRL'S LEFT ARM: Reaching into center holding boy's hand!
-    const girlLeftArmGeo = new THREE.CylinderGeometry(0.035, 0.03, 0.3, 8);
+    const girlLeftArmGeo = new THREE.CylinderGeometry(0.035, 0.03, 0.32, 8);
     girlLeftArmGeo.rotateZ(Math.PI / 4);
-    girlLeftArmGeo.rotateX(-0.2);
+    girlLeftArmGeo.rotateX(-0.18);
     const girlLeftArm = new THREE.Mesh(girlLeftArmGeo, girlDressMat);
-    girlLeftArm.position.set(-0.16, 0.12, -0.08);
+    girlLeftArm.position.set(-0.17, 0.14, -0.07);
     girlGroup.add(girlLeftArm);
 
     this.coupleGroup.add(girlGroup);
@@ -582,12 +662,19 @@ export class DeshiRickshaw {
     // C. CLASPED HANDS IN THE CENTER (ROMANTIC DETAIL!)
     // ----------------------------------------------------
     const claspedHandsGroup = new THREE.Group();
-    claspedHandsGroup.position.set(0, 1.25, 0.78);
+    claspedHandsGroup.position.set(0, 1.28, 0.74);
 
-    const handGeo = new THREE.SphereGeometry(0.045, 10, 10);
-    handGeo.scale(1.4, 0.9, 1.1);
-    const hands = new THREE.Mesh(handGeo, skinMat);
-    claspedHandsGroup.add(hands);
+    // Boy's hand
+    const boyHand = new THREE.Mesh(new THREE.SphereGeometry(0.045, 10, 10), skinMat);
+    boyHand.scale.set(1.3, 0.9, 1.1);
+    boyHand.position.set(-0.02, 0, 0);
+    claspedHandsGroup.add(boyHand);
+
+    // Girl's hand interlaced holding
+    const girlHand = new THREE.Mesh(new THREE.SphereGeometry(0.042, 10, 10), skinMat);
+    girlHand.scale.set(1.2, 0.85, 1.05);
+    girlHand.position.set(0.02, 0.01, 0.01);
+    claspedHandsGroup.add(girlHand);
 
     this.coupleGroup.add(claspedHandsGroup);
 

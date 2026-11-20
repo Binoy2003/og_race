@@ -81,6 +81,7 @@ class BangladeshTruckGame {
     this.particleSystem = new ParticleSystem(this.scene);
     this.speedLines = new SpeedLines(this.scene);
     this.cameraController = new CameraController(this.camera);
+    this.cameraController.setVehicleType(this.currentVehicleType);
 
     // Timing & State
     this.clock = new THREE.Clock();
@@ -104,6 +105,7 @@ class BangladeshTruckGame {
     this.playerVehicle = this.vehicles[type];
     this.playerTruck = this.playerVehicle;
     this.soundManager.setVehicleType(type);
+    this.cameraController.setVehicleType(type);
     this.cameraController.init(this.playerVehicle);
   }
 

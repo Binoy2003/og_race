@@ -90,7 +90,7 @@ export class DeshiCNG {
 
     const roofTexture = new THREE.CanvasTexture(roofCanvas);
 
-    // B. Lower Side Art Banner ("মা বাবার দোয়া" & Stencil)
+    // B. Lower Side Art Banner ("সি.এন.জি চালিত" & "মা বাবার দোয়া" exactly from reference image)
     const sideCanvas = document.createElement('canvas');
     sideCanvas.width = 512;
     sideCanvas.height = 160;
@@ -99,18 +99,28 @@ export class DeshiCNG {
     sCtx.fillStyle = '#15803d'; // Green CNG body
     sCtx.fillRect(0, 0, 512, 160);
 
-    // Yellow ribbon
-    sCtx.fillStyle = '#f59e0b';
-    sCtx.fillRect(20, 35, 472, 75);
-    sCtx.strokeStyle = '#dc2626';
-    sCtx.lineWidth = 4;
-    sCtx.strokeRect(20, 35, 472, 75);
+    // 1. Upper White Ribbon: "সি.এন.জি চালিত"
+    sCtx.fillStyle = '#ffffff';
+    sCtx.fillRect(20, 15, 472, 58);
+    sCtx.strokeStyle = '#0284c7';
+    sCtx.lineWidth = 3;
+    sCtx.strokeRect(20, 15, 472, 58);
 
-    // Red lettering: "মা বাবার দোয়া"
-    sCtx.fillStyle = '#b91c1c';
-    sCtx.font = 'bold 36px sans-serif';
+    sCtx.fillStyle = '#0284c7';
+    sCtx.font = 'bold 32px sans-serif';
     sCtx.textAlign = 'center';
-    sCtx.fillText('মা বাবার দোয়া', 256, 86);
+    sCtx.fillText('সি.এন.জি চালিত', 256, 56);
+
+    // 2. Lower Yellow Ribbon: "মা বাবার দোয়া"
+    sCtx.fillStyle = '#f59e0b';
+    sCtx.fillRect(20, 85, 472, 60);
+    sCtx.strokeStyle = '#dc2626';
+    sCtx.lineWidth = 3;
+    sCtx.strokeRect(20, 85, 472, 60);
+
+    sCtx.fillStyle = '#b91c1c';
+    sCtx.font = 'bold 34px sans-serif';
+    sCtx.fillText('মা বাবার দোয়া', 256, 128);
 
     const sideTexture = new THREE.CanvasTexture(sideCanvas);
 
@@ -246,6 +256,15 @@ export class DeshiCNG {
     rp.rotation.y = Math.PI; // Faces oncoming traffic from rear!
     this.bodyGroup.add(rp);
 
+    // Side Roof Art Panels on left and right canvas roof (Balloons & "সি.এন.জি চালিত" from photo)
+    [-0.84, 0.84].forEach((x, idx) => {
+      const srpGeo = new THREE.PlaneGeometry(1.2, 0.55);
+      const srp = new THREE.Mesh(srpGeo, roofArtMat);
+      srp.position.set(x, 1.76, 0.42);
+      srp.rotation.y = idx === 0 ? -Math.PI / 2 : Math.PI / 2;
+      this.bodyGroup.add(srp);
+    });
+
     // ----------------------------------------------------
     // 4. Wire Mesh Safety Gates (Left & Right Doors with "OK")
     // ----------------------------------------------------
@@ -274,6 +293,12 @@ export class DeshiCNG {
     fMud.position.set(0, 0.35, -1.42);
     this.bodyGroup.add(fMud);
 
+    // Front fork column
+    const forkColGeo = new THREE.CylinderGeometry(0.04, 0.04, 0.55, 8);
+    const forkCol = new THREE.Mesh(forkColGeo, chromeMat);
+    forkCol.position.set(0, 0.65, -1.42);
+    this.bodyGroup.add(forkCol);
+
     // Rear Wheels (x = ±0.75, z = 0.85)
     [-0.75, 0.75].forEach((x) => {
       const rw = this.createCNGWheel(0.35, blackRubberMat, rimMat);
@@ -286,7 +311,14 @@ export class DeshiCNG {
     // 6. Lights, Horn & Tubular Crash Guards
     // ----------------------------------------------------
 
-    // Single Large Chrome Headlight on front nose
+    // Chrome tubular bracket mounting headlight to front fender (from photo)
+    const hlBracketGeo = new THREE.CylinderGeometry(0.02, 0.02, 0.35, 8);
+    hlBracketGeo.rotateX(0.4);
+    const hlBracket = new THREE.Mesh(hlBracketGeo, chromeMat);
+    hlBracket.position.set(0, 0.76, -1.55);
+    this.bodyGroup.add(hlBracket);
+
+    // Single Large Chrome Headlight on front bracket
     const hlGeo = new THREE.SphereGeometry(0.12, 16, 16);
     hlGeo.scale(1, 1, 0.65);
     const hlMesh = new THREE.Mesh(hlGeo, new THREE.MeshBasicMaterial({ color: 0xffffff }));

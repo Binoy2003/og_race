@@ -326,6 +326,18 @@ export class RoadManager {
     const banana = p.createBananaTree();
     banana.position.set((this.roadWidth * 0.5 + 5.8 + Math.random() * 2.5) * treeSide, 0, 4);
     group.add(banana);
+
+    // H. AUTHENTIC BANGLADESHI JATRI CHAWNI (যাত্রী ছাউনি / BUS STOP)
+    // Roadside passenger shed with cute teenage couple sitting on the bench holding hands!
+    if (index % 3 === 0) {
+      const chawniSide = (index % 6 === 0) ? -1 : 1;
+      const chawni = p.createJatriChawni();
+      const chawniX = (this.roadWidth * 0.5 + 4.6) * chawniSide;
+      chawni.position.set(chawniX, 0, -18);
+      // Face toward the highway road so the romantic couple holding hands is visible!
+      chawni.rotation.y = chawniSide > 0 ? -Math.PI / 2 : Math.PI / 2;
+      group.add(chawni);
+    }
   }
 
   // Update segments and rural animations as player moves forward along -Z
