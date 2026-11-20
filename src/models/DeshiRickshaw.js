@@ -155,77 +155,189 @@ export class DeshiRickshaw {
 
     const backTexture = new THREE.CanvasTexture(backCanvas);
 
-    // B. Canopy / Hood Texture (Traditional Rich Rickshaw Folk Art Roof)
+    // B. Canopy / Hood Texture (Authentic Masterpiece of Bangladeshi Rickshaw Paint)
     const hoodCanvas = document.createElement('canvas');
-    hoodCanvas.width = 512;
-    hoodCanvas.height = 512;
+    hoodCanvas.width = 1024;
+    hoodCanvas.height = 1024;
     const hCtx = hoodCanvas.getContext('2d');
 
-    // Rich golden-yellow body
+    // Vibrant Yellow Lacquer Background
     hCtx.fillStyle = '#f59e0b';
-    hCtx.fillRect(0, 0, 512, 512);
+    hCtx.fillRect(0, 0, 1024, 1024);
 
-    // Deep Maroon arched top bands (from Image 5)
-    hCtx.fillStyle = '#881337';
-    hCtx.fillRect(0, 0, 512, 70);
-    hCtx.fillRect(0, 442, 512, 70);
-
-    // Turquoise accent pinstripes
-    hCtx.fillStyle = '#06b6d4';
-    hCtx.fillRect(0, 70, 512, 14);
-    hCtx.fillRect(0, 428, 512, 14);
-
-    // Maroon band golden scalloped border
-    for (let x = 16; x < 512; x += 32) {
+    // Traditional Diamond Watermark Grid on Yellow Canvas
+    hCtx.strokeStyle = 'rgba(234, 88, 12, 0.18)';
+    hCtx.lineWidth = 3;
+    for (let i = -1024; i < 2048; i += 64) {
       hCtx.beginPath();
-      hCtx.arc(x, 70, 8, 0, Math.PI);
-      hCtx.fillStyle = '#fde047';
-      hCtx.fill();
-
+      hCtx.moveTo(i, 0);
+      hCtx.lineTo(i + 1024, 1024);
+      hCtx.stroke();
       hCtx.beginPath();
-      hCtx.arc(x, 442, 8, Math.PI, Math.PI * 2);
-      hCtx.fillStyle = '#fde047';
-      hCtx.fill();
+      hCtx.moveTo(i, 1024);
+      hCtx.lineTo(i + 1024, 0);
+      hCtx.stroke();
     }
 
-    // Traditional Folk Floral Mandalas & Blooming Lotus Rosettes on Roof
-    const drawLotusRosette = (cx, cy, r) => {
-      // Outer petals
-      const pColors = ['#dc2626', '#ec4899', '#059669', '#3b82f6'];
-      for (let i = 0; i < 8; i++) {
-        const ang = (i * Math.PI) / 4;
-        const px = cx + Math.cos(ang) * (r * 0.75);
-        const py = cy + Math.sin(ang) * (r * 0.75);
-        hCtx.beginPath();
-        hCtx.arc(px, py, r * 0.35, 0, Math.PI * 2);
-        hCtx.fillStyle = pColors[i % pColors.length];
-        hCtx.fill();
-        hCtx.strokeStyle = '#18181b';
-        hCtx.lineWidth = 2;
-        hCtx.stroke();
-      }
-      // Inner circle
+    // 1. Front and Rear Arched Borders in Deep Royal Maroon (from Image 5)
+    hCtx.fillStyle = '#881337';
+    hCtx.fillRect(0, 0, 1024, 140);
+    hCtx.fillRect(0, 884, 1024, 140);
+
+    // Turquoise & Emerald Accent Stripes
+    hCtx.fillStyle = '#06b6d4';
+    hCtx.fillRect(0, 140, 1024, 28);
+    hCtx.fillRect(0, 856, 1024, 28);
+
+    hCtx.fillStyle = '#10b981';
+    hCtx.fillRect(0, 168, 1024, 16);
+    hCtx.fillRect(0, 840, 1024, 16);
+
+    // Golden Scalloped Borders along the maroon bands
+    for (let x = 32; x < 1024; x += 64) {
       hCtx.beginPath();
-      hCtx.arc(cx, cy, r * 0.42, 0, Math.PI * 2);
+      hCtx.arc(x, 140, 16, 0, Math.PI);
       hCtx.fillStyle = '#fde047';
       hCtx.fill();
       hCtx.strokeStyle = '#18181b';
-      hCtx.lineWidth = 2;
+      hCtx.lineWidth = 2.5;
       hCtx.stroke();
 
-      // Center ruby dot
       hCtx.beginPath();
-      hCtx.arc(cx, cy, r * 0.18, 0, Math.PI * 2);
+      hCtx.arc(x, 884, 16, Math.PI, Math.PI * 2);
+      hCtx.fillStyle = '#fde047';
+      hCtx.fill();
+      hCtx.strokeStyle = '#18181b';
+      hCtx.lineWidth = 2.5;
+      hCtx.stroke();
+    }
+
+    // Traditional Bengali Calligraphy on Arched Banners: "মা বাবার দোয়া"
+    [70, 954].forEach((bannerY) => {
+      hCtx.fillStyle = '#ffffff';
+      hCtx.font = 'bold 44px sans-serif';
+      hCtx.textAlign = 'center';
+      hCtx.textBaseline = 'middle';
+      hCtx.shadowColor = 'rgba(0,0,0,0.8)';
+      hCtx.shadowBlur = 8;
+      hCtx.fillText('মা বাবার দোয়া', 512, bannerY);
+      hCtx.shadowBlur = 0;
+    });
+
+    // 2. MAGNIFICENT CENTRAL BLOOMING LOTUS MANDALA (Top Ridge of Roof)
+    const drawGrandLotusMandala = (cx, cy) => {
+      // Golden Sunburst Rays radiating outward
+      hCtx.strokeStyle = '#ea580c';
+      hCtx.lineWidth = 4;
+      for (let a = 0; a < Math.PI * 2; a += Math.PI / 16) {
+        hCtx.beginPath();
+        hCtx.moveTo(cx, cy);
+        hCtx.lineTo(cx + Math.cos(a) * 260, cy + Math.sin(a) * 260);
+        hCtx.stroke();
+      }
+
+      // Outer Layer Petals (Ruby Red & Cyan)
+      for (let i = 0; i < 16; i++) {
+        const ang = (i * Math.PI) / 8;
+        const px = cx + Math.cos(ang) * 175;
+        const py = cy + Math.sin(ang) * 175;
+        hCtx.beginPath();
+        hCtx.ellipse(px, py, 42, 65, ang + Math.PI / 2, 0, Math.PI * 2);
+        hCtx.fillStyle = i % 2 === 0 ? '#dc2626' : '#0284c7';
+        hCtx.fill();
+        hCtx.strokeStyle = '#18181b';
+        hCtx.lineWidth = 4;
+        hCtx.stroke();
+      }
+
+      // Middle Layer Petals (Hot Pink & Emerald Green)
+      for (let i = 0; i < 12; i++) {
+        const ang = (i * Math.PI) / 6;
+        const px = cx + Math.cos(ang) * 115;
+        const py = cy + Math.sin(ang) * 115;
+        hCtx.beginPath();
+        hCtx.ellipse(px, py, 34, 52, ang + Math.PI / 2, 0, Math.PI * 2);
+        hCtx.fillStyle = i % 2 === 0 ? '#ec4899' : '#10b981';
+        hCtx.fill();
+        hCtx.strokeStyle = '#18181b';
+        hCtx.lineWidth = 3.5;
+        hCtx.stroke();
+      }
+
+      // Inner Core Ring
+      hCtx.beginPath();
+      hCtx.arc(cx, cy, 62, 0, Math.PI * 2);
+      hCtx.fillStyle = '#fde047';
+      hCtx.fill();
+      hCtx.strokeStyle = '#18181b';
+      hCtx.lineWidth = 4;
+      hCtx.stroke();
+
+      // Center Ruby Jewel
+      hCtx.beginPath();
+      hCtx.arc(cx, cy, 32, 0, Math.PI * 2);
       hCtx.fillStyle = '#b91c1c';
+      hCtx.fill();
+
+      // Peacock Feather Kalka Flourishes on Left and Right sides of Lotus
+      [-1, 1].forEach((dir) => {
+        // Upper Paisley / Kalka curve
+        hCtx.beginPath();
+        hCtx.moveTo(cx + dir * 160, cy - 60);
+        hCtx.bezierCurveTo(cx + dir * 320, cy - 140, cx + dir * 420, cy - 40, cx + dir * 340, cy + 50);
+        hCtx.bezierCurveTo(cx + dir * 280, cy + 120, cx + dir * 200, cy + 60, cx + dir * 180, cy);
+        hCtx.fillStyle = '#0d9488';
+        hCtx.fill();
+        hCtx.strokeStyle = '#18181b';
+        hCtx.lineWidth = 4;
+        hCtx.stroke();
+
+        // Peacock eye inside kalka
+        hCtx.beginPath();
+        hCtx.arc(cx + dir * 320, cy - 30, 28, 0, Math.PI * 2);
+        hCtx.fillStyle = '#fde047';
+        hCtx.fill();
+        hCtx.beginPath();
+        hCtx.arc(cx + dir * 320, cy - 30, 16, 0, Math.PI * 2);
+        hCtx.fillStyle = '#1e3a8a';
+        hCtx.fill();
+      });
+    };
+
+    drawGrandLotusMandala(512, 512);
+
+    // 3. Side Lotus Rosettes near left and right edges (visible from street level!)
+    const drawSideRosette = (cx, cy) => {
+      const colors = ['#dc2626', '#ec4899', '#f59e0b', '#10b981'];
+      for (let i = 0; i < 8; i++) {
+        const ang = (i * Math.PI) / 4;
+        const px = cx + Math.cos(ang) * 48;
+        const py = cy + Math.sin(ang) * 48;
+        hCtx.beginPath();
+        hCtx.arc(px, py, 22, 0, Math.PI * 2);
+        hCtx.fillStyle = colors[i % colors.length];
+        hCtx.fill();
+        hCtx.strokeStyle = '#18181b';
+        hCtx.lineWidth = 2.5;
+        hCtx.stroke();
+      }
+      hCtx.beginPath();
+      hCtx.arc(cx, cy, 26, 0, Math.PI * 2);
+      hCtx.fillStyle = '#fde047';
+      hCtx.fill();
+      hCtx.strokeStyle = '#18181b';
+      hCtx.lineWidth = 2.5;
+      hCtx.stroke();
+      hCtx.beginPath();
+      hCtx.arc(cx, cy, 12, 0, Math.PI * 2);
+      hCtx.fillStyle = '#991b1b';
       hCtx.fill();
     };
 
-    // Draw grid of lotus rosettes on roof
-    for (let y = 145; y <= 365; y += 110) {
-      for (let x = 75; x <= 450; x += 110) {
-        drawLotusRosette(x, y, 36);
-      }
-    }
+    [120, 904].forEach((sideX) => {
+      drawSideRosette(sideX, 320);
+      drawSideRosette(sideX, 704);
+    });
 
     const hoodTexture = new THREE.CanvasTexture(hoodCanvas);
 

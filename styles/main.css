@@ -131,32 +131,32 @@ canvas {
 
 /* ---------------- Main Menu Branding ---------------- */
 .menu-title-wrap {
-  margin-bottom: 1.8rem;
+  margin-bottom: 1.1rem;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
 .game-title {
-  font-size: 4.2rem;
+  font-size: 2.75rem;
   font-weight: 900;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.09em;
   text-transform: uppercase;
   font-style: italic;
   background: linear-gradient(135deg, #ffffff 15%, #fbbf24 55%, #ef4444 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 6px 20px rgba(245, 158, 11, 0.4));
-  line-height: 0.95;
+  filter: drop-shadow(0 4px 14px rgba(245, 158, 11, 0.4));
+  line-height: 1.0;
 }
 
 .subtitle {
-  font-size: 0.85rem;
-  letter-spacing: 0.38em;
+  font-size: 0.68rem;
+  letter-spacing: 0.24em;
   color: var(--accent-emerald);
   font-weight: 800;
   text-transform: uppercase;
-  margin-top: 0.6rem;
+  margin-top: 0.35rem;
 }
 
 .location-tag {
@@ -1004,11 +1004,11 @@ body:not(.touch-active) #mobile-controls {
 /* Tablet & Smaller Laptops */
 @media (max-width: 768px) {
   .game-title {
-    font-size: 3.4rem;
+    font-size: 2.35rem;
   }
   .panel {
-    padding: 2.0rem 1.6rem;
-    max-width: 420px;
+    padding: 1.8rem 1.4rem;
+    max-width: 400px;
   }
   .hud-value {
     font-size: 1.8rem;
@@ -1024,8 +1024,8 @@ body:not(.touch-active) #mobile-controls {
 /* Mobile Portrait (Phones under 540px width - iPhone & Android) */
 @media (max-width: 540px) {
   .game-title {
-    font-size: 2.6rem;
-    letter-spacing: 0.09em;
+    font-size: 2.05rem;
+    letter-spacing: 0.08em;
   }
   .subtitle {
     font-size: 0.68rem;
