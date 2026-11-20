@@ -190,6 +190,132 @@ export class DeshiCNG {
 
     const grillTexture = new THREE.CanvasTexture(grillCanvas);
 
+    // E. Authentic Rear Engine Hatch Texture (from user's real CNG photo - Image 1!)
+    const rearHatchCanvas = document.createElement('canvas');
+    rearHatchCanvas.width = 512;
+    rearHatchCanvas.height = 360;
+    const rhCtx = rearHatchCanvas.getContext('2d');
+
+    // Rich Green metal background
+    rhCtx.fillStyle = '#15803d';
+    rhCtx.fillRect(0, 0, 512, 360);
+
+    // Subtle steel sheet bevel outline
+    rhCtx.strokeStyle = '#166534';
+    rhCtx.lineWidth = 4;
+    rhCtx.strokeRect(6, 6, 500, 348);
+
+    // Horizontal ventilation louvers / ridges (cooling slits from Image 1)
+    for (let y = 50; y <= 210; y += 22) {
+      // Left louvers
+      rhCtx.fillStyle = '#14532d';
+      rhCtx.fillRect(25, y, 105, 8);
+      rhCtx.fillStyle = '#22c55e';
+      rhCtx.fillRect(25, y + 8, 105, 2);
+
+      // Right louvers
+      rhCtx.fillStyle = '#14532d';
+      rhCtx.fillRect(382, y, 105, 8);
+      rhCtx.fillStyle = '#22c55e';
+      rhCtx.fillRect(382, y + 8, 105, 2);
+
+      // Middle louvers (under UTTARA banner)
+      if (y >= 165) {
+        rhCtx.fillStyle = '#14532d';
+        rhCtx.fillRect(145, y, 222, 7);
+        rhCtx.fillStyle = '#22c55e';
+        rhCtx.fillRect(145, y + 7, 222, 2);
+      }
+    }
+
+    // Upper Left Badge: "উত্তরা" (Uttara)
+    rhCtx.fillStyle = '#b91c1c';
+    rhCtx.beginPath();
+    rhCtx.roundRect(24, 18, 95, 26, 6);
+    rhCtx.fill();
+    rhCtx.strokeStyle = '#fde047';
+    rhCtx.lineWidth = 2;
+    rhCtx.stroke();
+    rhCtx.fillStyle = '#ffffff';
+    rhCtx.font = 'bold 16px sans-serif';
+    rhCtx.textAlign = 'center';
+    rhCtx.fillText('উত্তরা', 71, 37);
+
+    // Upper Right Badge: "RE CNG FOUR STROKE"
+    rhCtx.fillStyle = '#065f46';
+    rhCtx.beginPath();
+    rhCtx.roundRect(390, 18, 98, 26, 6);
+    rhCtx.fill();
+    rhCtx.strokeStyle = '#fde047';
+    rhCtx.lineWidth = 2;
+    rhCtx.stroke();
+    rhCtx.fillStyle = '#fde047';
+    rhCtx.font = 'bold 13px sans-serif';
+    rhCtx.textAlign = 'center';
+    rhCtx.fillText('RE CNG', 439, 32);
+    rhCtx.fillStyle = '#ffffff';
+    rhCtx.font = '9px sans-serif';
+    rhCtx.fillText('FOUR STROKE', 439, 42);
+
+    // Center Bangladesh Digital License Plate: "ঢাকা মেট্রো-থ \n ১১-৫০৫১"
+    rhCtx.fillStyle = '#047857';
+    rhCtx.beginPath();
+    rhCtx.roundRect(176, 20, 160, 72, 8);
+    rhCtx.fill();
+    rhCtx.strokeStyle = '#ffffff';
+    rhCtx.lineWidth = 3;
+    rhCtx.stroke();
+
+    rhCtx.fillStyle = '#ffffff';
+    rhCtx.font = 'bold 19px sans-serif';
+    rhCtx.textAlign = 'center';
+    rhCtx.fillText('ঢাকা মেট্রো-থ', 256, 48);
+    rhCtx.font = 'bold 24px sans-serif';
+    rhCtx.fillText('১১-৫০৫১', 256, 80);
+
+    // Bold Yellow "🔴 UTTARA 🔴" Banner (directly below number plate!)
+    rhCtx.fillStyle = '#facc15';
+    rhCtx.beginPath();
+    rhCtx.roundRect(138, 104, 236, 44, 6);
+    rhCtx.fill();
+    rhCtx.strokeStyle = '#dc2626';
+    rhCtx.lineWidth = 3;
+    rhCtx.stroke();
+
+    // Red dots on sides
+    rhCtx.fillStyle = '#dc2626';
+    rhCtx.beginPath();
+    rhCtx.arc(158, 126, 9, 0, Math.PI * 2);
+    rhCtx.arc(354, 126, 9, 0, Math.PI * 2);
+    rhCtx.fill();
+
+    // "UTTARA" bold text
+    rhCtx.fillStyle = '#1c1917';
+    rhCtx.font = '900 24px sans-serif';
+    rhCtx.textAlign = 'center';
+    rhCtx.fillText('UTTARA', 256, 134);
+
+    // Semicircular Sunburst Fan / Rainbow Decals (Under taillights on left & right)
+    const drawSunburst = (cx, cy, radius) => {
+      const fanColors = ['#0284c7', '#10b981', '#f59e0b', '#ef4444', '#ec4899'];
+      const slice = Math.PI / fanColors.length;
+      for (let i = 0; i < fanColors.length; i++) {
+        rhCtx.fillStyle = fanColors[i];
+        rhCtx.beginPath();
+        rhCtx.moveTo(cx, cy);
+        rhCtx.arc(cx, cy, radius, Math.PI + i * slice, Math.PI + (i + 1) * slice);
+        rhCtx.closePath();
+        rhCtx.fill();
+      }
+      rhCtx.strokeStyle = '#ffffff';
+      rhCtx.lineWidth = 2;
+      rhCtx.stroke();
+    };
+    drawSunburst(65, 305, 46);
+    drawSunburst(447, 305, 46);
+
+    const rearHatchTexture = new THREE.CanvasTexture(rearHatchCanvas);
+
     // ----------------------------------------------------
     // 2. Shared Materials
     // ----------------------------------------------------
@@ -200,11 +326,14 @@ export class DeshiCNG {
     const blackRubberMat = new THREE.MeshStandardMaterial({ color: 0x1f2421, roughness: 0.9 });
     const rimMat = new THREE.MeshStandardMaterial({ color: 0x94a3b8, metalness: 0.6, roughness: 0.3 });
     const glassMat = new THREE.MeshPhysicalMaterial({ color: 0x0f172a, transparent: true, opacity: 0.55, roughness: 0.1 });
+    const rearGlassMat = new THREE.MeshPhysicalMaterial({ color: 0x93c5fd, transparent: true, opacity: 0.48, roughness: 0.08, transmission: 0.65 });
+    const windowRubberMat = new THREE.MeshStandardMaterial({ color: 0x18181b, roughness: 0.85 });
 
     const roofArtMat = new THREE.MeshStandardMaterial({ map: roofTexture, roughness: 0.85 });
     const sideArtMat = new THREE.MeshStandardMaterial({ map: sideTexture, roughness: 0.5 });
     const gateMat = new THREE.MeshStandardMaterial({ map: gateTexture, transparent: true, opacity: 0.92, side: THREE.DoubleSide });
     const grillMat = new THREE.MeshStandardMaterial({ map: grillTexture, roughness: 0.4 });
+    const rearHatchMat = new THREE.MeshStandardMaterial({ map: rearHatchTexture, roughness: 0.45, metalness: 0.1 });
 
     // ----------------------------------------------------
     // 3. Main Cabin Body Structure
@@ -252,12 +381,33 @@ export class DeshiCNG {
     roof.position.set(0, 1.82, 0.15);
     this.bodyGroup.add(roof);
 
-    // Roof Art Panel on back of roof
-    const rpGeo = new THREE.PlaneGeometry(1.5, 0.75);
-    const rp = new THREE.Mesh(rpGeo, roofArtMat);
-    rp.position.set(0, 1.62, 1.28);
-    rp.rotation.y = Math.PI; // Faces oncoming traffic from rear!
-    this.bodyGroup.add(rp);
+    // ----------------------------------------------------
+    // AUTHENTIC REAR CANVAS FACE & LARGE REAR WINDOW (from Image 1!)
+    // ----------------------------------------------------
+    const rearCanvasWall = new THREE.Mesh(
+      new THREE.PlaneGeometry(1.58, 0.72),
+      blackCanvasMat
+    );
+    rearCanvasWall.position.set(0, 1.62, 1.28);
+    rearCanvasWall.rotation.y = Math.PI;
+    this.bodyGroup.add(rearCanvasWall);
+
+    // Thick Black Rubber Weatherstrip Window Frame
+    const rearWinFrame = new THREE.Mesh(
+      new THREE.BoxGeometry(1.18, 0.52, 0.04),
+      windowRubberMat
+    );
+    rearWinFrame.position.set(0, 1.62, 1.30);
+    this.bodyGroup.add(rearWinFrame);
+
+    // Clear Tinted Rear Window Glass Pane (Viewing inside cabin from behind!)
+    const rearWinGlass = new THREE.Mesh(
+      new THREE.PlaneGeometry(1.10, 0.44),
+      rearGlassMat
+    );
+    rearWinGlass.position.set(0, 1.62, 1.325);
+    rearWinGlass.rotation.y = Math.PI;
+    this.bodyGroup.add(rearWinGlass);
 
     // Side Roof Art Panels on left and right canvas roof (Balloons & "সি.এন.জি চালিত" from photo)
     [-0.84, 0.84].forEach((x, idx) => {
@@ -329,43 +479,105 @@ export class DeshiCNG {
     this.bodyGroup.add(hlMesh);
     this.headlights.push(hlMesh);
 
-    // Rear Taillights
-    [-0.62, 0.62].forEach((x) => {
-      const tlGeo = new THREE.BoxGeometry(0.14, 0.12, 0.06);
-      const tl = new THREE.Mesh(tlGeo, new THREE.MeshBasicMaterial({ color: 0xdc2626 }));
-      tl.position.set(x, 0.62, 1.36);
-      this.bodyGroup.add(tl);
-      this.brakeLights.push(tl);
+    // ----------------------------------------------------
+    // AUTHENTIC GREEN METAL REAR ENGINE HATCH (from Image 1!)
+    // ----------------------------------------------------
+    const rearHatchMesh = new THREE.Mesh(
+      new THREE.PlaneGeometry(1.64, 0.94),
+      rearHatchMat
+    );
+    rearHatchMesh.position.set(0, 0.88, 1.35);
+    rearHatchMesh.rotation.y = Math.PI; // Face rearwards
+    this.bodyGroup.add(rearHatchMesh);
+
+    // Combination Vertical Taillights (Upper Red Brake + Lower White Reverse)
+    [-0.66, 0.66].forEach((x) => {
+      // Black housing bezel
+      const bezelGeo = new THREE.BoxGeometry(0.13, 0.28, 0.05);
+      const bezel = new THREE.Mesh(bezelGeo, windowRubberMat);
+      bezel.position.set(x, 0.82, 1.37);
+      this.bodyGroup.add(bezel);
+
+      // Upper Red Brake Lens
+      const redLensGeo = new THREE.BoxGeometry(0.11, 0.13, 0.04);
+      const redLens = new THREE.Mesh(redLensGeo, new THREE.MeshBasicMaterial({ color: 0xef4444 }));
+      redLens.position.set(x, 0.88, 1.39);
+      this.bodyGroup.add(redLens);
+      this.brakeLights.push(redLens);
+
+      // Lower Clear White Lens
+      const whiteLensGeo = new THREE.BoxGeometry(0.11, 0.09, 0.04);
+      const whiteLens = new THREE.Mesh(whiteLensGeo, new THREE.MeshBasicMaterial({ color: 0xf8fafc }));
+      whiteLens.position.set(x, 0.75, 1.39);
+      this.bodyGroup.add(whiteLens);
     });
 
-    // Rear Chrome Tubular Crash Guard Bumper
-    const bBarGeo = new THREE.CylinderGeometry(0.035, 0.035, 1.68, 12);
+    // ----------------------------------------------------
+    // AUTHENTIC GREEN TUBULAR CRASH GUARD BUMPER (from Image 1!)
+    // ----------------------------------------------------
+    const bumperGroup = new THREE.Group();
+    bumperGroup.position.set(0, 0, 0);
+
+    // Main Green Tubular Crossbar
+    const bBarGeo = new THREE.CylinderGeometry(0.035, 0.035, 1.72, 12);
     bBarGeo.rotateZ(Math.PI / 2);
-    const bBar = new THREE.Mesh(bBarGeo, chromeMat);
-    bBar.position.set(0, 0.38, 1.42);
-    this.bodyGroup.add(bBar);
+    const bBar = new THREE.Mesh(bBarGeo, cngGreenMat);
+    bBar.position.set(0, 0.38, 1.44);
+    bumperGroup.add(bBar);
 
-    // Rear License Plate (ঢাকা মেট্রো-থ ১১-২৪৮২)
-    const lpCanvas = document.createElement('canvas');
-    lpCanvas.width = 256;
-    lpCanvas.height = 80;
-    const lpCtx = lpCanvas.getContext('2d');
-    lpCtx.fillStyle = '#065f46';
-    lpCtx.fillRect(0, 0, 256, 80);
-    lpCtx.strokeStyle = '#ffffff';
-    lpCtx.lineWidth = 4;
-    lpCtx.strokeRect(4, 4, 248, 72);
-    lpCtx.fillStyle = '#ffffff';
-    lpCtx.font = 'bold 24px sans-serif';
-    lpCtx.textAlign = 'center';
-    lpCtx.fillText('ঢাকা মেট্রো-থ', 128, 34);
-    lpCtx.fillText('১১-২৪৮২', 128, 64);
+    // Left and right curved bumper corners wrapping to sides
+    [-0.85, 0.85].forEach((bx) => {
+      const cornerGeo = new THREE.CylinderGeometry(0.035, 0.035, 0.25, 10);
+      cornerGeo.rotateX(Math.PI / 2);
+      const corner = new THREE.Mesh(cornerGeo, cngGreenMat);
+      corner.position.set(bx, 0.38, 1.34);
+      bumperGroup.add(corner);
+    });
 
-    const lpTexture = new THREE.CanvasTexture(lpCanvas);
-    const lpGeo = new THREE.PlaneGeometry(0.65, 0.22);
-    const lp = new THREE.Mesh(lpGeo, new THREE.MeshBasicMaterial({ map: lpTexture }));
-    lp.position.set(0, 0.38, 1.45);
-    this.bodyGroup.add(lp);
+    // Ornamental Yellow Diamond Mesh in Center of Bumper (exactly like photo!)
+    const diamondCanvas = document.createElement('canvas');
+    diamondCanvas.width = 128;
+    diamondCanvas.height = 64;
+    const dCtx = diamondCanvas.getContext('2d');
+    dCtx.fillStyle = '#facc15';
+    dCtx.fillRect(0, 0, 128, 64);
+    dCtx.strokeStyle = '#1c1917';
+    dCtx.lineWidth = 4;
+    for (let i = -64; i < 192; i += 16) {
+      dCtx.beginPath();
+      dCtx.moveTo(i, 0);
+      dCtx.lineTo(i + 32, 64);
+      dCtx.stroke();
+      dCtx.beginPath();
+      dCtx.moveTo(i + 32, 0);
+      dCtx.lineTo(i, 64);
+      dCtx.stroke();
+    }
+    const diamondTexture = new THREE.CanvasTexture(diamondCanvas);
+    const diamondMesh = new THREE.Mesh(
+      new THREE.PlaneGeometry(0.44, 0.12),
+      new THREE.MeshStandardMaterial({ map: diamondTexture, roughness: 0.4 })
+    );
+    diamondMesh.position.set(0, 0.38, 1.48);
+    diamondMesh.rotation.y = Math.PI;
+    bumperGroup.add(diamondMesh);
+
+    // Lower Chrome Step Under-Guard Bar
+    const lowBarGeo = new THREE.CylinderGeometry(0.022, 0.022, 1.48, 10);
+    lowBarGeo.rotateZ(Math.PI / 2);
+    const lowBar = new THREE.Mesh(lowBarGeo, chromeMat);
+    lowBar.position.set(0, 0.26, 1.43);
+    bumperGroup.add(lowBar);
+
+    // Rubber Mudflaps behind rear wheels
+    [-0.68, 0.68].forEach((mx) => {
+      const flapGeo = new THREE.BoxGeometry(0.24, 0.18, 0.02);
+      const flap = new THREE.Mesh(flapGeo, blackRubberMat);
+      flap.position.set(mx, 0.22, 1.36);
+      bumperGroup.add(flap);
+    });
+
+    this.bodyGroup.add(bumperGroup);
 
     // ----------------------------------------------------
     // 7. Driver Silhouette inside Front Cabin

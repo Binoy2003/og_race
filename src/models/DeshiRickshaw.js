@@ -52,64 +52,106 @@ export class DeshiRickshaw {
     // 1. Procedural Rickshaw Art Textures via Canvas
     // ----------------------------------------------------
 
-    // A. Backboard Tin Art Plate (Traditional Peacock / Floral motif)
+    // A. Backboard Tin Art Plate (Authentic Bangladeshi Rickshaw Art from Image 2!)
     const backCanvas = document.createElement('canvas');
     backCanvas.width = 512;
     backCanvas.height = 384;
     const bCtx = backCanvas.getContext('2d');
 
-    // Yellow background with turquoise ornamental border
+    // Rich Golden-Yellow Background
     bCtx.fillStyle = '#f59e0b';
     bCtx.fillRect(0, 0, 512, 384);
 
-    bCtx.strokeStyle = '#06b6d4';
-    bCtx.lineWidth = 14;
+    // Ornate Red Scalloped Border
+    bCtx.strokeStyle = '#dc2626';
+    bCtx.lineWidth = 10;
     bCtx.strokeRect(10, 10, 492, 364);
 
-    bCtx.strokeStyle = '#dc2626';
-    bCtx.lineWidth = 6;
-    bCtx.strokeRect(22, 22, 468, 340);
+    bCtx.strokeStyle = '#fde047';
+    bCtx.lineWidth = 4;
+    bCtx.strokeRect(18, 18, 476, 348);
 
-    // Bengali Calligraphy: "মা বাবার দোয়া"
-    bCtx.fillStyle = '#dc2626';
-    bCtx.font = 'bold 36px sans-serif';
-    bCtx.textAlign = 'center';
-    bCtx.fillText('মা বাবার দোয়া', 256, 68);
-
-    // Peacock / Floral Art centerpiece
-    bCtx.fillStyle = '#0284c7';
+    // Top Arched Banner with Calligraphy: "মা বাবার দোয়া"
+    bCtx.fillStyle = '#b91c1c';
     bCtx.beginPath();
-    bCtx.ellipse(256, 210, 75, 105, 0, 0, Math.PI * 2);
+    bCtx.roundRect(100, 22, 312, 46, 8);
     bCtx.fill();
-    bCtx.strokeStyle = '#fbbf24';
-    bCtx.lineWidth = 8;
+    bCtx.strokeStyle = '#fde047';
+    bCtx.lineWidth = 2.5;
     bCtx.stroke();
 
-    // Vibrant Peacock Feathers / Lotus Petals
-    const colors = ['#ef4444', '#10b981', '#f59e0b', '#ec4899', '#8b5cf6'];
-    for (let i = 0; i < 7; i++) {
-      const angle = -Math.PI * 0.75 + (i * Math.PI * 0.25);
-      const px = 256 + Math.cos(angle) * 115;
-      const py = 210 + Math.sin(angle) * 100;
+    bCtx.fillStyle = '#ffffff';
+    bCtx.font = 'bold 26px sans-serif';
+    bCtx.textAlign = 'center';
+    bCtx.fillText('মা বাবার দোয়া', 256, 54);
 
-      bCtx.fillStyle = colors[i % colors.length];
+    // Centerpiece: Traditional Folk Floral Mandala & Peacock Motif (from Image 2)
+    // Central Blooming Lotus
+    bCtx.fillStyle = '#db2777';
+    bCtx.beginPath();
+    bCtx.arc(256, 175, 42, 0, Math.PI * 2);
+    bCtx.fill();
+
+    bCtx.fillStyle = '#fde047';
+    bCtx.beginPath();
+    bCtx.arc(256, 175, 22, 0, Math.PI * 2);
+    bCtx.fill();
+
+    // Symmetrical Lotus Petals & Black Folk Scrollwork (Image 2 style)
+    const petalColors = ['#ef4444', '#f59e0b', '#10b981', '#06b6d4', '#ec4899'];
+    for (let i = 0; i < 12; i++) {
+      const angle = (i * Math.PI) / 6;
+      const px = 256 + Math.cos(angle) * 72;
+      const py = 175 + Math.sin(angle) * 62;
+
+      bCtx.fillStyle = petalColors[i % petalColors.length];
       bCtx.beginPath();
-      bCtx.arc(px, py, 26, 0, Math.PI * 2);
+      bCtx.ellipse(px, py, 18, 26, angle, 0, Math.PI * 2);
       bCtx.fill();
-      bCtx.strokeStyle = '#ffffff';
-      bCtx.lineWidth = 4;
+      bCtx.strokeStyle = '#18181b';
+      bCtx.lineWidth = 2.5;
       bCtx.stroke();
     }
 
-    // Yellow eye spot
-    bCtx.fillStyle = '#ffffff';
-    bCtx.beginPath();
-    bCtx.arc(256, 175, 18, 0, Math.PI * 2);
-    bCtx.fill();
-    bCtx.fillStyle = '#000000';
-    bCtx.beginPath();
-    bCtx.arc(256, 175, 9, 0, Math.PI * 2);
-    bCtx.fill();
+    // Outer Symmetrical Folk Flourishes & Leaves
+    bCtx.strokeStyle = '#18181b';
+    bCtx.lineWidth = 4.5;
+    [-1, 1].forEach((dir) => {
+      // Upper flourish
+      bCtx.beginPath();
+      bCtx.moveTo(256 + dir * 60, 120);
+      bCtx.bezierCurveTo(256 + dir * 130, 90, 256 + dir * 180, 130, 256 + dir * 150, 170);
+      bCtx.stroke();
+
+      // Lower flourish
+      bCtx.beginPath();
+      bCtx.moveTo(256 + dir * 60, 230);
+      bCtx.bezierCurveTo(256 + dir * 140, 260, 256 + dir * 190, 220, 256 + dir * 160, 180);
+      bCtx.stroke();
+    });
+
+    // Lower Decorative Band (from Image 2): Pink & Turquoise Geometric Scallops
+    bCtx.fillStyle = '#ec4899';
+    bCtx.fillRect(20, 280, 472, 48);
+
+    bCtx.fillStyle = '#06b6d4';
+    bCtx.fillRect(20, 328, 472, 38);
+
+    // White diamond chevron lattice on lower band
+    bCtx.strokeStyle = '#ffffff';
+    bCtx.lineWidth = 3;
+    for (let x = 20; x <= 492; x += 28) {
+      bCtx.beginPath();
+      bCtx.moveTo(x, 280);
+      bCtx.lineTo(x + 14, 328);
+      bCtx.lineTo(x + 28, 280);
+      bCtx.stroke();
+
+      bCtx.beginPath();
+      bCtx.arc(x + 14, 346, 6, 0, Math.PI * 2);
+      bCtx.fillStyle = '#fde047';
+      bCtx.fill();
+    }
 
     const backTexture = new THREE.CanvasTexture(backCanvas);
 
@@ -378,10 +420,10 @@ export class DeshiRickshaw {
     cushion.position.set(0, 1.08, 0.88);
     carriageGroup.add(cushion);
 
-    // Backrest Cushion (supporting mid-back so couple is clearly visible!)
-    const backCushionGeo = new THREE.BoxGeometry(1.18, 0.34, 0.12);
+    // Backrest Cushion (supporting mid-back - low profile so couple is clearly visible from rear!)
+    const backCushionGeo = new THREE.BoxGeometry(1.16, 0.22, 0.10);
     const backCushion = new THREE.Mesh(backCushionGeo, cushionMat);
-    backCushion.position.set(0, 1.20, 1.12);
+    backCushion.position.set(0, 1.15, 1.08);
     carriageGroup.add(backCushion);
 
     // Side Armrests with decorative carved wood
@@ -392,36 +434,81 @@ export class DeshiRickshaw {
       carriageGroup.add(arm);
     });
 
-    // Backboard Tin Plate with Rickshaw Art (Facing rear traffic)
-    const backPlateGeo = new THREE.PlaneGeometry(1.05, 0.75);
+    // ----------------------------------------------------
+    // AUTHENTIC RICKSHAW ART TIN BACKBOARD (from Image 2 & Image 5!)
+    // Mounted on lower chassis below seat, facing oncoming rear traffic
+    // ----------------------------------------------------
+    const backPlateGeo = new THREE.PlaneGeometry(1.06, 0.52);
     const backPlate = new THREE.Mesh(backPlateGeo, backArtMat);
-    backPlate.position.set(0, 0.95, 1.22);
+    backPlate.position.set(0, 0.68, 1.18);
     backPlate.rotation.y = Math.PI; // Face backwards toward oncoming rear traffic!
     carriageGroup.add(backPlate);
 
-    // Traditional Arched Rickshaw Hood / Canopy with Red Struts
-    const hoodGeo = new THREE.CylinderGeometry(0.68, 0.68, 1.26, 24, 1, true, Math.PI * 0.1, Math.PI * 0.85);
-    hoodGeo.rotateZ(Math.PI / 2);
-    const hood = new THREE.Mesh(hoodGeo, hoodMat);
-    hood.position.set(0, 1.62, 0.85);
-    carriageGroup.add(hood);
-
-    // Thin Red Metal Support Struts connecting Hood to Carriage (from reference picture)
-    [-0.62, 0.62].forEach((x) => {
-      const strutGeo = new THREE.CylinderGeometry(0.015, 0.015, 1.05, 8);
-      strutGeo.rotateX(0.35);
-      const strut = new THREE.Mesh(strutGeo, redFrameMat);
-      strut.position.set(x, 1.42, 0.65);
-      carriageGroup.add(strut);
+    // Authentic Hanging Red Fringe / Mudflap (Classic Bangladeshi Rickshaw Rear)
+    const mudflapGeo = new THREE.PlaneGeometry(0.96, 0.22);
+    const mudflapMat = new THREE.MeshStandardMaterial({
+      color: 0xdc2626,
+      roughness: 0.9,
+      side: THREE.DoubleSide
     });
+    const mudflap = new THREE.Mesh(mudflapGeo, mudflapMat);
+    mudflap.position.set(0, 0.32, 1.18);
+    carriageGroup.add(mudflap);
 
-    // Rear Taillights on carriage
-    [-0.48, 0.48].forEach((x) => {
-      const tlGeo = new THREE.SphereGeometry(0.05, 10, 10);
-      const tl = new THREE.Mesh(tlGeo, new THREE.MeshBasicMaterial({ color: 0xff0000 }));
-      tl.position.set(x, 0.65, 1.22);
+    // Rear Mudguard Reflectors / Taillights (mounted on turquoise fenders as in Image 2 & 5)
+    [-0.78, 0.78].forEach((x) => {
+      const tlHousing = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.055, 0.055, 0.035, 12),
+        chromeMat
+      );
+      tlHousing.rotateX(Math.PI / 2);
+      tlHousing.position.set(x, 0.62, 1.16);
+      carriageGroup.add(tlHousing);
+
+      const tlGeo = new THREE.SphereGeometry(0.048, 12, 12);
+      const tl = new THREE.Mesh(tlGeo, new THREE.MeshBasicMaterial({ color: 0xef4444 }));
+      tl.position.set(x, 0.62, 1.18);
       carriageGroup.add(tl);
       this.brakeLights.push(tl);
+    });
+
+    // ----------------------------------------------------
+    // TRADITIONAL ARCHED HOOD CANOPY (from Image 2 & Image 5!)
+    // Arched overhead canopy with open rear arch so the passengers are 100% visible from behind!
+    // ----------------------------------------------------
+    // Top arched canopy (curves overhead from left to right along Z axis)
+    const hoodGeo = new THREE.CylinderGeometry(0.68, 0.68, 0.90, 24, 1, true, -Math.PI / 2, Math.PI);
+    hoodGeo.rotateX(Math.PI / 2);
+    const hood = new THREE.Mesh(hoodGeo, hoodMat);
+    hood.position.set(0, 1.48, 0.70);
+    carriageGroup.add(hood);
+
+    // Decorative Torus Arch Border framing the rear opening
+    const archBorderGeo = new THREE.TorusGeometry(0.68, 0.025, 8, 24, Math.PI);
+    const archBorder = new THREE.Mesh(archBorderGeo, redFrameMat);
+    archBorder.position.set(0, 1.48, 1.15);
+    carriageGroup.add(archBorder);
+
+    // Scalloped Red Decorative Fringe along rear canopy arch rim (Image 2)
+    for (let i = 0; i <= 14; i++) {
+      const ang = (i * Math.PI) / 14;
+      const fx = Math.cos(ang) * 0.68;
+      const fy = 1.48 + Math.sin(ang) * 0.68;
+      const fringeBead = new THREE.Mesh(
+        new THREE.SphereGeometry(0.022, 6, 6),
+        new THREE.MeshStandardMaterial({ color: 0xdc2626, roughness: 0.8 })
+      );
+      fringeBead.position.set(fx, fy - 0.02, 1.15);
+      carriageGroup.add(fringeBead);
+    }
+
+    // Slanted Red Metal Support Struts connecting Hood to Carriage Frame (Image 2)
+    [-0.64, 0.64].forEach((x) => {
+      const strutGeo = new THREE.CylinderGeometry(0.015, 0.015, 1.15, 8);
+      strutGeo.rotateX(0.42);
+      const strut = new THREE.Mesh(strutGeo, redFrameMat);
+      strut.position.set(x, 1.40, 0.60);
+      carriageGroup.add(strut);
     });
 
     this.bodyGroup.add(carriageGroup);
@@ -646,12 +733,60 @@ export class DeshiRickshaw {
     girlLegs.position.set(0, -0.05, -0.16);
     girlGroup.add(girlLegs);
 
-    // Girl Right Arm
+    // Girl Right Arm (Holding the Red Rose gracefully upright!)
     const girlRightArmGeo = new THREE.CylinderGeometry(0.035, 0.03, 0.35, 8);
     girlRightArmGeo.rotateZ(-0.25);
+    girlRightArmGeo.rotateX(-0.25);
     const girlRightArm = new THREE.Mesh(girlRightArmGeo, girlDressMat);
-    girlRightArm.position.set(0.2, 0.16, 0);
+    girlRightArm.position.set(0.2, 0.16, -0.05);
     girlGroup.add(girlRightArm);
+
+    // Romantic Red Rose in Girl's Hand! (Clearly visible from behind the rickshaw!)
+    const roseGroup = new THREE.Group();
+    // Green stem
+    const stemGeo = new THREE.CylinderGeometry(0.007, 0.007, 0.32, 6);
+    const roseStemMat = new THREE.MeshStandardMaterial({ color: 0x15803d, roughness: 0.8 });
+    const stem = new THREE.Mesh(stemGeo, roseStemMat);
+    stem.position.set(0, 0.14, 0);
+    roseGroup.add(stem);
+
+    // Green leaves
+    const leafGeo = new THREE.BoxGeometry(0.07, 0.012, 0.035);
+    const leaf1 = new THREE.Mesh(leafGeo, roseStemMat);
+    leaf1.position.set(0.035, 0.12, 0);
+    leaf1.rotation.z = 0.3;
+    roseGroup.add(leaf1);
+
+    const leaf2 = new THREE.Mesh(leafGeo, roseStemMat);
+    leaf2.position.set(-0.035, 0.18, 0);
+    leaf2.rotation.z = -0.3;
+    roseGroup.add(leaf2);
+
+    // Blooming Ruby Red Rose Blossom
+    const rosePetalMat = new THREE.MeshStandardMaterial({
+      color: 0xdc2626,
+      roughness: 0.35,
+      metalness: 0.1,
+      emissive: 0x7f1d1d,
+      emissiveIntensity: 0.3
+    });
+    const roseBud = new THREE.Mesh(new THREE.DodecahedronGeometry(0.055, 1), rosePetalMat);
+    roseBud.position.set(0, 0.30, 0);
+    roseBud.scale.set(1.1, 1.25, 1.1);
+    roseGroup.add(roseBud);
+
+    const roseCenter = new THREE.Mesh(
+      new THREE.SphereGeometry(0.038, 8, 8),
+      new THREE.MeshStandardMaterial({ color: 0x991b1b, roughness: 0.3 })
+    );
+    roseCenter.position.set(0, 0.32, 0);
+    roseGroup.add(roseCenter);
+
+    // Mount rose near girl's right hand tilted gracefully forward and upward
+    roseGroup.position.set(0.22, 0.22, -0.15);
+    roseGroup.rotation.x = -0.35;
+    roseGroup.rotation.z = -0.22;
+    girlGroup.add(roseGroup);
 
     // GIRL'S LEFT ARM: Reaching into center holding boy's hand!
     const girlLeftArmGeo = new THREE.CylinderGeometry(0.035, 0.03, 0.32, 8);
