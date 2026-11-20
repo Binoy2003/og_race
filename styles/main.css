@@ -97,19 +97,25 @@ canvas {
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
   border: 1px solid var(--border-glass);
-  border-radius: 28px;
-  padding: 2.5rem 3.0rem;
+  border-radius: 24px;
+  padding: 1.8rem 2.0rem;
   box-shadow: 
     0 25px 60px rgba(0, 0, 0, 0.7),
     0 0 50px rgba(245, 158, 11, 0.12),
     inset 0 1px 1px rgba(255, 255, 255, 0.15);
   text-align: center;
-  max-width: 460px;
+  max-width: 420px;
   width: 90%;
   max-height: 94dvh;
   overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
   margin: auto 0;
   animation: cardEntrance 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.panel::-webkit-scrollbar {
+  display: none;
 }
 
 @keyframes cardEntrance {
@@ -848,29 +854,37 @@ body:not(.touch-active) #mobile-controls {
   box-shadow: 0 0 22px rgba(245, 158, 11, 0.5);
 }
 
-/* ---------------- Game Over Screen ---------------- */
+/* ---------------- Game Over Screen (Compact, Sleek & Fits Any Screen) ---------------- */
+#gameover-screen .panel {
+  max-width: 360px;
+  width: 88%;
+  padding: 1.35rem 1.4rem;
+  border-radius: 22px;
+}
+
 .gameover-title {
-  font-size: 3.2rem;
+  font-size: 2.1rem;
   font-weight: 900;
   font-style: italic;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.08em;
   color: #ef4444;
-  text-shadow: 0 0 35px rgba(239, 68, 68, 0.65);
-  margin-bottom: 0.5rem;
+  text-shadow: 0 0 25px rgba(239, 68, 68, 0.65);
+  margin-bottom: 0.2rem;
+  line-height: 1;
 }
 
 .crash-voice-bubble {
   background: rgba(239, 68, 68, 0.18);
   border: 1px solid rgba(239, 68, 68, 0.5);
   color: #fde047;
-  font-size: 1.25rem;
+  font-size: 0.95rem;
   font-weight: 900;
-  letter-spacing: 0.05em;
-  padding: 0.45rem 1.2rem;
+  letter-spacing: 0.04em;
+  padding: 0.28rem 0.9rem;
   border-radius: 999px;
   display: inline-block;
-  margin: 0.2rem 0 0.8rem 0;
-  box-shadow: 0 0 20px rgba(239, 68, 68, 0.35);
+  margin: 0.15rem 0 0.45rem 0;
+  box-shadow: 0 0 16px rgba(239, 68, 68, 0.35);
   animation: popBounce 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
@@ -882,48 +896,96 @@ body:not(.touch-active) #mobile-controls {
 .stats-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 1.0rem;
-  margin: 1.8rem 0;
+  gap: 0.45rem;
+  margin: 0.75rem 0;
   width: 100%;
 }
 
 .stat-item {
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 16px;
-  padding: 1.0rem;
+  border-radius: 12px;
+  padding: 0.5rem 0.5rem;
 }
 
 .stat-item.highlight {
   grid-column: span 2;
   background: rgba(239, 68, 68, 0.14);
   border-color: rgba(239, 68, 68, 0.35);
+  padding: 0.65rem 0.5rem;
 }
 
 .stat-label {
-  font-size: 0.72rem;
+  font-size: 0.62rem;
   font-weight: 800;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.14em;
   color: var(--text-secondary);
   text-transform: uppercase;
 }
 
 .stat-val {
-  font-size: 1.8rem;
+  font-size: 1.35rem;
   font-weight: 900;
   color: #ffffff;
-  margin-top: 0.2rem;
+  margin-top: 0.1rem;
+  line-height: 1.1;
+}
+
+.stat-item.highlight .stat-val {
+  font-size: 1.65rem;
 }
 
 .new-record-tag {
   display: inline-block;
-  font-size: 0.75rem;
+  font-size: 0.68rem;
   font-weight: 900;
   color: var(--accent-amber);
-  letter-spacing: 0.2em;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
-  margin-top: 0.3rem;
+  margin-top: 0.15rem;
   animation: pulse 1s infinite alternate;
+}
+
+#gameover-screen .menu-actions {
+  gap: 0.48rem;
+}
+
+#gameover-screen .btn {
+  padding: 0.78rem 1.4rem;
+  font-size: 0.92rem;
+  border-radius: 12px;
+}
+
+#gameover-screen .developer-credit-small {
+  margin-top: 0.65rem;
+  font-size: 0.68rem;
+}
+
+/* ---------------- Pause Screen (Compact) ---------------- */
+#pause-screen .panel {
+  max-width: 350px;
+  width: 88%;
+  padding: 1.4rem 1.5rem;
+  border-radius: 22px;
+}
+
+#pause-screen h2 {
+  font-size: 1.6rem !important;
+  margin-bottom: 1.0rem !important;
+}
+
+#pause-screen .menu-actions {
+  gap: 0.48rem;
+}
+
+#pause-screen .btn {
+  padding: 0.78rem 1.4rem;
+  font-size: 0.92rem;
+  border-radius: 12px;
+}
+
+#pause-screen .developer-credit-small {
+  margin-top: 0.7rem;
 }
 
 @keyframes pulse {
@@ -1094,27 +1156,40 @@ body:not(.touch-active) #mobile-controls {
     border-width: 1.5px;
   }
 
-  /* Game Over stats on small screen */
+  /* Game Over stats on small screen (Compact & never overflows) */
+  #gameover-screen .panel {
+    max-width: 320px;
+    padding: 1.1rem 1.0rem;
+    border-radius: 18px;
+  }
   .stats-grid {
-    gap: 0.55rem;
-    margin: 1.0rem 0;
+    gap: 0.38rem;
+    margin: 0.6rem 0;
   }
   .stat-item {
-    padding: 0.6rem 0.5rem;
-    border-radius: 12px;
+    padding: 0.45rem 0.4rem;
+    border-radius: 10px;
   }
   .stat-label {
-    font-size: 0.60rem;
+    font-size: 0.58rem;
   }
   .stat-val {
-    font-size: 1.35rem;
+    font-size: 1.25rem;
+  }
+  .stat-item.highlight .stat-val {
+    font-size: 1.45rem;
   }
   .gameover-title {
-    font-size: 2.4rem;
+    font-size: 1.85rem;
   }
   .crash-voice-bubble {
-    font-size: 1.0rem;
-    padding: 0.35rem 0.85rem;
+    font-size: 0.88rem;
+    padding: 0.22rem 0.75rem;
+    margin: 0.1rem 0 0.35rem 0;
+  }
+  #gameover-screen .btn {
+    padding: 0.7rem 1.0rem;
+    font-size: 0.85rem;
   }
 }
 
@@ -1184,6 +1259,38 @@ body:not(.touch-active) #mobile-controls {
   .developer-credit-small {
     font-size: 0.56rem;
     margin-top: 0.35rem;
+  }
+
+  /* Game Over in Landscape */
+  #gameover-screen .panel {
+    max-width: 330px;
+    padding: 0.65rem 1.0rem;
+  }
+  #gameover-screen .gameover-title {
+    font-size: 1.5rem;
+    margin-bottom: 0.1rem;
+  }
+  #gameover-screen .crash-voice-bubble {
+    font-size: 0.78rem;
+    padding: 0.15rem 0.6rem;
+    margin: 0.1rem 0 0.25rem 0;
+  }
+  #gameover-screen .stats-grid {
+    gap: 0.25rem;
+    margin: 0.35rem 0;
+  }
+  #gameover-screen .stat-item {
+    padding: 0.25rem 0.35rem;
+    border-radius: 8px;
+  }
+  #gameover-screen .stat-label {
+    font-size: 0.52rem;
+  }
+  #gameover-screen .stat-val {
+    font-size: 1.05rem;
+  }
+  #gameover-screen .stat-item.highlight .stat-val {
+    font-size: 1.2rem;
   }
 
   /* HUD in Landscape */
