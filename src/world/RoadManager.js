@@ -218,12 +218,12 @@ export class RoadManager {
     group.add(wire);
 
     // B. SPECIAL FOCUS: DESHI COWS (Tied to wooden posts or trees beside road)
-    // Every segment features cows safely grazing on the roadside grassy verge
-    const cowSide = index % 2 === 0 ? -1 : 1;
+    // Safely placed on opposite side of passenger shed
+    const cowSide = (index % 2 === 0) ? -1 : 1;
     const cowColor = index % 3 === 0 ? 'white' : (index % 3 === 1 ? 'brown' : 'black');
     const cow = p.createCow(cowColor);
     const cowX = (this.roadWidth * 0.5 + 2.8 + Math.random() * 1.5) * cowSide;
-    const cowZ = -12 + Math.random() * 24;
+    const cowZ = 6 + Math.random() * 14;
     cow.position.set(cowX, 0, cowZ);
     cow.rotation.y = cowSide > 0 ? -Math.PI / 2 + (Math.random() - 0.5) * 0.6 : Math.PI / 2 + (Math.random() - 0.5) * 0.6;
     group.add(cow);
@@ -327,17 +327,17 @@ export class RoadManager {
     banana.position.set((this.roadWidth * 0.5 + 5.8 + Math.random() * 2.5) * treeSide, 0, 4);
     group.add(banana);
 
-    // H. AUTHENTIC BANGLADESHI JATRI CHAWNI (যাত্রী ছাউনি / BUS STOP)
-    // Roadside passenger shed with cute teenage couple sitting on the bench holding hands!
-    if (index % 3 === 0) {
-      const chawniSide = (index % 6 === 0) ? -1 : 1;
-      const chawni = p.createJatriChawni();
-      const chawniX = (this.roadWidth * 0.5 + 4.6) * chawniSide;
-      chawni.position.set(chawniX, 0, -18);
-      // Face toward the highway road so the romantic couple holding hands is visible!
-      chawni.rotation.y = chawniSide > 0 ? -Math.PI / 2 : Math.PI / 2;
-      group.add(chawni);
-    }
+    // H. AUTHENTIC BANGLADESHI JATRI CHAWNI (যাত্রী ছাউনি / PASSENGER SHED / BUS STOP)
+    // Features seating arrangement & cute teenage couple in love holding hands + girl holding a red rose!
+    // Spawns in EVERY segment, alternating right and left, with front opening angled 40° towards oncoming traffic!
+    const chawniSide = (index % 2 === 0) ? 1 : -1;
+    const chawni = p.createJatriChawni();
+    const chawniX = (this.roadWidth * 0.5 + 1.8) * chawniSide;
+    const chawniZ = (index === 0) ? -14 : -18;
+    chawni.position.set(chawniX, 0, chawniZ);
+    // Face 40° towards oncoming traffic (+Z) so players approaching down -Z look directly into the open shelter!
+    chawni.rotation.y = chawniSide > 0 ? 2.45 : -2.45;
+    group.add(chawni);
   }
 
   // Update segments and rural animations as player moves forward along -Z
