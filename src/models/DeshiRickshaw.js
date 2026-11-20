@@ -52,108 +52,498 @@ export class DeshiRickshaw {
     // 1. Procedural Rickshaw Art Textures via Canvas
     // ----------------------------------------------------
 
-    // A. Backboard Tin Art Plate (Authentic Bangladeshi Rickshaw Art from Image 2!)
+    // ===================================================================
+    // 1. Procedural Bangladeshi Rickshaw Art Textures (From Reference Picture!)
+    // ===================================================================
+
+    // A. Lower Tin Art Backplate: Rising Sun, Blue River & Village Houses (1024 x 640)
     const backCanvas = document.createElement('canvas');
-    backCanvas.width = 512;
-    backCanvas.height = 384;
+    backCanvas.width = 1024;
+    backCanvas.height = 640;
     const bCtx = backCanvas.getContext('2d');
 
-    // Rich Golden-Yellow Background
-    bCtx.fillStyle = '#f59e0b';
-    bCtx.fillRect(0, 0, 512, 384);
+    // 1. Soft Sky Blue Gradient
+    const skyGrad = bCtx.createLinearGradient(0, 0, 0, 360);
+    skyGrad.addColorStop(0, '#7dd3fc');
+    skyGrad.addColorStop(1, '#e0f2fe');
+    bCtx.fillStyle = skyGrad;
+    bCtx.fillRect(0, 0, 1024, 640);
 
-    // Ornate Red Scalloped Border
-    bCtx.strokeStyle = '#dc2626';
-    bCtx.lineWidth = 10;
-    bCtx.strokeRect(10, 10, 492, 364);
-
-    bCtx.strokeStyle = '#fde047';
-    bCtx.lineWidth = 4;
-    bCtx.strokeRect(18, 18, 476, 348);
-
-    // Top Arched Banner with Calligraphy: "মা বাবার দোয়া"
-    bCtx.fillStyle = '#b91c1c';
-    bCtx.beginPath();
-    bCtx.roundRect(100, 22, 312, 46, 8);
-    bCtx.fill();
-    bCtx.strokeStyle = '#fde047';
-    bCtx.lineWidth = 2.5;
-    bCtx.stroke();
-
-    bCtx.fillStyle = '#ffffff';
-    bCtx.font = 'bold 26px sans-serif';
-    bCtx.textAlign = 'center';
-    bCtx.fillText('মা বাবার দোয়া', 256, 54);
-
-    // Centerpiece: Traditional Folk Floral Mandala & Peacock Motif (from Image 2)
-    // Central Blooming Lotus
-    bCtx.fillStyle = '#db2777';
-    bCtx.beginPath();
-    bCtx.arc(256, 175, 42, 0, Math.PI * 2);
-    bCtx.fill();
-
-    bCtx.fillStyle = '#fde047';
-    bCtx.beginPath();
-    bCtx.arc(256, 175, 22, 0, Math.PI * 2);
-    bCtx.fill();
-
-    // Symmetrical Lotus Petals & Black Folk Scrollwork (Image 2 style)
-    const petalColors = ['#ef4444', '#f59e0b', '#10b981', '#06b6d4', '#ec4899'];
-    for (let i = 0; i < 12; i++) {
-      const angle = (i * Math.PI) / 6;
-      const px = 256 + Math.cos(angle) * 72;
-      const py = 175 + Math.sin(angle) * 62;
-
-      bCtx.fillStyle = petalColors[i % petalColors.length];
+    // Fluffy White Clouds
+    const drawCloud = (cx, cy, scale) => {
+      bCtx.fillStyle = '#ffffff';
       bCtx.beginPath();
-      bCtx.ellipse(px, py, 18, 26, angle, 0, Math.PI * 2);
+      bCtx.arc(cx, cy, 38 * scale, 0, Math.PI * 2);
+      bCtx.arc(cx + 42 * scale, cy - 14 * scale, 48 * scale, 0, Math.PI * 2);
+      bCtx.arc(cx + 95 * scale, cy - 8 * scale, 42 * scale, 0, Math.PI * 2);
+      bCtx.arc(cx + 135 * scale, cy + 8 * scale, 32 * scale, 0, Math.PI * 2);
+      bCtx.fill();
+    };
+    drawCloud(80, 120, 1.1);
+    drawCloud(720, 100, 0.95);
+
+    // 2. Radiant Rising Sun & Spreading Golden Rays (exact match to reference photo!)
+    const sunX = 512;
+    const sunY = 270;
+    for (let a = -Math.PI; a <= 0; a += Math.PI / 18) {
+      bCtx.beginPath();
+      bCtx.moveTo(sunX, sunY);
+      bCtx.lineTo(sunX + Math.cos(a) * 380, sunY + Math.sin(a) * 380);
+      bCtx.lineTo(sunX + Math.cos(a + Math.PI / 36) * 380, sunY + Math.sin(a + Math.PI / 36) * 380);
+      bCtx.closePath();
+      bCtx.fillStyle = 'rgba(245, 158, 11, 0.45)';
+      bCtx.fill();
+    }
+    // Half-circle Rising Golden Sun
+    bCtx.beginPath();
+    bCtx.arc(sunX, sunY, 78, Math.PI, 0);
+    bCtx.fillStyle = '#f59e0b';
+    bCtx.fill();
+    bCtx.beginPath();
+    bCtx.arc(sunX, sunY, 52, Math.PI, 0);
+    bCtx.fillStyle = '#fde047';
+    bCtx.fill();
+
+    // 3. Blue River Water (Left side)
+    const riverGrad = bCtx.createLinearGradient(0, 270, 0, 520);
+    riverGrad.addColorStop(0, '#0284c7');
+    riverGrad.addColorStop(1, '#0369a1');
+    bCtx.fillStyle = riverGrad;
+    bCtx.beginPath();
+    bCtx.moveTo(0, 270);
+    bCtx.lineTo(512, 270);
+    bCtx.lineTo(470, 520);
+    bCtx.lineTo(0, 520);
+    bCtx.closePath();
+    bCtx.fill();
+
+    // White wave ripples on the water
+    bCtx.strokeStyle = 'rgba(255, 255, 255, 0.85)';
+    bCtx.lineWidth = 3.5;
+    for (let y = 290; y < 510; y += 24) {
+      const step = 38;
+      for (let x = 20; x < 440; x += step * 2) {
+        bCtx.beginPath();
+        bCtx.moveTo(x, y);
+        bCtx.quadraticCurveTo(x + step / 2, y - 5, x + step, y);
+        bCtx.stroke();
+      }
+    }
+
+    // 4. Riverbank & Rural Landscape (Right side)
+    // Sandy shoreline
+    bCtx.fillStyle = '#fde68a';
+    bCtx.beginPath();
+    bCtx.moveTo(470, 520);
+    bCtx.lineTo(512, 270);
+    bCtx.lineTo(560, 270);
+    bCtx.lineTo(530, 520);
+    bCtx.closePath();
+    bCtx.fill();
+
+    // Green grassy meadow
+    bCtx.fillStyle = '#16a34a';
+    bCtx.beginPath();
+    bCtx.moveTo(520, 270);
+    bCtx.lineTo(1024, 270);
+    bCtx.lineTo(1024, 520);
+    bCtx.lineTo(485, 520);
+    bCtx.closePath();
+    bCtx.fill();
+
+    // Coconut palms behind the houses
+    const drawPalm = (px, py) => {
+      bCtx.strokeStyle = '#854d0e';
+      bCtx.lineWidth = 6;
+      bCtx.beginPath();
+      bCtx.moveTo(px, py);
+      bCtx.quadraticCurveTo(px - 15, py - 60, px - 25, py - 110);
+      bCtx.stroke();
+      bCtx.strokeStyle = '#15803d';
+      bCtx.lineWidth = 4;
+      for (let fa = 0; fa < Math.PI * 2; fa += Math.PI / 4) {
+        bCtx.beginPath();
+        bCtx.moveTo(px - 25, py - 110);
+        bCtx.quadraticCurveTo(px - 25 + Math.cos(fa) * 45, py - 110 + Math.sin(fa) * 40 - 15, px - 25 + Math.cos(fa) * 65, py - 110 + Math.sin(fa) * 40);
+        bCtx.stroke();
+      }
+    };
+    drawPalm(640, 360);
+    drawPalm(720, 350);
+    drawPalm(940, 360);
+
+    // Two Traditional Village Houses (from reference photo)
+    // House 1 (Right): Red corrugated tin roof
+    bCtx.fillStyle = '#fce7f3'; // pinkish white walls
+    bCtx.fillRect(720, 370, 190, 85);
+    bCtx.strokeStyle = '#18181b';
+    bCtx.lineWidth = 3;
+    bCtx.strokeRect(720, 370, 190, 85);
+
+    bCtx.fillStyle = '#dc2626';
+    bCtx.beginPath();
+    bCtx.moveTo(705, 370);
+    bCtx.lineTo(815, 310);
+    bCtx.lineTo(925, 370);
+    bCtx.closePath();
+    bCtx.fill();
+    bCtx.stroke();
+    // Corrugation
+    bCtx.strokeStyle = '#ffffff';
+    bCtx.lineWidth = 2.5;
+    for (let rx = 720; rx < 910; rx += 18) {
+      bCtx.beginPath();
+      bCtx.moveTo(rx, 370);
+      bCtx.lineTo(815, 310);
+      bCtx.stroke();
+    }
+    bCtx.fillStyle = '#374151';
+    bCtx.fillRect(785, 395, 35, 60);
+    bCtx.fillRect(850, 390, 30, 30);
+
+    // House 2 (Left): Blue corrugated tin roof
+    bCtx.fillStyle = '#f8fafc'; // white walls
+    bCtx.fillRect(570, 385, 140, 70);
+    bCtx.strokeStyle = '#18181b';
+    bCtx.lineWidth = 3;
+    bCtx.strokeRect(570, 385, 140, 70);
+
+    bCtx.fillStyle = '#2563eb';
+    bCtx.beginPath();
+    bCtx.moveTo(555, 385);
+    bCtx.lineTo(640, 335);
+    bCtx.lineTo(725, 385);
+    bCtx.closePath();
+    bCtx.fill();
+    bCtx.stroke();
+    bCtx.strokeStyle = '#ffffff';
+    bCtx.lineWidth = 2.5;
+    for (let bx = 570; bx < 710; bx += 18) {
+      bCtx.beginPath();
+      bCtx.moveTo(bx, 385);
+      bCtx.lineTo(640, 335);
+      bCtx.stroke();
+    }
+    bCtx.fillStyle = '#1e3a8a';
+    bCtx.fillRect(620, 405, 30, 50);
+
+    // 5. Lower Borders:
+    // Scalloped Orange & Yellow Lotus Petals
+    bCtx.fillStyle = '#ea580c';
+    bCtx.fillRect(0, 510, 1024, 45);
+    bCtx.fillStyle = '#fde047';
+    for (let x = 20; x < 1024; x += 40) {
+      bCtx.beginPath();
+      bCtx.arc(x, 510, 16, 0, Math.PI);
       bCtx.fill();
       bCtx.strokeStyle = '#18181b';
+      bCtx.lineWidth = 2;
+      bCtx.stroke();
+    }
+
+    // Colorful vertical dash band (Red, White, Green, Yellow)
+    bCtx.fillStyle = '#18181b';
+    bCtx.fillRect(0, 555, 1024, 35);
+    const dashColors = ['#dc2626', '#ffffff', '#16a34a', '#fde047'];
+    for (let i = 0; i < 48; i++) {
+      bCtx.fillStyle = dashColors[i % dashColors.length];
+      bCtx.fillRect(i * 22, 558, 14, 29);
+    }
+
+    // 6. Three Hanging Silver Filigree Heart Charms at Bottom (from reference photo!)
+    const drawSilverHeart = (hx, hy) => {
+      bCtx.strokeStyle = '#94a3b8';
+      bCtx.lineWidth = 3;
+      bCtx.beginPath();
+      bCtx.arc(hx, hy, 8, 0, Math.PI * 2);
+      bCtx.stroke();
+
+      bCtx.fillStyle = '#e2e8f0';
+      bCtx.beginPath();
+      bCtx.moveTo(hx, hy + 8);
+      bCtx.bezierCurveTo(hx + 28, hy + 8, hx + 44, hy + 28, hx, hy + 64);
+      bCtx.bezierCurveTo(hx - 44, hy + 28, hx - 28, hy + 8, hx, hy + 8);
+      bCtx.closePath();
+      bCtx.fill();
+      bCtx.strokeStyle = '#64748b';
       bCtx.lineWidth = 2.5;
       bCtx.stroke();
-    }
 
-    // Outer Symmetrical Folk Flourishes & Leaves
-    bCtx.strokeStyle = '#18181b';
-    bCtx.lineWidth = 4.5;
-    [-1, 1].forEach((dir) => {
-      // Upper flourish
-      bCtx.beginPath();
-      bCtx.moveTo(256 + dir * 60, 120);
-      bCtx.bezierCurveTo(256 + dir * 130, 90, 256 + dir * 180, 130, 256 + dir * 150, 170);
-      bCtx.stroke();
-
-      // Lower flourish
-      bCtx.beginPath();
-      bCtx.moveTo(256 + dir * 60, 230);
-      bCtx.bezierCurveTo(256 + dir * 140, 260, 256 + dir * 190, 220, 256 + dir * 160, 180);
-      bCtx.stroke();
-    });
-
-    // Lower Decorative Band (from Image 2): Pink & Turquoise Geometric Scallops
-    bCtx.fillStyle = '#ec4899';
-    bCtx.fillRect(20, 280, 472, 48);
-
-    bCtx.fillStyle = '#06b6d4';
-    bCtx.fillRect(20, 328, 472, 38);
-
-    // White diamond chevron lattice on lower band
-    bCtx.strokeStyle = '#ffffff';
-    bCtx.lineWidth = 3;
-    for (let x = 20; x <= 492; x += 28) {
-      bCtx.beginPath();
-      bCtx.moveTo(x, 280);
-      bCtx.lineTo(x + 14, 328);
-      bCtx.lineTo(x + 28, 280);
-      bCtx.stroke();
-
-      bCtx.beginPath();
-      bCtx.arc(x + 14, 346, 6, 0, Math.PI * 2);
-      bCtx.fillStyle = '#fde047';
-      bCtx.fill();
-    }
+      // Perforated filigree holes
+      bCtx.fillStyle = '#94a3b8';
+      [
+        [0, 24], [-14, 28], [14, 28], [-8, 42], [8, 42], [0, 52]
+      ].forEach(([dx, dy]) => {
+        bCtx.beginPath();
+        bCtx.arc(hx + dx, hy + dy, 3.2, 0, Math.PI * 2);
+        bCtx.fill();
+      });
+    };
+    drawSilverHeart(220, 570);
+    drawSilverHeart(512, 570);
+    drawSilverHeart(804, 570);
 
     const backTexture = new THREE.CanvasTexture(backCanvas);
+
+    // ===================================================================
+    // B. Middle Arched Silver Cowl Banner ("বাংলাদেশ" with "মা" Medallions)
+    // ===================================================================
+    const midBannerCanvas = document.createElement('canvas');
+    midBannerCanvas.width = 1024;
+    midBannerCanvas.height = 260;
+    const mCtx = midBannerCanvas.getContext('2d');
+
+    const cowlGrad = mCtx.createLinearGradient(0, 0, 0, 260);
+    cowlGrad.addColorStop(0, '#f8fafc');
+    cowlGrad.addColorStop(0.5, '#e2e8f0');
+    cowlGrad.addColorStop(1, '#94a3b8');
+    mCtx.fillStyle = cowlGrad;
+    mCtx.fillRect(0, 0, 1024, 260);
+
+    // Metallic Studs / Rivets
+    mCtx.fillStyle = '#475569';
+    for (let x = 30; x < 1000; x += 45) {
+      mCtx.beginPath();
+      mCtx.arc(x, 24, 7, 0, Math.PI * 2);
+      mCtx.fill();
+      mCtx.beginPath();
+      mCtx.arc(x - 2, 22, 2.5, 0, Math.PI * 2);
+      mCtx.fillStyle = '#ffffff';
+      mCtx.fill();
+      mCtx.fillStyle = '#475569';
+
+      mCtx.beginPath();
+      mCtx.arc(x, 236, 7, 0, Math.PI * 2);
+      mCtx.fill();
+      mCtx.beginPath();
+      mCtx.arc(x - 2, 234, 2.5, 0, Math.PI * 2);
+      mCtx.fillStyle = '#ffffff';
+      mCtx.fill();
+      mCtx.fillStyle = '#475569';
+    }
+
+    // Calligraphy: "বাংলাদেশ" with red and green accents
+    mCtx.fillStyle = '#f59e0b';
+    mCtx.strokeStyle = '#dc2626';
+    mCtx.lineWidth = 7;
+    mCtx.font = 'bold 82px sans-serif';
+    mCtx.textAlign = 'center';
+    mCtx.textBaseline = 'middle';
+    mCtx.strokeText('বাংলাদেশ', 512, 115);
+    mCtx.fillText('বাংলাদেশ', 512, 115);
+
+    mCtx.fillStyle = '#16a34a';
+    mCtx.font = 'bold 78px sans-serif';
+    mCtx.fillText('বাংলাদেশ', 512, 113);
+    mCtx.fillStyle = '#fef08a';
+    mCtx.font = 'bold 74px sans-serif';
+    mCtx.fillText('বাংলাদেশ', 512, 111);
+
+    // Colorful decorative dots below "বাংলাদেশ"
+    const dotColors = ['#dc2626', '#16a34a', '#f59e0b', '#06b6d4', '#ec4899'];
+    for (let i = 0; i < 18; i++) {
+      mCtx.beginPath();
+      mCtx.arc(310 + i * 24, 185, 7.5, 0, Math.PI * 2);
+      mCtx.fillStyle = dotColors[i % dotColors.length];
+      mCtx.fill();
+      mCtx.strokeStyle = '#18181b';
+      mCtx.lineWidth = 1.8;
+      mCtx.stroke();
+    }
+
+    // Circular "মা" Medallions on Left and Right (exact match to picture!)
+    const drawMaaMedallion = (cx, cy) => {
+      mCtx.beginPath();
+      mCtx.arc(cx, cy, 62, 0, Math.PI * 2);
+      mCtx.fillStyle = '#cbd5e1';
+      mCtx.fill();
+      mCtx.strokeStyle = '#64748b';
+      mCtx.lineWidth = 4;
+      mCtx.stroke();
+
+      mCtx.beginPath();
+      mCtx.arc(cx, cy, 48, 0, Math.PI * 2);
+      mCtx.fillStyle = '#dc2626';
+      mCtx.fill();
+      mCtx.strokeStyle = '#fde047';
+      mCtx.lineWidth = 3;
+      mCtx.stroke();
+
+      mCtx.fillStyle = '#ffffff';
+      mCtx.font = 'bold 50px sans-serif';
+      mCtx.textAlign = 'center';
+      mCtx.textBaseline = 'middle';
+      mCtx.fillText('মা', cx, cy);
+    };
+    drawMaaMedallion(140, 125);
+    drawMaaMedallion(884, 125);
+
+    const midBannerTexture = new THREE.CanvasTexture(midBannerCanvas);
+
+    // ===================================================================
+    // C. Upper Arched Hood Back ("মায়ের দোয়া", Blue Strap "১", & Folk Flowers)
+    // ===================================================================
+    const hoodBackCanvas = document.createElement('canvas');
+    hoodBackCanvas.width = 1024;
+    hoodBackCanvas.height = 1024;
+    const hbCtx = hoodBackCanvas.getContext('2d');
+
+    // Red Arched Dome with Golden Rim
+    hbCtx.beginPath();
+    hbCtx.moveTo(40, 1024);
+    hbCtx.lineTo(40, 520);
+    hbCtx.bezierCurveTo(40, 60, 984, 60, 984, 520);
+    hbCtx.lineTo(984, 1024);
+    hbCtx.closePath();
+    hbCtx.fillStyle = '#dc2626';
+    hbCtx.fill();
+    hbCtx.strokeStyle = '#881337';
+    hbCtx.lineWidth = 12;
+    hbCtx.stroke();
+
+    hbCtx.strokeStyle = '#fde047';
+    hbCtx.lineWidth = 5;
+    hbCtx.stroke();
+
+    // Central Royal Blue Vertical Strap with White Stripe (from picture)
+    hbCtx.fillStyle = '#1d4ed8';
+    hbCtx.fillRect(456, 120, 112, 680);
+    hbCtx.strokeStyle = '#18181b';
+    hbCtx.lineWidth = 3;
+    hbCtx.strokeRect(456, 120, 112, 680);
+
+    hbCtx.fillStyle = '#ffffff';
+    hbCtx.fillRect(498, 120, 28, 680);
+
+    // Red medallion with Bengali "১" at the bottom of blue strap
+    hbCtx.beginPath();
+    hbCtx.arc(512, 780, 42, 0, Math.PI * 2);
+    hbCtx.fillStyle = '#dc2626';
+    hbCtx.fill();
+    hbCtx.strokeStyle = '#fde047';
+    hbCtx.lineWidth = 5;
+    hbCtx.stroke();
+
+    hbCtx.fillStyle = '#ffffff';
+    hbCtx.font = 'bold 44px sans-serif';
+    hbCtx.textAlign = 'center';
+    hbCtx.textBaseline = 'middle';
+    hbCtx.fillText('১', 512, 780);
+
+    // Top Arch Calligraphy: "মায়ের" on Left, "দোয়া" on Right (white with black outline)
+    const drawArchedText = (text, cx, cy, rot) => {
+      hbCtx.save();
+      hbCtx.translate(cx, cy);
+      hbCtx.rotate(rot);
+      hbCtx.font = 'bold 88px sans-serif';
+      hbCtx.textAlign = 'center';
+      hbCtx.textBaseline = 'middle';
+      hbCtx.strokeStyle = '#18181b';
+      hbCtx.lineWidth = 12;
+      hbCtx.strokeText(text, 0, 0);
+      hbCtx.fillStyle = '#ffffff';
+      hbCtx.fillText(text, 0, 0);
+      hbCtx.restore();
+    };
+    drawArchedText('মায়ের', 310, 240, -0.22);
+    drawArchedText('দোয়া', 714, 240, 0.22);
+
+    // Symmetrical Folk Floral Bouquets flanking Blue Strap (Yellow, Pink Lotus & Royal Blue Roses!)
+    const drawSideFolkBouquet = (sideX, flip) => {
+      hbCtx.save();
+      hbCtx.translate(sideX, 500);
+      if (flip) hbCtx.scale(-1, 1);
+
+      // Top Yellow Blossom
+      hbCtx.beginPath();
+      hbCtx.arc(70, -160, 36, 0, Math.PI * 2);
+      hbCtx.fillStyle = '#fde047';
+      hbCtx.fill();
+      hbCtx.strokeStyle = '#18181b';
+      hbCtx.lineWidth = 3;
+      hbCtx.stroke();
+      hbCtx.beginPath();
+      hbCtx.arc(70, -160, 16, 0, Math.PI * 2);
+      hbCtx.fillStyle = '#ea580c';
+      hbCtx.fill();
+
+      // Middle Pink Lotus
+      for (let p = 0; p < 7; p++) {
+        const pa = -Math.PI / 2 + (p - 3) * 0.35;
+        hbCtx.beginPath();
+        hbCtx.ellipse(80 + Math.cos(pa) * 45, -50 + Math.sin(pa) * 35, 18, 38, pa, 0, Math.PI * 2);
+        hbCtx.fillStyle = '#ec4899';
+        hbCtx.fill();
+        hbCtx.strokeStyle = '#18181b';
+        hbCtx.lineWidth = 2.5;
+        hbCtx.stroke();
+      }
+      hbCtx.beginPath();
+      hbCtx.arc(80, -50, 24, 0, Math.PI * 2);
+      hbCtx.fillStyle = '#fef08a';
+      hbCtx.fill();
+      hbCtx.stroke();
+
+      // Lower Royal Blue Roses
+      const drawBlueRose = (rx, ry) => {
+        hbCtx.fillStyle = '#16a34a';
+        hbCtx.beginPath();
+        hbCtx.ellipse(rx - 30, ry + 20, 16, 32, 0.6, 0, Math.PI * 2);
+        hbCtx.ellipse(rx + 30, ry + 20, 16, 32, -0.6, 0, Math.PI * 2);
+        hbCtx.fill();
+        hbCtx.stroke();
+
+        hbCtx.fillStyle = '#1d4ed8';
+        hbCtx.beginPath();
+        hbCtx.arc(rx, ry, 55, 0, Math.PI * 2);
+        hbCtx.fill();
+        hbCtx.strokeStyle = '#18181b';
+        hbCtx.lineWidth = 3;
+        hbCtx.stroke();
+
+        hbCtx.strokeStyle = '#38bdf8';
+        hbCtx.lineWidth = 4;
+        hbCtx.beginPath();
+        hbCtx.arc(rx, ry, 36, 0.4, Math.PI * 1.6);
+        hbCtx.stroke();
+        hbCtx.beginPath();
+        hbCtx.arc(rx, ry, 20, Math.PI, Math.PI * 2.2);
+        hbCtx.stroke();
+
+        hbCtx.fillStyle = '#ffffff';
+        hbCtx.beginPath();
+        hbCtx.arc(rx, ry, 10, 0, Math.PI * 2);
+        hbCtx.fill();
+      };
+      drawBlueRose(85, 110);
+      hbCtx.restore();
+    };
+
+    drawSideFolkBouquet(260, false);
+    drawSideFolkBouquet(764, true);
+
+    const hoodBackTexture = new THREE.CanvasTexture(hoodBackCanvas);
+
+    // ===================================================================
+    // D. Mudguard Texture (Red & White Spiral Candy Stripes from picture!)
+    // ===================================================================
+    const mudguardCanvas = document.createElement('canvas');
+    mudguardCanvas.width = 512;
+    mudguardCanvas.height = 128;
+    const mgCtx = mudguardCanvas.getContext('2d');
+    mgCtx.fillStyle = '#ffffff';
+    mgCtx.fillRect(0, 0, 512, 128);
+    mgCtx.fillStyle = '#dc2626';
+    for (let i = -128; i < 512 + 128; i += 36) {
+      mgCtx.beginPath();
+      mgCtx.moveTo(i, 0);
+      mgCtx.lineTo(i + 18, 0);
+      mgCtx.lineTo(i + 18 + 128, 128);
+      mgCtx.lineTo(i + 128, 128);
+      mgCtx.closePath();
+      mgCtx.fill();
+    }
+    const stripedMudguardTexture = new THREE.CanvasTexture(mudguardCanvas);
 
     // B. Canopy / Hood Texture (Authentic Masterpiece of Bangladeshi Rickshaw Paint)
     const hoodCanvas = document.createElement('canvas');
@@ -417,6 +807,9 @@ export class DeshiRickshaw {
     const tealFenderMat = new THREE.MeshStandardMaterial({ color: 0x0284c7, metalness: 0.5, roughness: 0.4 });
     const woodTinMat = new THREE.MeshStandardMaterial({ color: 0x15803d, roughness: 0.6 });
     const backArtMat = new THREE.MeshStandardMaterial({ map: backTexture, roughness: 0.4 });
+    const middleBannerMat = new THREE.MeshStandardMaterial({ map: midBannerTexture, roughness: 0.35, metalness: 0.1 });
+    const hoodBackMat = new THREE.MeshStandardMaterial({ map: hoodBackTexture, roughness: 0.6, transparent: true, side: THREE.DoubleSide });
+    const stripedFenderMat = new THREE.MeshStandardMaterial({ map: stripedMudguardTexture, roughness: 0.45, metalness: 0.1 });
     const sideArtMat = new THREE.MeshStandardMaterial({ map: sideArtTexture, roughness: 0.5, side: THREE.DoubleSide });
     const hoodMat = new THREE.MeshStandardMaterial({ map: hoodTexture, roughness: 0.7, side: THREE.DoubleSide });
     const cushionMat = new THREE.MeshStandardMaterial({ map: cushionTexture, roughness: 0.6 });
@@ -525,10 +918,10 @@ export class DeshiRickshaw {
       this.bodyGroup.add(rw);
       this.wheels.push(rw);
 
-      // Turquoise curved mudguards over rear wheels
+      // Red & White Spiral Candy Striped Mudguards over rear wheels (from reference photo!)
       const fenderGeo = new THREE.CylinderGeometry(0.53, 0.53, 0.16, 20, 1, true, 0, Math.PI);
       fenderGeo.rotateZ(Math.PI / 2);
-      const fender = new THREE.Mesh(fenderGeo, tealFenderMat);
+      const fender = new THREE.Mesh(fenderGeo, stripedFenderMat);
       fender.position.set(x, 0.48, 0.95);
       this.bodyGroup.add(fender);
     });
@@ -586,27 +979,30 @@ export class DeshiRickshaw {
     });
 
     // ----------------------------------------------------
-    // AUTHENTIC RICKSHAW ART TIN BACKBOARD (from Image 2 & Image 5!)
-    // Mounted on lower chassis below seat, facing oncoming rear traffic
+    // AUTHENTIC BANGLADESHI RICKSHAW ART BACKSIDE (Exact Match to Reference Picture!)
     // ----------------------------------------------------
-    const backPlateGeo = new THREE.PlaneGeometry(1.06, 0.52);
+    // 1. Lower Tin Scenic Plate (Rising Sun, River, Village Houses & 3 Silver Hearts)
+    const backPlateGeo = new THREE.PlaneGeometry(1.06, 0.54);
     const backPlate = new THREE.Mesh(backPlateGeo, backArtMat);
-    backPlate.position.set(0, 0.68, 1.18);
+    backPlate.position.set(0, 0.66, 1.18);
     backPlate.rotation.y = Math.PI; // Face backwards toward oncoming rear traffic!
     carriageGroup.add(backPlate);
 
-    // Authentic Hanging Red Fringe / Mudflap (Classic Bangladeshi Rickshaw Rear)
-    const mudflapGeo = new THREE.PlaneGeometry(0.96, 0.22);
-    const mudflapMat = new THREE.MeshStandardMaterial({
-      color: 0xdc2626,
-      roughness: 0.9,
-      side: THREE.DoubleSide
-    });
-    const mudflap = new THREE.Mesh(mudflapGeo, mudflapMat);
-    mudflap.position.set(0, 0.32, 1.18);
-    carriageGroup.add(mudflap);
+    // 2. Middle Silver Cowl Banner ("বাংলাদেশ" with "মা" medallions from reference photo)
+    const midBannerGeo = new THREE.PlaneGeometry(1.08, 0.19);
+    const midBanner = new THREE.Mesh(midBannerGeo, middleBannerMat);
+    midBanner.position.set(0, 0.96, 1.185);
+    midBanner.rotation.y = Math.PI;
+    carriageGroup.add(midBanner);
 
-    // Rear Mudguard Reflectors / Taillights (mounted on turquoise fenders as in Image 2 & 5)
+    // 3. Upper Hood Back Arched Panel ("মায়ের দোয়া", Blue Strap "১", & Symmetrical Folk Flowers)
+    const hoodBackGeo = new THREE.PlaneGeometry(1.22, 0.82);
+    const hoodBackMesh = new THREE.Mesh(hoodBackGeo, hoodBackMat);
+    hoodBackMesh.position.set(0, 1.50, 1.11);
+    hoodBackMesh.rotation.y = Math.PI;
+    carriageGroup.add(hoodBackMesh);
+
+    // Rear Mudguard Reflectors / Taillights (mounted on red & white striped fenders)
     [-0.78, 0.78].forEach((x) => {
       const tlHousing = new THREE.Mesh(
         new THREE.CylinderGeometry(0.055, 0.055, 0.035, 12),

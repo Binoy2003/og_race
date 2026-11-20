@@ -329,14 +329,16 @@ export class RoadManager {
 
     // H. AUTHENTIC BANGLADESHI JATRI CHAWNI (যাত্রী ছাউনি / PASSENGER SHED / BUS STOP)
     // Features seating arrangement & cute teenage couple in love holding hands + girl holding a red rose!
-    // Spawns in EVERY segment, alternating right and left, with front opening angled 40° towards oncoming traffic!
+    // Spawns in EVERY segment, alternating right and left, with front opening angled towards oncoming traffic!
     const chawniSide = (index % 2 === 0) ? 1 : -1;
-    const chawni = p.createJatriChawni();
-    const chawniX = (this.roadWidth * 0.5 + 1.8) * chawniSide;
+    const chawni = p.createJatriChawni(chawniSide);
+    // Safely positioned on roadside verge: road edge is at ±6.5m.
+    // Offset +3.4m places the center at ±9.9m, leaving >1.3m clearance from the road edge so it never enters the road!
+    const chawniX = (this.roadWidth * 0.5 + 3.4) * chawniSide;
     const chawniZ = (index === 0) ? -14 : -18;
     chawni.position.set(chawniX, 0, chawniZ);
-    // Face 40° towards oncoming traffic (+Z) so players approaching down -Z look directly into the open shelter!
-    chawni.rotation.y = chawniSide > 0 ? 2.45 : -2.45;
+    // Angle shelter 18° towards oncoming traffic (+Z) so oncoming players look directly into the open shelter, signs & couple!
+    chawni.rotation.y = chawniSide > 0 ? (Math.PI * 0.5 + 0.32) : (-Math.PI * 0.5 - 0.32);
     group.add(chawni);
   }
 

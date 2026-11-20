@@ -501,42 +501,42 @@ export class BangladeshProps {
   // 4B. AUTHENTIC BANGLADESHI JATRI CHAWNI (যাত্রী ছাউনি / BUS STOP)
   // Features Seating Arrangement & Romantic Teenage Couple Holding Hands + Red Rose!
   // ========================================================
-  createJatriChawni() {
+  createJatriChawni(side = 1) {
     const chawni = new THREE.Group();
     chawni.name = 'jatri_chawni';
 
-    // 1. Raised Concrete Platform with Warning Step Curb
-    const platformGeo = new THREE.BoxGeometry(6.2, 0.35, 3.2);
+    // 1. Raised Concrete Platform (Safely set on roadside verge)
+    const platformGeo = new THREE.BoxGeometry(5.0, 0.35, 2.3);
     const platform = new THREE.Mesh(platformGeo, this.concreteMat);
     platform.position.set(0, 0.175, 0);
     platform.receiveShadow = true;
     chawni.add(platform);
 
     // Platform step curb (red/white roadside warning)
-    const curbGeo = new THREE.BoxGeometry(6.4, 0.14, 0.25);
+    const curbGeo = new THREE.BoxGeometry(5.2, 0.14, 0.22);
     const curb = new THREE.Mesh(curbGeo, this.brickMat);
-    curb.position.set(0, 0.07, -1.5);
+    curb.position.set(0, 0.07, -1.1);
     chawni.add(curb);
 
     // 2. Back Brick Wall
-    const wallGeo = new THREE.BoxGeometry(5.6, 2.5, 0.2);
+    const wallGeo = new THREE.BoxGeometry(4.8, 2.5, 0.18);
     const wall = new THREE.Mesh(wallGeo, this.brickMat);
-    wall.position.set(0, 1.45, 1.35);
+    wall.position.set(0, 1.45, 1.02);
     wall.castShadow = true;
     chawni.add(wall);
 
     // Whitewashed inner surface of back wall
-    const innerWallGeo = new THREE.PlaneGeometry(5.4, 2.3);
+    const innerWallGeo = new THREE.PlaneGeometry(4.6, 2.3);
     const innerWall = new THREE.Mesh(innerWallGeo, this.culvertRailingMaterial);
-    innerWall.position.set(0, 1.45, 1.24);
+    innerWall.position.set(0, 1.45, 0.92);
     chawni.add(innerWall);
 
     // 3. Four Concrete / Steel Support Pillars
     const pillarPositions = [
-      [-2.6, -1.25],
-      [2.6, -1.25],
-      [-2.6, 1.25],
-      [2.6, 1.25]
+      [-2.1, -0.92],
+      [2.1, -0.92],
+      [-2.1, 0.92],
+      [2.1, 0.92]
     ];
     pillarPositions.forEach(([px, pz]) => {
       const pGeo = new THREE.CylinderGeometry(0.08, 0.09, 2.6, 12);
@@ -553,70 +553,304 @@ export class BangladeshProps {
     });
 
     // 4. Curved Tin / Corrugated Green Roof
-    const roofGeo = new THREE.CylinderGeometry(2.8, 2.8, 6.4, 24, 1, true, Math.PI * 0.2, Math.PI * 0.6);
+    const roofGeo = new THREE.CylinderGeometry(2.4, 2.4, 5.2, 24, 1, true, Math.PI * 0.2, Math.PI * 0.6);
     roofGeo.rotateZ(Math.PI / 2);
     const roof = new THREE.Mesh(roofGeo, this.tinRoofMat);
-    roof.position.set(0, 2.85, 0.05);
+    roof.position.set(0, 2.75, 0.05);
     roof.castShadow = true;
     chawni.add(roof);
 
     // Roof Trusses (Metal beams supporting the roof)
-    [-2.2, 0, 2.2].forEach((tx) => {
-      const trussGeo = new THREE.BoxGeometry(0.06, 0.06, 2.6);
+    [-1.8, 0, 1.8].forEach((tx) => {
+      const trussGeo = new THREE.BoxGeometry(0.06, 0.06, 2.1);
       const truss = new THREE.Mesh(trussGeo, new THREE.MeshStandardMaterial({ color: 0x334155 }));
-      truss.position.set(tx, 2.65, 0);
+      truss.position.set(tx, 2.55, 0);
       chawni.add(truss);
     });
 
     // Warm Lantern / Lamp under roof (illuminating the couple romantically!)
     const lamp = new THREE.PointLight(0xffedd5, 3.5, 16);
-    lamp.position.set(0, 2.45, 0.35);
+    lamp.position.set(0, 2.45, 0.25);
     chawni.add(lamp);
 
     // Vintage black lantern cage & glowing bulb
     const cageGeo = new THREE.CylinderGeometry(0.14, 0.18, 0.28, 8, 1, true);
     const cage = new THREE.Mesh(cageGeo, new THREE.MeshStandardMaterial({ color: 0x1e293b, wireframe: true }));
-    cage.position.set(0, 2.48, 0.35);
+    cage.position.set(0, 2.48, 0.25);
     chawni.add(cage);
 
     const bulbMesh = new THREE.Mesh(
       new THREE.SphereGeometry(0.1, 12, 12),
       new THREE.MeshBasicMaterial({ color: 0xffedd5 })
     );
-    bulbMesh.position.set(0, 2.48, 0.35);
+    bulbMesh.position.set(0, 2.48, 0.25);
     chawni.add(bulbMesh);
 
-    // 5. Authentic Signboard: "যাত্রী ছাউনি | বাস স্টপ"
+    // ----------------------------------------------------
+    // 5A. HEADER SIGNBOARD: "BUS STOP" | যাত্রী ছাউনি
+    // ----------------------------------------------------
     const signCanvas = document.createElement('canvas');
-    signCanvas.width = 512;
-    signCanvas.height = 128;
+    signCanvas.width = 1024;
+    signCanvas.height = 256;
     const sCtx = signCanvas.getContext('2d');
 
     // Deep Green background
     sCtx.fillStyle = '#15803d';
-    sCtx.fillRect(0, 0, 512, 128);
+    sCtx.fillRect(0, 0, 1024, 256);
 
-    // Gold border
+    // Gold reflective border
     sCtx.strokeStyle = '#f59e0b';
-    sCtx.lineWidth = 8;
-    sCtx.strokeRect(6, 6, 500, 116);
+    sCtx.lineWidth = 14;
+    sCtx.strokeRect(10, 10, 1004, 236);
 
-    // White / Yellow Bengali Calligraphy
+    // Inner gold pinstripe
+    sCtx.strokeStyle = '#fde047';
+    sCtx.lineWidth = 4;
+    sCtx.strokeRect(24, 24, 976, 208);
+
+    // Bus Icon on left and right
+    const drawMiniBus = (bx, by) => {
+      sCtx.fillStyle = '#fde047';
+      sCtx.beginPath();
+      sCtx.roundRect(bx, by, 76, 44, 8);
+      sCtx.fill();
+      sCtx.fillStyle = '#0284c7';
+      sCtx.fillRect(bx + 8, by + 6, 20, 18);
+      sCtx.fillRect(bx + 34, by + 6, 20, 18);
+      sCtx.fillRect(bx + 58, by + 6, 12, 18);
+      sCtx.fillStyle = '#18181b';
+      sCtx.beginPath();
+      sCtx.arc(bx + 20, by + 44, 9, 0, Math.PI * 2);
+      sCtx.arc(bx + 56, by + 44, 9, 0, Math.PI * 2);
+      sCtx.fill();
+    };
+    drawMiniBus(42, 105);
+    drawMiniBus(906, 105);
+
+    // BOLD "BUS STOP" IN ENGLISH (Top line - High Visibility!)
     sCtx.fillStyle = '#ffffff';
-    sCtx.font = 'bold 44px sans-serif';
+    sCtx.font = '900 86px sans-serif';
     sCtx.textAlign = 'center';
-    sCtx.fillText('যাত্রী ছাউনি', 256, 60);
+    sCtx.textBaseline = 'middle';
+    sCtx.shadowColor = 'rgba(0,0,0,0.9)';
+    sCtx.shadowBlur = 12;
+    sCtx.fillText('BUS STOP', 512, 85);
 
+    // "বাস স্টপ | যাত্রী ছাউনি" IN BENGALI (Bottom line)
     sCtx.fillStyle = '#fde047';
-    sCtx.font = 'bold 26px sans-serif';
-    sCtx.fillText('বাস স্টপ (BUS STOP)', 256, 102);
+    sCtx.font = 'bold 54px sans-serif';
+    sCtx.shadowColor = 'rgba(0,0,0,0.8)';
+    sCtx.shadowBlur = 8;
+    sCtx.fillText('বাস স্টপ  |  যাত্রী ছাউনি', 512, 185);
+    sCtx.shadowBlur = 0;
 
     const signTexture = new THREE.CanvasTexture(signCanvas);
-    const signGeo = new THREE.PlaneGeometry(3.6, 0.95);
-    const signMat = new THREE.MeshStandardMaterial({ map: signTexture, roughness: 0.5 });
-    const sign = new THREE.Mesh(signGeo, signMat);
-    sign.position.set(0, 2.7, -1.35);
-    chawni.add(sign);
+
+    // Signboard assembly with frame and unmirrored front/back faces
+    const signGroup = new THREE.Group();
+    signGroup.position.set(0, 2.65, -1.02);
+
+    const signFrameGeo = new THREE.BoxGeometry(4.24, 0.84, 0.07);
+    const signFrameMat = new THREE.MeshStandardMaterial({ color: 0x14532d, roughness: 0.5 });
+    const signFrame = new THREE.Mesh(signFrameGeo, signFrameMat);
+    signGroup.add(signFrame);
+
+    const signFaceMat = new THREE.MeshStandardMaterial({
+      map: signTexture,
+      roughness: 0.35,
+      emissive: 0x15803d,
+      emissiveIntensity: 0.15
+    });
+
+    // Front face (facing -Z unmirrored)
+    const frontSignGeo = new THREE.PlaneGeometry(4.18, 0.78);
+    frontSignGeo.rotateY(Math.PI);
+    const frontSign = new THREE.Mesh(frontSignGeo, signFaceMat);
+    frontSign.position.set(0, 0, -0.038);
+    signGroup.add(frontSign);
+
+    // Back face (facing +Z unmirrored)
+    const backSignGeo = new THREE.PlaneGeometry(4.18, 0.78);
+    const backSign = new THREE.Mesh(backSignGeo, signFaceMat);
+    backSign.position.set(0, 0, 0.038);
+    signGroup.add(backSign);
+
+    chawni.add(signGroup);
+
+    // ----------------------------------------------------
+    // 5B. ROADSIDE "BUS STOP" POLE SIGN BOARD (রাস্তার পাশের সাইন পোস্ট)
+    // Always positioned on roadside corner facing oncoming traffic!
+    // ----------------------------------------------------
+    const poleGroup = new THREE.Group();
+    const poleX = side > 0 ? -2.25 : 2.25;
+    poleGroup.position.set(poleX, 0, -1.15);
+
+    // Concrete base block
+    const baseBlock = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.18, 0.22, 0.3, 12),
+      this.concreteMat
+    );
+    baseBlock.position.set(0, 0.15, 0);
+    poleGroup.add(baseBlock);
+
+    // Striped Metal Pole (Yellow & Black caution stripes)
+    const poleMat = new THREE.MeshStandardMaterial({ color: 0x334155, metalness: 0.8, roughness: 0.2 });
+    const poleMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.045, 3.1, 12), poleMat);
+    poleMesh.position.set(0, 1.55, 0);
+    poleGroup.add(poleMesh);
+
+    // High-visibility Circular/Rounded Roadside "BUS STOP" Signboard
+    const poleSignCanvas = document.createElement('canvas');
+    poleSignCanvas.width = 512;
+    poleSignCanvas.height = 512;
+    const psCtx = poleSignCanvas.getContext('2d');
+
+    // Highway Blue background
+    psCtx.fillStyle = '#0284c7';
+    psCtx.beginPath();
+    psCtx.roundRect(16, 16, 480, 480, 48);
+    psCtx.fill();
+
+    // Yellow border
+    psCtx.strokeStyle = '#facc15';
+    psCtx.lineWidth = 20;
+    psCtx.stroke();
+
+    // Inner white border
+    psCtx.strokeStyle = '#ffffff';
+    psCtx.lineWidth = 4;
+    psCtx.beginPath();
+    psCtx.roundRect(36, 36, 440, 440, 36);
+    psCtx.stroke();
+
+    // Bus Graphic
+    psCtx.fillStyle = '#ffffff';
+    psCtx.beginPath();
+    psCtx.roundRect(135, 75, 242, 130, 24);
+    psCtx.fill();
+
+    psCtx.fillStyle = '#0284c7';
+    psCtx.fillRect(155, 95, 60, 50);
+    psCtx.fillRect(230, 95, 60, 50);
+    psCtx.fillRect(305, 95, 52, 50);
+
+    psCtx.fillStyle = '#18181b';
+    psCtx.beginPath();
+    psCtx.arc(190, 205, 22, 0, Math.PI * 2);
+    psCtx.arc(320, 205, 22, 0, Math.PI * 2);
+    psCtx.fill();
+
+    // Bold "BUS STOP" text
+    psCtx.fillStyle = '#ffffff';
+    psCtx.font = '900 72px sans-serif';
+    psCtx.textAlign = 'center';
+    psCtx.textBaseline = 'middle';
+    psCtx.shadowColor = 'rgba(0,0,0,0.85)';
+    psCtx.shadowBlur = 8;
+    psCtx.fillText('BUS STOP', 256, 310);
+
+    // Bengali "বাস স্টপ"
+    psCtx.fillStyle = '#fde047';
+    psCtx.font = 'bold 56px sans-serif';
+    psCtx.fillText('বাস স্টপ', 256, 405);
+    psCtx.shadowBlur = 0;
+
+    const poleSignTexture = new THREE.CanvasTexture(poleSignCanvas);
+    const poleSignMat = new THREE.MeshStandardMaterial({
+      map: poleSignTexture,
+      roughness: 0.35,
+      emissive: 0x0284c7,
+      emissiveIntensity: 0.12
+    });
+
+    const poleSignGroup = new THREE.Group();
+    poleSignGroup.position.set(0, 2.7, 0);
+
+    // Pole sign frame
+    const poleSignFrame = new THREE.Mesh(
+      new THREE.BoxGeometry(0.96, 0.96, 0.06),
+      new THREE.MeshStandardMaterial({ color: 0x0369a1, roughness: 0.4 })
+    );
+    poleSignGroup.add(poleSignFrame);
+
+    // Front face (unmirrored facing -Z)
+    const poleFrontGeo = new THREE.PlaneGeometry(0.92, 0.92);
+    poleFrontGeo.rotateY(Math.PI);
+    const poleFront = new THREE.Mesh(poleFrontGeo, poleSignMat);
+    poleFront.position.set(0, 0, -0.032);
+    poleSignGroup.add(poleFront);
+
+    // Back face (unmirrored facing +Z)
+    const poleBackGeo = new THREE.PlaneGeometry(0.92, 0.92);
+    const poleBack = new THREE.Mesh(poleBackGeo, poleSignMat);
+    poleBack.position.set(0, 0, 0.032);
+    poleSignGroup.add(poleBack);
+
+    // Angle pole sign slightly towards oncoming traffic
+    poleSignGroup.rotation.y = side > 0 ? 0.35 : -0.35;
+    poleGroup.add(poleSignGroup);
+
+    chawni.add(poleGroup);
+
+    // ----------------------------------------------------
+    // 5C. SIDE WALL ENAMELED SIGNBOARD: "BUS STOP"
+    // Mounted on the side wall directly visible to oncoming cars!
+    // ----------------------------------------------------
+    const sideSignCanvas = document.createElement('canvas');
+    sideSignCanvas.width = 512;
+    sideSignCanvas.height = 320;
+    const ssCtx = sideSignCanvas.getContext('2d');
+
+    // Clean off-white enamel sign plate
+    ssCtx.fillStyle = '#f8fafc';
+    ssCtx.fillRect(0, 0, 512, 320);
+
+    // Red and Green border (Bangladesh colors)
+    ssCtx.strokeStyle = '#15803d';
+    ssCtx.lineWidth = 14;
+    ssCtx.strokeRect(8, 8, 496, 304);
+    ssCtx.strokeStyle = '#dc2626';
+    ssCtx.lineWidth = 4;
+    ssCtx.strokeRect(22, 22, 468, 276);
+
+    // Header: BRTC / Highway Stop
+    ssCtx.fillStyle = '#15803d';
+    ssCtx.font = 'bold 30px sans-serif';
+    ssCtx.textAlign = 'center';
+    ssCtx.textBaseline = 'middle';
+    ssCtx.fillText('বাংলাদেশ সড়ক পরিবহন (BRTC)', 256, 55);
+
+    // Center BOLD "BUS STOP"
+    ssCtx.fillStyle = '#dc2626';
+    ssCtx.font = '900 68px sans-serif';
+    ssCtx.shadowColor = 'rgba(0,0,0,0.3)';
+    ssCtx.shadowBlur = 4;
+    ssCtx.fillText('BUS STOP', 256, 140);
+
+    // Bengali "বাস স্টপ"
+    ssCtx.fillStyle = '#1e293b';
+    ssCtx.font = 'bold 50px sans-serif';
+    ssCtx.shadowBlur = 0;
+    ssCtx.fillText('বাস স্টপ', 256, 220);
+
+    // Bottom subtitle
+    ssCtx.fillStyle = '#64748b';
+    ssCtx.font = 'bold 24px sans-serif';
+    ssCtx.fillText('HIGHWAY PASSENGER SHELTER', 256, 275);
+
+    const sideSignTexture = new THREE.CanvasTexture(sideSignCanvas);
+    const sideSignMat = new THREE.MeshStandardMaterial({
+      map: sideSignTexture,
+      roughness: 0.35,
+      emissive: 0xffffff,
+      emissiveIntensity: 0.08
+    });
+
+    const sideSignMesh = new THREE.Mesh(new THREE.PlaneGeometry(1.2, 0.75), sideSignMat);
+    const sideWallX = side > 0 ? -2.12 : 2.12;
+    sideSignMesh.position.set(sideWallX, 1.85, 0);
+    sideSignMesh.rotation.y = side > 0 ? -Math.PI / 2 : Math.PI / 2;
+    chawni.add(sideSignMesh);
 
     // ----------------------------------------------------
     // 6. SEATING ARRANGEMENT (বসার ব্যবস্থা - Long Passenger Waiting Bench)
