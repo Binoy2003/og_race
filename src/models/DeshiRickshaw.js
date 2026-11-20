@@ -155,36 +155,75 @@ export class DeshiRickshaw {
 
     const backTexture = new THREE.CanvasTexture(backCanvas);
 
-    // B. Canopy / Hood Texture (Scalloped Yellow, Red and Turquoise)
+    // B. Canopy / Hood Texture (Traditional Rich Rickshaw Folk Art Roof)
     const hoodCanvas = document.createElement('canvas');
     hoodCanvas.width = 512;
     hoodCanvas.height = 512;
     const hCtx = hoodCanvas.getContext('2d');
 
+    // Rich golden-yellow body
     hCtx.fillStyle = '#f59e0b';
     hCtx.fillRect(0, 0, 512, 512);
 
-    // Red fringe border
-    hCtx.fillStyle = '#dc2626';
-    hCtx.fillRect(0, 460, 512, 52);
+    // Deep Maroon arched top bands (from Image 5)
+    hCtx.fillStyle = '#881337';
+    hCtx.fillRect(0, 0, 512, 70);
+    hCtx.fillRect(0, 442, 512, 70);
 
-    // Traditional floral circles
-    for (let y = 80; y <= 400; y += 120) {
-      for (let x = 80; x <= 440; x += 120) {
-        hCtx.fillStyle = '#059669';
-        hCtx.beginPath();
-        hCtx.arc(x, y, 36, 0, Math.PI * 2);
-        hCtx.fill();
+    // Turquoise accent pinstripes
+    hCtx.fillStyle = '#06b6d4';
+    hCtx.fillRect(0, 70, 512, 14);
+    hCtx.fillRect(0, 428, 512, 14);
 
-        hCtx.fillStyle = '#ef4444';
-        hCtx.beginPath();
-        hCtx.arc(x, y, 22, 0, Math.PI * 2);
-        hCtx.fill();
+    // Maroon band golden scalloped border
+    for (let x = 16; x < 512; x += 32) {
+      hCtx.beginPath();
+      hCtx.arc(x, 70, 8, 0, Math.PI);
+      hCtx.fillStyle = '#fde047';
+      hCtx.fill();
 
-        hCtx.fillStyle = '#ffffff';
+      hCtx.beginPath();
+      hCtx.arc(x, 442, 8, Math.PI, Math.PI * 2);
+      hCtx.fillStyle = '#fde047';
+      hCtx.fill();
+    }
+
+    // Traditional Folk Floral Mandalas & Blooming Lotus Rosettes on Roof
+    const drawLotusRosette = (cx, cy, r) => {
+      // Outer petals
+      const pColors = ['#dc2626', '#ec4899', '#059669', '#3b82f6'];
+      for (let i = 0; i < 8; i++) {
+        const ang = (i * Math.PI) / 4;
+        const px = cx + Math.cos(ang) * (r * 0.75);
+        const py = cy + Math.sin(ang) * (r * 0.75);
         hCtx.beginPath();
-        hCtx.arc(x, y, 10, 0, Math.PI * 2);
+        hCtx.arc(px, py, r * 0.35, 0, Math.PI * 2);
+        hCtx.fillStyle = pColors[i % pColors.length];
         hCtx.fill();
+        hCtx.strokeStyle = '#18181b';
+        hCtx.lineWidth = 2;
+        hCtx.stroke();
+      }
+      // Inner circle
+      hCtx.beginPath();
+      hCtx.arc(cx, cy, r * 0.42, 0, Math.PI * 2);
+      hCtx.fillStyle = '#fde047';
+      hCtx.fill();
+      hCtx.strokeStyle = '#18181b';
+      hCtx.lineWidth = 2;
+      hCtx.stroke();
+
+      // Center ruby dot
+      hCtx.beginPath();
+      hCtx.arc(cx, cy, r * 0.18, 0, Math.PI * 2);
+      hCtx.fillStyle = '#b91c1c';
+      hCtx.fill();
+    };
+
+    // Draw grid of lotus rosettes on roof
+    for (let y = 145; y <= 365; y += 110) {
+      for (let x = 75; x <= 450; x += 110) {
+        drawLotusRosette(x, y, 36);
       }
     }
 
@@ -473,38 +512,89 @@ export class DeshiRickshaw {
     });
 
     // ----------------------------------------------------
-    // TRADITIONAL ARCHED HOOD CANOPY (from Image 2 & Image 5!)
-    // Arched overhead canopy with open rear arch so the passengers are 100% visible from behind!
+    // TRADITIONAL ARCHED RICKSHAW ROOF / CANOPY (ছাদ ও হুড)
+    // Prominent curved folk art roof spanning overhead with open rear arch so couple remains fully visible!
     // ----------------------------------------------------
-    // Top arched canopy (curves overhead from left to right along Z axis)
-    const hoodGeo = new THREE.CylinderGeometry(0.68, 0.68, 0.90, 24, 1, true, -Math.PI / 2, Math.PI);
-    hoodGeo.rotateX(Math.PI / 2);
+    // 1. Arched Canopy Roof (ছাদ) - Curves overhead from left to right along Z axis
+    const hoodGeo = new THREE.CylinderGeometry(0.70, 0.70, 0.96, 24, 1, true, -Math.PI / 2, Math.PI);
+    hoodGeo.rotateX(-Math.PI / 2); // Curves UPWARDS overhead (peak at y = 2.20m!)
     const hood = new THREE.Mesh(hoodGeo, hoodMat);
-    hood.position.set(0, 1.48, 0.70);
+    hood.position.set(0, 1.50, 0.62);
     carriageGroup.add(hood);
 
-    // Decorative Torus Arch Border framing the rear opening
-    const archBorderGeo = new THREE.TorusGeometry(0.68, 0.025, 8, 24, Math.PI);
-    const archBorder = new THREE.Mesh(archBorderGeo, redFrameMat);
-    archBorder.position.set(0, 1.48, 1.15);
-    carriageGroup.add(archBorder);
+    // 2. Front Visor Arch Rim & Decorative Scalloped Fringe (overhang shading puller's back)
+    const frontArchGeo = new THREE.TorusGeometry(0.70, 0.022, 8, 24, Math.PI);
+    const frontArch = new THREE.Mesh(frontArchGeo, redFrameMat);
+    frontArch.position.set(0, 1.50, 0.14);
+    carriageGroup.add(frontArch);
 
-    // Scalloped Red Decorative Fringe along rear canopy arch rim (Image 2)
     for (let i = 0; i <= 14; i++) {
       const ang = (i * Math.PI) / 14;
-      const fx = Math.cos(ang) * 0.68;
-      const fy = 1.48 + Math.sin(ang) * 0.68;
+      const fx = Math.cos(ang) * 0.70;
+      const fy = 1.50 + Math.sin(ang) * 0.70;
+      const fringe = new THREE.Mesh(
+        new THREE.SphereGeometry(0.022, 6, 6),
+        new THREE.MeshStandardMaterial({ color: 0xdc2626, roughness: 0.8 })
+      );
+      fringe.position.set(fx, fy - 0.02, 0.14);
+      carriageGroup.add(fringe);
+    }
+
+    // 3. Rear Decorative Arch Border framing the rear opening
+    const rearArchGeo = new THREE.TorusGeometry(0.70, 0.025, 8, 24, Math.PI);
+    const rearArch = new THREE.Mesh(rearArchGeo, redFrameMat);
+    rearArch.position.set(0, 1.50, 1.10);
+    carriageGroup.add(rearArch);
+
+    // Scalloped Red Decorative Fringe along rear canopy arch rim (Image 2 & 5)
+    for (let i = 0; i <= 14; i++) {
+      const ang = (i * Math.PI) / 14;
+      const fx = Math.cos(ang) * 0.70;
+      const fy = 1.50 + Math.sin(ang) * 0.70;
       const fringeBead = new THREE.Mesh(
         new THREE.SphereGeometry(0.022, 6, 6),
         new THREE.MeshStandardMaterial({ color: 0xdc2626, roughness: 0.8 })
       );
-      fringeBead.position.set(fx, fy - 0.02, 1.15);
+      fringeBead.position.set(fx, fy - 0.02, 1.10);
       carriageGroup.add(fringeBead);
     }
 
-    // Slanted Red Metal Support Struts connecting Hood to Carriage Frame (Image 2)
+    // 4. Upper Rear Hood Cowl Panel (Maroon & Floral Rickshaw Art Header from Image 5)
+    // Mounted high above couple's heads (y = 1.96 - 2.20) framing the top arch
+    const hoodHeaderGeo = new THREE.CylinderGeometry(0.70, 0.70, 0.12, 24, 1, true, -Math.PI / 2, Math.PI);
+    hoodHeaderGeo.rotateX(-Math.PI / 2);
+    const hoodHeader = new THREE.Mesh(hoodHeaderGeo, hoodMat);
+    hoodHeader.position.set(0, 1.50, 1.04);
+    carriageGroup.add(hoodHeader);
+
+    // 5. Side Canvas Panels on Left & Right (Image 2)
+    [-0.70, 0.70].forEach((x, idx) => {
+      const sideFlapGeo = new THREE.PlaneGeometry(0.82, 0.36);
+      const sideFlap = new THREE.Mesh(sideFlapGeo, hoodMat);
+      sideFlap.position.set(x, 1.34, 0.65);
+      sideFlap.rotation.y = idx === 0 ? -Math.PI / 2 : Math.PI / 2;
+      carriageGroup.add(sideFlap);
+
+      // Folding Scissors Struts (হুডের কাঁচি) in shiny chrome (Image 2)
+      const strut1 = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.012, 0.78, 8), chromeMat);
+      strut1.position.set(x + (idx === 0 ? -0.015 : 0.015), 1.34, 0.65);
+      strut1.rotation.x = 0.45;
+      carriageGroup.add(strut1);
+
+      const strut2 = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.012, 0.78, 8), chromeMat);
+      strut2.position.set(x + (idx === 0 ? -0.015 : 0.015), 1.34, 0.65);
+      strut2.rotation.x = -0.45;
+      carriageGroup.add(strut2);
+
+      // Center scissor hinge rivet
+      const rivet = new THREE.Mesh(new THREE.SphereGeometry(0.022, 8, 8), redFrameMat);
+      rivit: rivet.position.set(x + (idx === 0 ? -0.025 : 0.025), 1.34, 0.65);
+      carriageGroup.add(rivet);
+    });
+
+    // 6. Slanted Red Metal Main Support Struts (connecting Hood to Lower Chassis Frame)
     [-0.64, 0.64].forEach((x) => {
-      const strutGeo = new THREE.CylinderGeometry(0.015, 0.015, 1.15, 8);
+      const strutGeo = new THREE.CylinderGeometry(0.016, 0.016, 1.15, 8);
       strutGeo.rotateX(0.42);
       const strut = new THREE.Mesh(strutGeo, redFrameMat);
       strut.position.set(x, 1.40, 0.60);
