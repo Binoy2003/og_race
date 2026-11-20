@@ -1332,9 +1332,1059 @@ export class BangladeshProps {
     return fence;
   }
 
-  // Update animal animations and environmental motion every frame
+  // ========================================================
+  // 9. HIGHWAY CAFE ("HIGHWAY CAFE" / "ক্যাফে ও রেস্তোরাঁ")
+  // Warm Brick Facade, Storefront Glazing, Striped Awning & Patio Tables
+  // ========================================================
+  createHighwayCafe(side = 1) {
+    const cafe = new THREE.Group();
+    cafe.name = 'highway_cafe';
+
+    // 1. Raised Terrace Platform (Paved stone tile)
+    const platformGeo = new THREE.BoxGeometry(6.6, 0.28, 4.4);
+    const platformMat = new THREE.MeshStandardMaterial({ color: 0x8d6e63, roughness: 0.85 });
+    const platform = new THREE.Mesh(platformGeo, platformMat);
+    platform.position.set(0, 0.14, 0);
+    platform.receiveShadow = true;
+    cafe.add(platform);
+
+    // Front curb step
+    const curbGeo = new THREE.BoxGeometry(6.8, 0.14, 0.25);
+    const curb = new THREE.Mesh(curbGeo, this.concreteMat);
+    curb.position.set(0, 0.07, -2.15);
+    cafe.add(curb);
+
+    // 2. Main Cafe Building
+    const buildingGeo = new THREE.BoxGeometry(5.6, 3.2, 3.0);
+    const wallMat = new THREE.MeshStandardMaterial({ color: 0x5d4037, roughness: 0.8 }); // rich warm espresso brick
+    const building = new THREE.Mesh(buildingGeo, wallMat);
+    building.position.set(0, 1.74, 0.6);
+    building.castShadow = true;
+    cafe.add(building);
+
+    // Modern roof cornice / trim
+    const corniceGeo = new THREE.BoxGeometry(5.9, 0.22, 3.3);
+    const corniceMat = new THREE.MeshStandardMaterial({ color: 0x3e2723, roughness: 0.6 });
+    const cornice = new THREE.Mesh(corniceGeo, corniceMat);
+    cornice.position.set(0, 3.42, 0.6);
+    cafe.add(cornice);
+
+    // 3. Storefront Glass Windows & Entrance Door
+    const windowMat = new THREE.MeshStandardMaterial({
+      color: 0x1e293b,
+      metalness: 0.8,
+      roughness: 0.15,
+      transparent: true,
+      opacity: 0.65
+    });
+
+    // Left panoramic picture window
+    const winLeft = new THREE.Mesh(new THREE.BoxGeometry(1.9, 1.8, 0.1), windowMat);
+    winLeft.position.set(-1.6, 1.7, -0.92);
+    cafe.add(winLeft);
+
+    // Right panoramic picture window
+    const winRight = new THREE.Mesh(new THREE.BoxGeometry(1.9, 1.8, 0.1), windowMat);
+    winRight.position.set(1.6, 1.7, -0.92);
+    cafe.add(winRight);
+
+    // Center Entrance Glass Door with Brass Push Bar
+    const door = new THREE.Mesh(new THREE.BoxGeometry(1.2, 2.3, 0.1), windowMat);
+    door.position.set(0, 1.45, -0.92);
+    cafe.add(door);
+
+    const brassBarMat = new THREE.MeshStandardMaterial({ color: 0xf59e0b, metalness: 0.9, roughness: 0.2 });
+    const pushBar = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.025, 0.7, 8), brassBarMat);
+    pushBar.position.set(0.42, 1.35, -0.98);
+    cafe.add(pushBar);
+
+    // Warm Interior Ambient Light & Cozy Glow
+    const cafeWarmLight = new THREE.PointLight(0xffedd5, 3.2, 9.0);
+    cafeWarmLight.position.set(0, 2.2, 0.2);
+    cafe.add(cafeWarmLight);
+
+    // Interior Cafe Counter Silhouette
+    const intCounterGeo = new THREE.BoxGeometry(3.6, 1.0, 0.8);
+    const intCounter = new THREE.Mesh(intCounterGeo, new THREE.MeshStandardMaterial({ color: 0x27160c }));
+    intCounter.position.set(0, 0.8, 0.4);
+    cafe.add(intCounter);
+
+    // 4. Striped Fabric Awning (Canopy) over Patio
+    // Rich burgundy & warm biscuit stripes
+    const awningCanvas = document.createElement('canvas');
+    awningCanvas.width = 256;
+    awningCanvas.height = 256;
+    const aCtx = awningCanvas.getContext('2d');
+    const stripeW = 32;
+    for (let x = 0; x < 256; x += stripeW * 2) {
+      aCtx.fillStyle = '#831843'; // Deep Burgundy Red
+      aCtx.fillRect(x, 0, stripeW, 256);
+      aCtx.fillStyle = '#fef3c7'; // Warm Biscuit Cream
+      aCtx.fillRect(x + stripeW, 0, stripeW, 256);
+    }
+    const awningTex = new THREE.CanvasTexture(awningCanvas);
+    awningTex.wrapS = THREE.RepeatWrapping;
+    awningTex.wrapT = THREE.RepeatWrapping;
+    awningTex.repeat.set(4, 1);
+    const awningMat = new THREE.MeshStandardMaterial({ map: awningTex, roughness: 0.7, side: THREE.DoubleSide });
+
+    const awningGroup = new THREE.Group();
+    awningGroup.position.set(0, 2.65, -0.9);
+
+    const awningSlopeGeo = new THREE.PlaneGeometry(4.8, 1.5);
+    awningSlopeGeo.rotateX(Math.PI * 0.4); // Slanted down towards front
+    const awningSlope = new THREE.Mesh(awningSlopeGeo, awningMat);
+    awningSlope.position.set(0, -0.22, -0.65);
+    awningGroup.add(awningSlope);
+
+    // Front Valance Flap
+    const valanceGeo = new THREE.PlaneGeometry(4.8, 0.26);
+    const valance = new THREE.Mesh(valanceGeo, awningMat);
+    valance.position.set(0, -0.55, -1.25);
+    awningGroup.add(valance);
+
+    // Iron support brackets
+    [-2.2, 2.2].forEach((bx) => {
+      const strutGeo = new THREE.CylinderGeometry(0.02, 0.02, 1.4, 6);
+      strutGeo.rotateX(-Math.PI * 0.25);
+      const strut = new THREE.Mesh(strutGeo, new THREE.MeshStandardMaterial({ color: 0x1e293b }));
+      strut.position.set(bx, -0.35, -0.6);
+      awningGroup.add(strut);
+    });
+
+    cafe.add(awningGroup);
+
+    // 5. SIGNBOARD: "HIGHWAY CAFE" | ক্যাফে ও রেস্তোরাঁ
+    const signCanvas = document.createElement('canvas');
+    signCanvas.width = 1024;
+    signCanvas.height = 256;
+    const sCtx = signCanvas.getContext('2d');
+
+    // Rich Dark Roast Espresso background
+    sCtx.fillStyle = '#1c120c';
+    sCtx.fillRect(0, 0, 1024, 256);
+
+    // Gold borders
+    sCtx.strokeStyle = '#d97706';
+    sCtx.lineWidth = 12;
+    sCtx.strokeRect(10, 10, 1004, 236);
+
+    sCtx.strokeStyle = '#fde047';
+    sCtx.lineWidth = 4;
+    sCtx.strokeRect(22, 22, 980, 212);
+
+    // Steaming Coffee Cup Icon on Left and Right
+    const drawCoffeeCup = (cx, cy) => {
+      // Saucer
+      sCtx.fillStyle = '#fde047';
+      sCtx.beginPath();
+      sCtx.ellipse(cx, cy + 32, 42, 12, 0, 0, Math.PI * 2);
+      sCtx.fill();
+
+      // Cup body
+      sCtx.fillStyle = '#ffffff';
+      sCtx.beginPath();
+      sCtx.moveTo(cx - 30, cy - 18);
+      sCtx.lineTo(cx + 30, cy - 18);
+      sCtx.quadraticCurveTo(cx + 28, cy + 24, cx + 18, cy + 28);
+      sCtx.lineTo(cx - 18, cy + 28);
+      sCtx.quadraticCurveTo(cx - 28, cy + 24, cx - 30, cy - 18);
+      sCtx.closePath();
+      sCtx.fill();
+
+      // Handle
+      sCtx.strokeStyle = '#ffffff';
+      sCtx.lineWidth = 8;
+      sCtx.beginPath();
+      sCtx.arc(cx + 32, cy + 4, 14, -Math.PI * 0.4, Math.PI * 0.6);
+      sCtx.stroke();
+
+      // Steam swirls
+      sCtx.strokeStyle = '#fef08a';
+      sCtx.lineWidth = 4;
+      sCtx.beginPath();
+      sCtx.moveTo(cx - 12, cy - 24);
+      sCtx.quadraticCurveTo(cx - 18, cy - 38, cx - 10, cy - 48);
+      sCtx.moveTo(cx + 8, cy - 24);
+      sCtx.quadraticCurveTo(cx + 2, cy - 38, cx + 12, cy - 50);
+      sCtx.stroke();
+    };
+
+    drawCoffeeCup(70, 128);
+    drawCoffeeCup(954, 128);
+
+    // Top BOLD English "HIGHWAY CAFE"
+    sCtx.fillStyle = '#fef08a';
+    sCtx.font = '900 82px sans-serif';
+    sCtx.textAlign = 'center';
+    sCtx.textBaseline = 'middle';
+    sCtx.shadowColor = 'rgba(0,0,0,0.95)';
+    sCtx.shadowBlur = 14;
+    sCtx.fillText('HIGHWAY CAFE', 512, 80);
+
+    // Bengali "ক্যাফে ও রেস্তোরাঁ"
+    sCtx.fillStyle = '#ffffff';
+    sCtx.font = 'bold 54px sans-serif';
+    sCtx.shadowColor = 'rgba(0,0,0,0.85)';
+    sCtx.shadowBlur = 8;
+    sCtx.fillText('ক্যাফে ও রেস্তোরাঁ', 512, 172);
+
+    // Subtitle
+    sCtx.fillStyle = '#f59e0b';
+    sCtx.font = 'bold 26px sans-serif';
+    sCtx.shadowBlur = 0;
+    sCtx.fillText('FRESH COFFEE • TEA • BURGERS & SNACKS', 512, 226);
+
+    const signTexture = new THREE.CanvasTexture(signCanvas);
+    const signMat = new THREE.MeshStandardMaterial({
+      map: signTexture,
+      roughness: 0.35,
+      emissive: 0x3d2010,
+      emissiveIntensity: 0.18
+    });
+
+    const signGroup = new THREE.Group();
+    signGroup.position.set(0, 3.4, -0.95);
+
+    const signFrame = new THREE.Mesh(
+      new THREE.BoxGeometry(4.7, 0.92, 0.08),
+      new THREE.MeshStandardMaterial({ color: 0x27160c, roughness: 0.5 })
+    );
+    signGroup.add(signFrame);
+
+    const signFaceGeo = new THREE.PlaneGeometry(4.62, 0.84);
+    signFaceGeo.rotateY(Math.PI); // Facing -Z towards oncoming traffic
+    const signFace = new THREE.Mesh(signFaceGeo, signMat);
+    signFace.position.set(0, 0, -0.045);
+    signGroup.add(signFace);
+
+    // Spotlight fixtures shining down on signboard
+    [-1.6, 1.6].forEach((sx) => {
+      const lampArm = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.02, 0.02, 0.35, 6),
+        brassBarMat
+      );
+      lampArm.position.set(sx, 0.52, -0.15);
+      lampArm.rotation.x = Math.PI * 0.3;
+      signGroup.add(lampArm);
+
+      const lampHead = new THREE.Mesh(
+        new THREE.ConeGeometry(0.08, 0.14, 8),
+        brassBarMat
+      );
+      lampHead.position.set(sx, 0.42, -0.28);
+      lampHead.rotation.x = Math.PI * 0.8;
+      signGroup.add(lampHead);
+
+      const bulb = new THREE.Mesh(
+        new THREE.SphereGeometry(0.04, 6, 6),
+        new THREE.MeshBasicMaterial({ color: 0xffedd5 })
+      );
+      bulb.position.set(sx, 0.38, -0.28);
+      signGroup.add(bulb);
+    });
+
+    cafe.add(signGroup);
+
+    // 6. Outdoor Patio Furniture: 2 Bistro Tables & 4 Chairs
+    const tablePositions = [-1.7, 1.7];
+    tablePositions.forEach((tx) => {
+      const tableGroup = new THREE.Group();
+      tableGroup.position.set(tx, 0.28, -1.35);
+
+      // Cast iron pedestal base
+      const tBase = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.035, 0.22, 0.75, 12),
+        new THREE.MeshStandardMaterial({ color: 0x1e293b, metalness: 0.8 })
+      );
+      tBase.position.y = 0.375;
+      tableGroup.add(tBase);
+
+      // Round wooden table top
+      const tTop = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.55, 0.55, 0.05, 16),
+        this.woodMat
+      );
+      tTop.position.y = 0.75;
+      tableGroup.add(tTop);
+
+      // 2 Coffee Cups on the table
+      [-0.18, 0.18].forEach((cx, idx) => {
+        const mug = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.05, 0.045, 0.08, 8),
+          new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.2 })
+        );
+        mug.position.set(cx, 0.81, idx === 0 ? 0.1 : -0.1);
+        tableGroup.add(mug);
+
+        // Dark coffee surface inside mug
+        const coffee = new THREE.Mesh(
+          new THREE.CircleGeometry(0.04, 8),
+          new THREE.MeshBasicMaterial({ color: 0x27160c })
+        );
+        coffee.rotation.x = -Math.PI / 2;
+        coffee.position.set(cx, 0.85, idx === 0 ? 0.1 : -0.1);
+        tableGroup.add(coffee);
+      });
+
+      // 2 Wooden Chairs
+      [-0.65, 0.65].forEach((cx) => {
+        const chair = new THREE.Group();
+        chair.position.set(cx, 0, 0);
+
+        // Chair legs
+        [-0.14, 0.14].forEach((clx) => {
+          [-0.14, 0.14].forEach((clz) => {
+            const leg = new THREE.Mesh(
+              new THREE.CylinderGeometry(0.02, 0.02, 0.45, 6),
+              this.woodMat
+            );
+            leg.position.set(clx, 0.225, clz);
+            chair.add(leg);
+          });
+        });
+
+        // Seat
+        const cSeat = new THREE.Mesh(
+          new THREE.BoxGeometry(0.36, 0.04, 0.36),
+          this.woodMat
+        );
+        cSeat.position.y = 0.45;
+        chair.add(cSeat);
+
+        // Backrest
+        const cBack = new THREE.Mesh(
+          new THREE.BoxGeometry(0.36, 0.35, 0.04),
+          this.woodMat
+        );
+        cBack.position.set(0, 0.68, cx > 0 ? 0.16 : -0.16);
+        chair.add(cBack);
+
+        tableGroup.add(chair);
+      });
+
+      cafe.add(tableGroup);
+    });
+
+    // 7. Patio Flower Planters on outer edges
+    [-2.9, 2.9].forEach((px) => {
+      const planter = new THREE.Mesh(
+        new THREE.BoxGeometry(0.45, 0.42, 1.6),
+        this.woodMat
+      );
+      planter.position.set(px, 0.49, -1.2);
+      cafe.add(planter);
+
+      // Shrub greenery inside planter
+      for (let s = -0.55; s <= 0.55; s += 0.5) {
+        const bush = new THREE.Mesh(
+          new THREE.SphereGeometry(0.24, 8, 8),
+          this.palmLeafMat
+        );
+        bush.position.set(px, 0.8, -1.2 + s);
+        cafe.add(bush);
+
+        // Tiny red/yellow flowers
+        const flower = new THREE.Mesh(
+          new THREE.SphereGeometry(0.06, 6, 6),
+          new THREE.MeshBasicMaterial({ color: s < 0 ? 0xdc2626 : 0xf59e0b })
+        );
+        flower.position.set(px, 0.95, -1.2 + s);
+        cafe.add(flower);
+      }
+    });
+
+    return cafe;
+  }
+
+  // ========================================================
+  // 10. HIGHWAY BAR ("HIGHWAY BAR" / "মদের বার" / LIQUOR LOUNGE)
+  // Dark Industrial Exterior, Backlit Liquor Shelves, Bar Stools & Glowing Neon Sign
+  // ========================================================
+  createHighwayBar(side = -1) {
+    const bar = new THREE.Group();
+    bar.name = 'highway_bar';
+
+    // 1. Raised Dark Slate Platform
+    const platformGeo = new THREE.BoxGeometry(6.6, 0.28, 4.4);
+    const platformMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.8 });
+    const platform = new THREE.Mesh(platformGeo, platformMat);
+    platform.position.set(0, 0.14, 0);
+    platform.receiveShadow = true;
+    bar.add(platform);
+
+    // Front curb step
+    const curbGeo = new THREE.BoxGeometry(6.8, 0.14, 0.25);
+    const curb = new THREE.Mesh(curbGeo, new THREE.MeshStandardMaterial({ color: 0x0f172a }));
+    curb.position.set(0, 0.07, -2.15);
+    bar.add(curb);
+
+    // 2. Main Bar Building (Industrial Dark Style with Timber Slats)
+    const buildingGeo = new THREE.BoxGeometry(5.6, 3.2, 3.0);
+    const wallMat = new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.7 });
+    const building = new THREE.Mesh(buildingGeo, wallMat);
+    building.position.set(0, 1.74, 0.6);
+    building.castShadow = true;
+    bar.add(building);
+
+    // Dark walnut wood vertical slats on facade side pillars
+    [-2.5, 2.5].forEach((wx) => {
+      const slatPillar = new THREE.Mesh(
+        new THREE.BoxGeometry(0.55, 3.2, 0.2),
+        new THREE.MeshStandardMaterial({ color: 0x3e2723, roughness: 0.6 })
+      );
+      slatPillar.position.set(wx, 1.74, -0.9);
+      bar.add(slatPillar);
+    });
+
+    // Sleek black roof cornice
+    const corniceGeo = new THREE.BoxGeometry(5.9, 0.22, 3.3);
+    const cornice = new THREE.Mesh(corniceGeo, new THREE.MeshStandardMaterial({ color: 0x020617, roughness: 0.4 }));
+    cornice.position.set(0, 3.42, 0.6);
+    bar.add(cornice);
+
+    // 3. Open Bar Lounge & Counter
+    // Polished Black Granite Bar Counter
+    const counterTopGeo = new THREE.BoxGeometry(3.6, 0.12, 0.7);
+    const counterTopMat = new THREE.MeshStandardMaterial({ color: 0x111827, roughness: 0.15, metalness: 0.8 });
+    const counterTop = new THREE.Mesh(counterTopGeo, counterTopMat);
+    counterTop.position.set(0, 1.05, -0.6);
+    bar.add(counterTop);
+
+    const counterBaseGeo = new THREE.BoxGeometry(3.4, 0.98, 0.6);
+    const counterBaseMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.5 });
+    const counterBase = new THREE.Mesh(counterBaseGeo, counterBaseMat);
+    counterBase.position.set(0, 0.5, -0.6);
+    bar.add(counterBase);
+
+    // Cyan LED under-counter glow strip
+    const ledStripGeo = new THREE.BoxGeometry(3.4, 0.04, 0.04);
+    const ledStripMat = new THREE.MeshBasicMaterial({ color: 0x06b6d4 });
+    const ledStrip = new THREE.Mesh(ledStripGeo, ledStripMat);
+    ledStrip.position.set(0, 0.98, -0.93);
+    bar.add(ledStrip);
+
+    // 4. Backlit Tiered Bottle Display Shelves
+    const shelfBackdropGeo = new THREE.BoxGeometry(3.4, 1.6, 0.2);
+    const shelfBackdrop = new THREE.Mesh(
+      shelfBackdropGeo,
+      new THREE.MeshStandardMaterial({ color: 0x1e1e2f, roughness: 0.3 })
+    );
+    shelfBackdrop.position.set(0, 1.8, 0.6);
+    bar.add(shelfBackdrop);
+
+    // 3 Glass Shelves with Bottles
+    const bottleColors = [
+      0x16a34a, // Green beer bottles
+      0xd97706, // Golden whiskey bottles
+      0x06b6d4, // Cyan vodka/gin bottles
+      0x991b1b, // Red wine bottles
+      0xfacc15  // Champagne / Rum
+    ];
+
+    [1.25, 1.7, 2.15].forEach((sy, tierIdx) => {
+      // Glass tier shelf
+      const shelfSlab = new THREE.Mesh(
+        new THREE.BoxGeometry(3.2, 0.04, 0.3),
+        new THREE.MeshStandardMaterial({ color: 0x38bdf8, roughness: 0.1, transparent: true, opacity: 0.8 })
+      );
+      shelfSlab.position.set(0, sy, 0.45);
+      bar.add(shelfSlab);
+
+      // Rows of bottles
+      for (let bx = -1.4; bx <= 1.4; bx += 0.28) {
+        const bCol = bottleColors[(Math.abs(Math.round(bx * 10)) + tierIdx) % bottleColors.length];
+        const bGroup = new THREE.Group();
+        bGroup.position.set(bx, sy + 0.02, 0.45);
+
+        // Bottle body
+        const bBody = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.045, 0.045, 0.22, 8),
+          new THREE.MeshStandardMaterial({ color: bCol, roughness: 0.2, metalness: 0.3, transparent: true, opacity: 0.9 })
+        );
+        bBody.position.y = 0.11;
+        bGroup.add(bBody);
+
+        // Bottle neck & cap
+        const bNeck = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.016, 0.022, 0.1, 8),
+          new THREE.MeshStandardMaterial({ color: bCol, roughness: 0.2 })
+        );
+        bNeck.position.y = 0.25;
+        bGroup.add(bNeck);
+
+        const bCap = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.018, 0.018, 0.02, 6),
+          new THREE.MeshBasicMaterial({ color: 0xfde047 })
+        );
+        bCap.position.y = 0.31;
+        bGroup.add(bCap);
+
+        bar.add(bGroup);
+      }
+    });
+
+    // 5. High Bar Stools
+    [-1.0, 0, 1.0].forEach((sx) => {
+      const stool = new THREE.Group();
+      stool.position.set(sx, 0.28, -1.25);
+
+      // Chrome central leg & circular base
+      const sBase = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.03, 0.24, 0.72, 12),
+        new THREE.MeshStandardMaterial({ color: 0x94a3b8, metalness: 0.9, roughness: 0.15 })
+      );
+      sBase.position.y = 0.36;
+      stool.add(sBase);
+
+      // Footrest ring
+      const fRing = new THREE.Mesh(
+        new THREE.TorusGeometry(0.16, 0.02, 8, 16),
+        new THREE.MeshStandardMaterial({ color: 0x94a3b8, metalness: 0.9, roughness: 0.15 })
+      );
+      fRing.rotation.x = Math.PI / 2;
+      fRing.position.y = 0.24;
+      stool.add(fRing);
+
+      // Round leather seat cushion
+      const sSeat = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.22, 0.22, 0.08, 16),
+        new THREE.MeshStandardMaterial({ color: 0x991b1b, roughness: 0.5 }) // crimson leather
+      );
+      sSeat.position.y = 0.74;
+      stool.add(sSeat);
+
+      bar.add(stool);
+    });
+
+    // 6. Vibrant Neon Mood Lights Inside Lounge
+    const neonCyan = new THREE.PointLight(0x06b6d4, 3.2, 9.0);
+    neonCyan.position.set(-1.2, 2.3, 0.2);
+    bar.add(neonCyan);
+
+    const neonPurple = new THREE.PointLight(0xd946ef, 2.8, 8.0);
+    neonPurple.position.set(1.2, 2.3, 0.2);
+    bar.add(neonPurple);
+
+    // 7. NEON SIGNBOARD: "HIGHWAY BAR" | মদের বার
+    const signCanvas = document.createElement('canvas');
+    signCanvas.width = 1024;
+    signCanvas.height = 256;
+    const sCtx = signCanvas.getContext('2d');
+
+    // Pitch black background
+    sCtx.fillStyle = '#030712';
+    sCtx.fillRect(0, 0, 1024, 256);
+
+    // Neon outer border (Hot Magenta glow)
+    sCtx.strokeStyle = '#ec4899';
+    sCtx.lineWidth = 10;
+    sCtx.shadowColor = '#ec4899';
+    sCtx.shadowBlur = 18;
+    sCtx.strokeRect(12, 12, 1000, 232);
+
+    // Neon inner border (Cyan glow)
+    sCtx.strokeStyle = '#06b6d4';
+    sCtx.lineWidth = 4;
+    sCtx.shadowColor = '#06b6d4';
+    sCtx.shadowBlur = 12;
+    sCtx.strokeRect(26, 26, 972, 204);
+
+    // Neon Beer Mug Icon on Left
+    const drawNeonBeerMug = (bx, by) => {
+      sCtx.shadowColor = '#facc15';
+      sCtx.shadowBlur = 14;
+
+      // Beer Mug Body
+      sCtx.fillStyle = '#facc15';
+      sCtx.beginPath();
+      sCtx.roundRect(bx, by + 18, 48, 56, [0, 0, 8, 8]);
+      sCtx.fill();
+
+      // Foam Head
+      sCtx.fillStyle = '#ffffff';
+      sCtx.beginPath();
+      sCtx.arc(bx + 10, by + 14, 14, 0, Math.PI * 2);
+      sCtx.arc(bx + 24, by + 8, 16, 0, Math.PI * 2);
+      sCtx.arc(bx + 38, by + 14, 14, 0, Math.PI * 2);
+      sCtx.fill();
+
+      // Handle
+      sCtx.strokeStyle = '#facc15';
+      sCtx.lineWidth = 6;
+      sCtx.beginPath();
+      sCtx.arc(bx + 52, by + 46, 16, -Math.PI * 0.45, Math.PI * 0.45);
+      sCtx.stroke();
+    };
+
+    // Neon Cocktail Glass Icon on Right
+    const drawNeonCocktail = (cx, cy) => {
+      sCtx.shadowColor = '#06b6d4';
+      sCtx.shadowBlur = 14;
+
+      // Triangle Glass Bowl
+      sCtx.strokeStyle = '#38bdf8';
+      sCtx.lineWidth = 5;
+      sCtx.beginPath();
+      sCtx.moveTo(cx - 30, cy + 10);
+      sCtx.lineTo(cx + 30, cy + 10);
+      sCtx.lineTo(cx, cy + 50);
+      sCtx.closePath();
+      sCtx.stroke();
+
+      // Liquid inside
+      sCtx.fillStyle = '#f43f5e';
+      sCtx.beginPath();
+      sCtx.moveTo(cx - 20, cy + 22);
+      sCtx.lineTo(cx + 20, cy + 22);
+      sCtx.lineTo(cx, cy + 50);
+      sCtx.closePath();
+      sCtx.fill();
+
+      // Stem & Base
+      sCtx.strokeStyle = '#38bdf8';
+      sCtx.lineWidth = 5;
+      sCtx.beginPath();
+      sCtx.moveTo(cx, cy + 50);
+      sCtx.lineTo(cx, cy + 80);
+      sCtx.moveTo(cx - 22, cy + 80);
+      sCtx.lineTo(cx + 22, cy + 80);
+      sCtx.stroke();
+
+      // Olive / Lime
+      sCtx.fillStyle = '#84cc16';
+      sCtx.beginPath();
+      sCtx.arc(cx - 6, cy + 16, 7, 0, Math.PI * 2);
+      sCtx.fill();
+    };
+
+    drawNeonBeerMug(52, 85);
+    drawNeonCocktail(940, 80);
+
+    // Top BOLD English "HIGHWAY BAR" in Neon Cyan & Hot Pink
+    sCtx.fillStyle = '#38bdf8';
+    sCtx.font = '900 84px sans-serif';
+    sCtx.textAlign = 'center';
+    sCtx.textBaseline = 'middle';
+    sCtx.shadowColor = '#06b6d4';
+    sCtx.shadowBlur = 24;
+    sCtx.fillText('HIGHWAY BAR', 512, 78);
+
+    // Center BOLD Bengali "মদের বার" in Glowing Amber/Yellow
+    sCtx.fillStyle = '#fde047';
+    sCtx.font = 'bold 62px sans-serif';
+    sCtx.shadowColor = '#f59e0b';
+    sCtx.shadowBlur = 20;
+    sCtx.fillText('মদের বার', 512, 168);
+
+    // Subtitle in Electric Lime Green
+    sCtx.fillStyle = '#a3e635';
+    sCtx.font = 'bold 25px sans-serif';
+    sCtx.shadowColor = '#84cc16';
+    sCtx.shadowBlur = 8;
+    sCtx.fillText('IMPORTED LIQUOR • CHILLED BEER • WINE LOUNGE', 512, 224);
+
+    const signTexture = new THREE.CanvasTexture(signCanvas);
+    const signMat = new THREE.MeshStandardMaterial({
+      map: signTexture,
+      roughness: 0.25,
+      emissive: 0x06b6d4,
+      emissiveIntensity: 0.35
+    });
+
+    const signGroup = new THREE.Group();
+    signGroup.position.set(0, 3.4, -0.95);
+
+    const signFrame = new THREE.Mesh(
+      new THREE.BoxGeometry(4.7, 0.95, 0.08),
+      new THREE.MeshStandardMaterial({ color: 0x020617, roughness: 0.4 })
+    );
+    signGroup.add(signFrame);
+
+    const signFaceGeo = new THREE.PlaneGeometry(4.62, 0.88);
+    signFaceGeo.rotateY(Math.PI);
+    const signFace = new THREE.Mesh(signFaceGeo, signMat);
+    signFace.position.set(0, 0, -0.045);
+    signGroup.add(signFace);
+
+    // Side 24/7 Neon Cocktail Signboard
+    const sideNeonGeo = new THREE.PlaneGeometry(0.8, 1.2);
+    const sideNeonCanvas = document.createElement('canvas');
+    sideNeonCanvas.width = 256;
+    sideNeonCanvas.height = 384;
+    const snCtx = sideNeonCanvas.getContext('2d');
+    snCtx.fillStyle = '#030712';
+    snCtx.fillRect(0, 0, 256, 384);
+    snCtx.strokeStyle = '#ec4899';
+    snCtx.lineWidth = 6;
+    snCtx.strokeRect(6, 6, 244, 372);
+    snCtx.fillStyle = '#facc15';
+    snCtx.font = '900 46px sans-serif';
+    snCtx.textAlign = 'center';
+    snCtx.shadowColor = '#f59e0b';
+    snCtx.shadowBlur = 12;
+    snCtx.fillText('BAR', 128, 70);
+    snCtx.fillStyle = '#38bdf8';
+    snCtx.font = 'bold 36px sans-serif';
+    snCtx.shadowColor = '#06b6d4';
+    snCtx.fillText('OPEN', 128, 130);
+    snCtx.fillStyle = '#ec4899';
+    snCtx.font = '900 44px sans-serif';
+    snCtx.shadowColor = '#ec4899';
+    snCtx.fillText('24/7', 128, 200);
+    snCtx.fillStyle = '#fde047';
+    snCtx.font = 'bold 32px sans-serif';
+    snCtx.shadowColor = '#f59e0b';
+    snCtx.fillText('মদ ও বিয়ার', 128, 280);
+    snCtx.fillStyle = '#a3e635';
+    snCtx.font = 'bold 22px sans-serif';
+    snCtx.fillText('CHILLED BEER', 128, 340);
+
+    const sideNeonTex = new THREE.CanvasTexture(sideNeonCanvas);
+    const sideNeonMesh = new THREE.Mesh(
+      sideNeonGeo,
+      new THREE.MeshStandardMaterial({ map: sideNeonTex, emissive: 0xec4899, emissiveIntensity: 0.35 })
+    );
+    sideNeonMesh.position.set(-2.82, 2.0, -0.6);
+    sideNeonMesh.rotation.y = -Math.PI / 2;
+    bar.add(sideNeonMesh);
+
+    return bar;
+  }
+
+  // ========================================================
+  // 11. ROADSIDE SMOKING GUYS GROUP (কয়েকটা ছেলে দাঁড়াইয়া সিগারেট খাইতেছে)
+  // 3 Guys Hanging Out: One Taking a Drag with Glowing Ember & Rising Smoke,
+  // One Holding a Lit Cigarette Talking, One Listening with Hands in Pockets!
+  // ========================================================
+  createSmokingGuysGroup(side = 1) {
+    const group = new THREE.Group();
+    group.name = 'smoking_guys_group';
+    group.scale.set(1.25, 1.25, 1.25); // Well-proportioned and visible
+
+    const skinMat = new THREE.MeshStandardMaterial({ color: 0xf5c396, roughness: 0.65 });
+    const hairMat = new THREE.MeshStandardMaterial({ color: 0x18181b, roughness: 0.45 });
+    const shoeWhiteMat = new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.7 });
+    const shoeDarkMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.7 });
+
+    // ----------------------------------------------------
+    // GUY 1: The Smoker taking a drag (মুখে সিগারেট নিয়ে টানছে)
+    // ----------------------------------------------------
+    const guy1 = new THREE.Group();
+    guy1.position.set(-0.42, 0, 0);
+
+    const g1JacketMat = new THREE.MeshStandardMaterial({ color: 0xdc2626, roughness: 0.7 }); // Trendy red hoodie jacket
+    const g1PantsMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.8 });  // Dark navy jeans
+
+    // Torso
+    const g1Torso = new THREE.Mesh(new THREE.BoxGeometry(0.38, 0.58, 0.24), g1JacketMat);
+    g1Torso.position.set(0, 1.15, 0);
+    g1Torso.rotation.y = 0.25;
+    guy1.add(g1Torso);
+
+    // Hoodie hood on back of neck
+    const g1Hood = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.24, 0.16), g1JacketMat);
+    g1Hood.position.set(0, 1.38, 0.12);
+    guy1.add(g1Hood);
+
+    // Head Pivot for breathing / smoking drag motion
+    const g1HeadPivot = new THREE.Group();
+    g1HeadPivot.position.set(0, 1.54, 0);
+    g1HeadPivot.rotation.x = -0.12; // Slight head tilt back while smoking!
+    g1HeadPivot.rotation.y = 0.25;
+
+    const g1Head = new THREE.Mesh(new THREE.SphereGeometry(0.125, 12, 12), skinMat);
+    g1HeadPivot.add(g1Head);
+
+    const g1Hair = new THREE.Mesh(new THREE.SphereGeometry(0.132, 12, 12), hairMat);
+    g1Hair.scale.set(1.02, 1.08, 1.04);
+    g1Hair.position.set(0, 0.03, -0.01);
+    g1HeadPivot.add(g1Hair);
+    guy1.add(g1HeadPivot);
+
+    // Legs
+    [-0.1, 0.1].forEach((lx) => {
+      const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.05, 0.84, 8), g1PantsMat);
+      leg.position.set(lx, 0.44, 0);
+      guy1.add(leg);
+
+      const shoe = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.08, 0.22), shoeWhiteMat);
+      shoe.position.set(lx, 0.04, -0.04);
+      guy1.add(shoe);
+    });
+
+    // Left arm hanging naturally down
+    const g1LeftArm = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.04, 0.52, 8), g1JacketMat);
+    g1LeftArm.position.set(-0.24, 1.1, 0);
+    g1LeftArm.rotation.z = 0.15;
+    guy1.add(g1LeftArm);
+
+    // Right arm raised with hand at mouth holding cigarette!
+    const g1RightUpperArm = new THREE.Mesh(new THREE.CylinderGeometry(0.048, 0.044, 0.32, 8), g1JacketMat);
+    g1RightUpperArm.position.set(0.23, 1.25, -0.06);
+    g1RightUpperArm.rotation.z = -Math.PI * 0.35;
+    g1RightUpperArm.rotation.x = -Math.PI * 0.25;
+    guy1.add(g1RightUpperArm);
+
+    const g1RightForearm = new THREE.Mesh(new THREE.CylinderGeometry(0.042, 0.038, 0.32, 8), g1JacketMat);
+    g1RightForearm.position.set(0.14, 1.44, -0.12);
+    g1RightForearm.rotation.z = Math.PI * 0.32;
+    g1RightForearm.rotation.x = -Math.PI * 0.45;
+    guy1.add(g1RightForearm);
+
+    // Right Hand
+    const g1Hand = new THREE.Mesh(new THREE.SphereGeometry(0.045, 8, 8), skinMat);
+    g1Hand.position.set(0.04, 1.5, -0.16);
+    guy1.add(g1Hand);
+
+    // THE CIGARETTE IN MOUTH / HAND
+    const cigGroup1 = new THREE.Group();
+    cigGroup1.position.set(0.02, 1.51, -0.18);
+    cigGroup1.rotation.x = -Math.PI * 0.15;
+    cigGroup1.rotation.y = 0.28;
+
+    // Filter tip (beige)
+    const cigFilter = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.012, 0.012, 0.028, 8),
+      new THREE.MeshStandardMaterial({ color: 0xd97706, roughness: 0.9 })
+    );
+    cigFilter.rotation.x = Math.PI / 2;
+    cigGroup1.add(cigFilter);
+
+    // White cigarette body
+    const cigBody = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.012, 0.012, 0.065, 8),
+      new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.5 })
+    );
+    cigBody.rotation.x = Math.PI / 2;
+    cigBody.position.z = -0.046;
+    cigGroup1.add(cigBody);
+
+    // Burning Red/Orange Cherry Ember Tip
+    const cigEmber = new THREE.Mesh(
+      new THREE.SphereGeometry(0.014, 8, 8),
+      new THREE.MeshBasicMaterial({ color: 0xff2200 })
+    );
+    cigEmber.position.z = -0.082;
+    cigGroup1.add(cigEmber);
+
+    // Mini glowing ember point light illuminating face & hand
+    const emberLight1 = new THREE.PointLight(0xff3b00, 1.2, 1.2);
+    emberLight1.position.z = -0.082;
+    cigGroup1.add(emberLight1);
+
+    // Animated Rising Smoke Puffs from cigarette tip
+    const smokeGroup1 = new THREE.Group();
+    smokeGroup1.position.set(0.02, 1.51, -0.26);
+    smokeGroup1.userData = {
+      type: 'cigarette',
+      maxH: 0.5,
+      spd: 0.007,
+      drift: 0.004,
+      light: emberLight1,
+      seed: Math.random() * 5
+    };
+    for (let s = 0; s < 5; s++) {
+      const sp = new THREE.Mesh(
+        new THREE.SphereGeometry(0.022 + s * 0.006, 6, 6),
+        this.smokeMat
+      );
+      sp.position.y = s * 0.1;
+      smokeGroup1.add(sp);
+    }
+    this.smokeEmitters.push(smokeGroup1);
+    guy1.add(smokeGroup1);
+
+    guy1.add(cigGroup1);
+    group.add(guy1);
+
+    // Register Guy 1 for animation (breathing/puffing)
+    this.animatedAnimals.push({
+      type: 'smoker',
+      head: g1HeadPivot,
+      seed: Math.random() * 10
+    });
+
+    // ----------------------------------------------------
+    // GUY 2: Holding lit cigarette while talking (হাতে সিগারেট নিয়ে কথা বলছে)
+    // ----------------------------------------------------
+    const guy2 = new THREE.Group();
+    guy2.position.set(0.48, 0, -0.15);
+
+    const g2ShirtMat = new THREE.MeshStandardMaterial({ color: 0x1e3a8a, roughness: 0.7 }); // Navy blue t-shirt
+    const g2PantsMat = new THREE.MeshStandardMaterial({ color: 0x3f6212, roughness: 0.8 });  // Olive green cargo pants
+
+    const g2Torso = new THREE.Mesh(new THREE.BoxGeometry(0.36, 0.56, 0.22), g2ShirtMat);
+    g2Torso.position.set(0, 1.14, 0);
+    g2Torso.rotation.y = -0.7; // Facing toward Guy 1 and Guy 3
+    guy2.add(g2Torso);
+
+    const g2Head = new THREE.Mesh(new THREE.SphereGeometry(0.12, 12, 12), skinMat);
+    g2Head.position.set(0, 1.54, 0);
+    g2Head.rotation.y = -0.7;
+    guy2.add(g2Head);
+
+    const g2Hair = new THREE.Mesh(new THREE.SphereGeometry(0.128, 12, 12), hairMat);
+    g2Hair.scale.set(1.02, 1.06, 1.04);
+    g2Hair.position.set(0, 1.57, -0.01);
+    guy2.add(g2Hair);
+
+    // Legs
+    [-0.09, 0.09].forEach((lx) => {
+      const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.058, 0.05, 0.84, 8), g2PantsMat);
+      leg.position.set(lx, 0.44, 0);
+      guy2.add(leg);
+
+      const shoe = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.08, 0.22), shoeDarkMat);
+      shoe.position.set(lx, 0.04, -0.04);
+      guy2.add(shoe);
+    });
+
+    // Right arm gesturing while talking
+    const g2RightArm = new THREE.Mesh(new THREE.CylinderGeometry(0.042, 0.038, 0.48, 8), g2ShirtMat);
+    g2RightArm.position.set(0.22, 1.16, 0.06);
+    g2RightArm.rotation.z = -Math.PI * 0.22;
+    g2RightArm.rotation.x = -Math.PI * 0.25;
+    guy2.add(g2RightArm);
+
+    // Left arm holding lit cigarette down at waist level
+    const g2LeftArm = new THREE.Mesh(new THREE.CylinderGeometry(0.042, 0.038, 0.48, 8), g2ShirtMat);
+    g2LeftArm.position.set(-0.21, 1.08, 0.04);
+    g2LeftArm.rotation.z = Math.PI * 0.16;
+    g2LeftArm.rotation.x = -Math.PI * 0.12;
+    guy2.add(g2LeftArm);
+
+    const g2LeftHand = new THREE.Mesh(new THREE.SphereGeometry(0.042, 8, 8), skinMat);
+    g2LeftHand.position.set(-0.28, 0.85, 0.1);
+    guy2.add(g2LeftHand);
+
+    // Cigarette held in Guy 2's left hand
+    const cigGroup2 = new THREE.Group();
+    cigGroup2.position.set(-0.32, 0.85, 0.12);
+    cigGroup2.rotation.x = -Math.PI * 0.35;
+    cigGroup2.rotation.y = -0.4;
+
+    const cigBody2 = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.012, 0.012, 0.08, 8),
+      new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.5 })
+    );
+    cigBody2.rotation.x = Math.PI / 2;
+    cigGroup2.add(cigBody2);
+
+    const cigEmber2 = new THREE.Mesh(
+      new THREE.SphereGeometry(0.014, 8, 8),
+      new THREE.MeshBasicMaterial({ color: 0xff2200 })
+    );
+    cigEmber2.position.z = -0.045;
+    cigGroup2.add(cigEmber2);
+
+    const emberLight2 = new THREE.PointLight(0xff3b00, 0.9, 1.0);
+    emberLight2.position.z = -0.045;
+    cigGroup2.add(emberLight2);
+
+    // Animated Rising Smoke Puffs for Guy 2's cigarette
+    const smokeGroup2 = new THREE.Group();
+    smokeGroup2.position.set(-0.32, 0.88, 0.1);
+    smokeGroup2.userData = {
+      type: 'cigarette',
+      maxH: 0.45,
+      spd: 0.006,
+      drift: 0.003,
+      light: emberLight2,
+      seed: Math.random() * 5
+    };
+    for (let s = 0; s < 4; s++) {
+      const sp = new THREE.Mesh(
+        new THREE.SphereGeometry(0.02 + s * 0.005, 6, 6),
+        this.smokeMat
+      );
+      sp.position.y = s * 0.1;
+      smokeGroup2.add(sp);
+    }
+    this.smokeEmitters.push(smokeGroup2);
+    guy2.add(smokeGroup2);
+
+    guy2.add(cigGroup2);
+    group.add(guy2);
+
+    // ----------------------------------------------------
+    // GUY 3: Buddy with hands in jacket pockets listening (জ্যাকেটের পকেটে হাত দিয়ে দাঁড়িয়ে শুনছে)
+    // ----------------------------------------------------
+    const guy3 = new THREE.Group();
+    guy3.position.set(0.02, 0, 0.52);
+
+    const g3JacketMat = new THREE.MeshStandardMaterial({ color: 0x334155, roughness: 0.7 }); // Charcoal jacket
+    const g3PantsMat = new THREE.MeshStandardMaterial({ color: 0xd4a373, roughness: 0.8 });  // Khaki chinos
+
+    const g3Torso = new THREE.Mesh(new THREE.BoxGeometry(0.38, 0.58, 0.24), g3JacketMat);
+    g3Torso.position.set(0, 1.15, 0);
+    g3Torso.rotation.y = Math.PI * 0.9; // Facing back towards Guy 1 and 2
+    guy3.add(g3Torso);
+
+    const g3Head = new THREE.Mesh(new THREE.SphereGeometry(0.125, 12, 12), skinMat);
+    g3Head.position.set(0, 1.54, 0);
+    g3Head.rotation.y = Math.PI * 0.9;
+    guy3.add(g3Head);
+
+    const g3Hair = new THREE.Mesh(new THREE.SphereGeometry(0.132, 12, 12), hairMat);
+    g3Hair.scale.set(1.02, 1.08, 1.04);
+    g3Hair.position.set(0, 1.57, 0.01);
+    guy3.add(g3Hair);
+
+    // Legs
+    [-0.1, 0.1].forEach((lx) => {
+      const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.058, 0.05, 0.84, 8), g3PantsMat);
+      leg.position.set(lx, 0.44, 0);
+      guy3.add(leg);
+
+      const shoe = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.08, 0.22), new THREE.MeshStandardMaterial({ color: 0x78350f }));
+      shoe.position.set(lx, 0.04, 0.04);
+      guy3.add(shoe);
+    });
+
+    // Arms bent with hands in jacket pockets
+    [-0.22, 0.22].forEach((ax) => {
+      const arm = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.04, 0.48, 8), g3JacketMat);
+      arm.position.set(ax, 1.12, -0.06);
+      arm.rotation.z = ax > 0 ? -0.25 : 0.25;
+      arm.rotation.x = Math.PI * 0.18;
+      guy3.add(arm);
+    });
+
+    group.add(guy3);
+
+    // ----------------------------------------------------
+    // ROADSIDE DETAILS: Concrete curb / brick, Cigarette pack & Matchbox
+    // ----------------------------------------------------
+    const brick = new THREE.Mesh(
+      new THREE.BoxGeometry(0.35, 0.2, 0.5),
+      this.brickMat
+    );
+    brick.position.set(-0.1, 0.1, -0.15);
+    group.add(brick);
+
+    // Gold/Navy Cigarette Pack on brick
+    const cigPack = new THREE.Mesh(
+      new THREE.BoxGeometry(0.1, 0.05, 0.16),
+      new THREE.MeshStandardMaterial({ color: 0x1e3a8a, metalness: 0.5, roughness: 0.3 })
+    );
+    cigPack.position.set(-0.1, 0.225, -0.15);
+    group.add(cigPack);
+
+    // Tiny matchbox with red strike edge
+    const matchbox = new THREE.Mesh(
+      new THREE.BoxGeometry(0.07, 0.035, 0.11),
+      new THREE.MeshStandardMaterial({ color: 0xf59e0b, roughness: 0.8 })
+    );
+    matchbox.position.set(0.02, 0.218, -0.22);
+    group.add(matchbox);
+
+    return group;
+  }
+
+  // Update animal animations, environmental motion, and smoke every frame
   update(time) {
-    // 1. Animals (Cows chewing/grazing, tails swishing, ducks paddling)
+    // 1. Animals & Figures (Cows chewing/grazing, ducks, romantic couple, smoking guys)
     this.animatedAnimals.forEach((anim) => {
       if (anim.type === 'cow') {
         // Natural head grazing / nodding
@@ -1358,18 +2408,38 @@ export class BangladeshProps {
           const pulse = 1.0 + Math.sin(time * 3.8 + anim.seed) * 0.14;
           anim.heart.scale.set(pulse, pulse, pulse);
         }
+      } else if (anim.type === 'smoker') {
+        // Subtle breathing & head motion while taking a drag
+        if (anim.head) {
+          const drag = Math.sin(time * 1.8 + anim.seed) * 0.04;
+          anim.head.rotation.x = -0.12 + Math.max(0, drag);
+        }
       }
     });
 
-    // 2. Tea Stall Smoke Emitters
+    // 2. Smoke Emitters (Tea Stall kettle steam + Cigarette smoke puffs)
     this.smokeEmitters.forEach((group) => {
+      const isCig = group.userData && group.userData.type === 'cigarette';
+      const maxH = (group.userData && group.userData.maxH) || (isCig ? 0.5 : 1.4);
+      const spd = (group.userData && group.userData.spd) || (isCig ? 0.007 : 0.015);
+      const drift = (group.userData && group.userData.drift) || (isCig ? 0.004 : 0.005);
+
       group.children.forEach((p, idx) => {
-        p.position.y += 0.015;
-        p.position.x += Math.sin(time * 3 + idx) * 0.005;
-        if (p.position.y > 1.4) {
+        p.position.y += spd;
+        p.position.x += Math.sin(time * 3.0 + idx) * drift;
+        p.position.z += Math.cos(time * 2.6 + idx) * (drift * 0.6);
+        if (p.position.y > maxH) {
           p.position.y = 0;
+          p.position.x = 0;
+          p.position.z = 0;
         }
       });
+
+      // Cigarette ember light flicker
+      if (group.userData && group.userData.light) {
+        const seed = group.userData.seed || 0;
+        group.userData.light.intensity = 0.85 + Math.sin(time * 7.5 + seed) * 0.35;
+      }
     });
   }
 }

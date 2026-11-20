@@ -380,7 +380,7 @@ canvas {
 
 .developer-link {
   color: inherit;
-  text-decoration: none;
+  text-decoration: none !important;
   display: inline-flex;
   align-items: center;
   gap: 0.2rem;
@@ -396,19 +396,13 @@ canvas {
   color: var(--accent-amber);
   font-weight: 800;
   font-size: 0.60rem;
-  text-decoration: underline;
-  text-underline-offset: 2px;
-  text-decoration-color: rgba(245, 158, 11, 0.45);
+  text-decoration: none !important;
   transition: all 0.2s ease;
   text-shadow: 0 0 6px rgba(245, 158, 11, 0.35);
 }
 
 .developer-link .ext-icon {
-  stroke: var(--accent-amber);
-  opacity: 0.75;
-  width: 10px;
-  height: 10px;
-  transition: transform 0.2s ease, opacity 0.2s ease;
+  display: none !important;
 }
 
 .developer-link:hover,
@@ -421,13 +415,7 @@ canvas {
 .developer-link:active strong {
   color: #fde047;
   text-shadow: 0 0 14px rgba(245, 158, 11, 0.9);
-  text-decoration-color: var(--accent-amber);
-}
-
-.developer-link:hover .ext-icon,
-.developer-link:active .ext-icon {
-  opacity: 1;
-  transform: translate(1px, -1px);
+  text-decoration: none !important;
 }
 
 /* ---------------- How-to-Play Modal (Popup only on click) ---------------- */

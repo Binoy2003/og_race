@@ -340,6 +340,56 @@ export class RoadManager {
     // Angle shelter 18° towards oncoming traffic (+Z) so oncoming players look directly into the open shelter, signs & couple!
     chawni.rotation.y = chawniSide > 0 ? (Math.PI * 0.5 + 0.32) : (-Math.PI * 0.5 - 0.32);
     group.add(chawni);
+
+    // I. HIGHWAY CAFE ("HIGHWAY CAFE" / "ক্যাফে ও রেস্তোরাঁ") & HIGHWAY BAR ("HIGHWAY BAR" / "মদের বার")
+    // User request: Roadside cafe, alcohol bar, and guys standing and smoking cigarettes!
+    // Safely positioned on roadside verge (|x| >= 12.0m for buildings, |x| >= 8.9m for people)
+    // Front openings and signboards angled towards oncoming traffic (+Z)
+    if (index % 4 === 1 || index % 4 === 2) {
+      // HIGHWAY CAFE
+      const cafeSide = (index % 4 === 2) ? 1 : -1;
+      const cafe = p.createHighwayCafe(cafeSide);
+      const cafeX = (this.roadWidth * 0.5 + 5.6) * cafeSide;
+      const cafeZ = (index % 4 === 2) ? 14 : 12;
+      cafe.position.set(cafeX, 0, cafeZ);
+      cafe.rotation.y = cafeSide > 0 ? (Math.PI * 0.5 + 0.28) : (-Math.PI * 0.5 - 0.28);
+      group.add(cafe);
+
+      // Group of young guys standing and smoking cigarettes outside the Cafe!
+      const guysSide = cafeSide;
+      const guys = p.createSmokingGuysGroup(guysSide);
+      const guysX = (this.roadWidth * 0.5 + 2.5) * guysSide;
+      const guysZ = cafeZ - 6;
+      guys.position.set(guysX, 0, guysZ);
+      guys.rotation.y = guysSide > 0 ? -0.4 : 0.4;
+      group.add(guys);
+    } else {
+      // HIGHWAY BAR ("মদের বার" / "HIGHWAY BAR & LOUNGE")
+      const barSide = (index % 4 === 0) ? 1 : -1;
+      const bar = p.createHighwayBar(barSide);
+      const barX = (this.roadWidth * 0.5 + 5.6) * barSide;
+      const barZ = 12;
+      bar.position.set(barX, 0, barZ);
+      bar.rotation.y = barSide > 0 ? (Math.PI * 0.5 + 0.28) : (-Math.PI * 0.5 - 0.28);
+      group.add(bar);
+
+      // Group of young guys standing and smoking cigarettes outside the Bar!
+      const guysSide = barSide;
+      const guys = p.createSmokingGuysGroup(guysSide);
+      const guysX = (this.roadWidth * 0.5 + 2.5) * guysSide;
+      const guysZ = barZ - 6;
+      guys.position.set(guysX, 0, guysZ);
+      guys.rotation.y = guysSide > 0 ? -0.4 : 0.4;
+      group.add(guys);
+    }
+
+    // Beside the Village Tea Stall (Cha er Tong at index % 3 === 1), also place smoking guys!
+    if (index % 3 === 1) {
+      const teaGuys = p.createSmokingGuysGroup(1);
+      teaGuys.position.set(this.roadWidth * 0.5 + 2.6, 0, 7);
+      teaGuys.rotation.y = -0.3;
+      group.add(teaGuys);
+    }
   }
 
   // Update segments and rural animations as player moves forward along -Z
