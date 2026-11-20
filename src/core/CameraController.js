@@ -38,14 +38,16 @@ export class CameraController {
   setVehicleType(type) {
     this.currentVehicleType = type;
     if (type === 'rickshaw') {
-      this.defaultOffset.set(0, 2.2, 4.8);
-      this.lookOffset.set(0, 1.15, -2.2);
+      // Elevated perspective looking down highway: player vehicle is neatly in view without blocking cars ahead!
+      this.defaultOffset.set(0, 3.5, 7.6);
+      this.lookOffset.set(0, 1.25, -16.0);
     } else if (type === 'cng') {
-      this.defaultOffset.set(0, 2.4, 5.2);
-      this.lookOffset.set(0, 1.2, -2.4);
+      this.defaultOffset.set(0, 3.8, 8.2);
+      this.lookOffset.set(0, 1.3, -16.0);
     } else {
-      this.defaultOffset.set(0, 3.2, 6.8);
-      this.lookOffset.set(0, 1.2, -3.0);
+      // Heavy Truck elevated view
+      this.defaultOffset.set(0, 4.4, 9.4);
+      this.lookOffset.set(0, 1.4, -18.0);
     }
   }
 

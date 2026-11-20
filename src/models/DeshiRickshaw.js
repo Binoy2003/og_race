@@ -36,9 +36,12 @@ export class DeshiRickshaw {
 
     // Collision Bounding Box (tuned for Cycle Rickshaw)
     this.box = new THREE.Box3();
-    this.collisionSize = new THREE.Vector3(1.85, 2.35, 3.8);
+    this.collisionSize = new THREE.Vector3(1.5, 2.1, 3.2);
 
     this.buildRickshaw();
+
+    // Balanced proportional size so highway in front is clearly visible
+    this.group.scale.set(0.85, 0.85, 0.85);
   }
 
   buildRickshaw() {
@@ -491,31 +494,33 @@ export class DeshiRickshaw {
     });
   }
 
-  // Create Bicycle / Rickshaw Wheel with Chrome Rim, Spokes & Tire
+  // Create Bicycle / Rickshaw Wheel with Chrome Rim, Spokes & Tire (Perfect Round Wheel in YZ plane)
   createRickshawWheel(radius, hubMat, chromeMat, tireMat) {
     const wheelGroup = new THREE.Group();
 
-    // Rubber Tire
-    const tireGeo = new THREE.TorusGeometry(radius, 0.032, 10, 32);
+    // Rubber Tire - oriented in YZ plane (axle along X)
+    const tireGeo = new THREE.TorusGeometry(radius, 0.038, 14, 36);
+    tireGeo.rotateY(Math.PI / 2);
     const tire = new THREE.Mesh(tireGeo, tireMat);
     wheelGroup.add(tire);
 
-    // Chrome Rim
-    const rimGeo = new THREE.TorusGeometry(radius * 0.94, 0.018, 8, 32);
+    // Chrome Rim - oriented in YZ plane
+    const rimGeo = new THREE.TorusGeometry(radius * 0.92, 0.02, 10, 36);
+    rimGeo.rotateY(Math.PI / 2);
     const rim = new THREE.Mesh(rimGeo, chromeMat);
     wheelGroup.add(rim);
 
-    // Red Center Hub
-    const hubGeo = new THREE.CylinderGeometry(0.06, 0.06, 0.12, 12);
-    hubGeo.rotateX(Math.PI / 2);
+    // Red Center Hub - cylinder with axis along X
+    const hubGeo = new THREE.CylinderGeometry(0.06, 0.06, 0.14, 14);
+    hubGeo.rotateZ(Math.PI / 2);
     const hub = new THREE.Mesh(hubGeo, hubMat);
     wheelGroup.add(hub);
 
-    // 12 Spokes
-    for (let i = 0; i < 12; i++) {
-      const angle = (i * Math.PI) / 6;
-      const spokeGeo = new THREE.CylinderGeometry(0.005, 0.005, radius * 1.85, 4);
-      spokeGeo.rotateZ(angle);
+    // 14 Spokes radiating outwards in YZ plane
+    for (let i = 0; i < 14; i++) {
+      const angle = (i * Math.PI) / 7;
+      const spokeGeo = new THREE.CylinderGeometry(0.005, 0.005, radius * 1.84, 4);
+      spokeGeo.rotateX(angle);
       const spoke = new THREE.Mesh(spokeGeo, chromeMat);
       wheelGroup.add(spoke);
     }

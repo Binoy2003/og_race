@@ -31,9 +31,12 @@ export class DeshiTruck {
 
     // Collision Bounding Box (tuned for loaded truck)
     this.box = new THREE.Box3();
-    this.collisionSize = new THREE.Vector3(2.35, 3.1, 6.2);
+    this.collisionSize = new THREE.Vector3(2.1, 2.8, 5.5);
 
     this.buildTruck();
+
+    // Balanced proportional size so highway in front is clearly visible
+    this.group.scale.set(0.88, 0.88, 0.88);
   }
 
   buildTruck() {

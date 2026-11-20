@@ -30,9 +30,12 @@ export class DeshiCNG {
 
     // Collision Bounding Box (tuned for CNG 3-wheeler)
     this.box = new THREE.Box3();
-    this.collisionSize = new THREE.Vector3(1.85, 2.1, 3.4);
+    this.collisionSize = new THREE.Vector3(1.6, 1.95, 3.1);
 
     this.buildCNG();
+
+    // Balanced proportional size so highway in front is clearly visible
+    this.group.scale.set(0.86, 0.86, 0.86);
   }
 
   buildCNG() {

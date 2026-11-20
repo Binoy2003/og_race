@@ -560,6 +560,18 @@ export class BangladeshProps {
     roof.castShadow = true;
     chawni.add(roof);
 
+    // Warm Lantern / Lamp under roof (illuminating the couple romantically)
+    const lamp = new THREE.PointLight(0xffedd5, 1.6, 10);
+    lamp.position.set(0, 2.3, 0.4);
+    chawni.add(lamp);
+
+    const bulbMesh = new THREE.Mesh(
+      new THREE.SphereGeometry(0.08, 10, 10),
+      new THREE.MeshBasicMaterial({ color: 0xfff7ed })
+    );
+    bulbMesh.position.set(0, 2.38, 0.4);
+    chawni.add(bulbMesh);
+
     // 5. Authentic Signboard: "যাত্রী ছাউনি | বাস স্টপ"
     const signCanvas = document.createElement('canvas');
     signCanvas.width = 512;
@@ -579,11 +591,11 @@ export class BangladeshProps {
     sCtx.fillStyle = '#ffffff';
     sCtx.font = 'bold 44px sans-serif';
     sCtx.textAlign = 'center';
-    sCtx.fillText('যাত্রী ছাউনি', 256, 62);
+    sCtx.fillText('যাত্রী ছাউনি', 256, 60);
 
     sCtx.fillStyle = '#fde047';
     sCtx.font = 'bold 26px sans-serif';
-    sCtx.fillText('বাস স্টপ', 256, 102);
+    sCtx.fillText('বাস স্টপ (BUS STOP)', 256, 102);
 
     const signTexture = new THREE.CanvasTexture(signCanvas);
     const signGeo = new THREE.PlaneGeometry(3.2, 0.85);
@@ -621,19 +633,19 @@ export class BangladeshProps {
     const girlPantsMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.8 }); // white salwar
     const girlHairMat = new THREE.MeshStandardMaterial({ color: 0x0f0e0e, roughness: 0.4 });
 
-    // A. Boy (sitting on left)
+    // A. Boy (sitting close on left, leaning affectionately towards girl)
     const boy = new THREE.Group();
-    boy.position.set(-0.35, 0, 0);
+    boy.position.set(-0.24, 0, 0);
 
     const boyTorso = new THREE.Mesh(new THREE.BoxGeometry(0.36, 0.46, 0.24), boyShirtMat);
     boyTorso.position.set(0, 0.25, 0);
-    boyTorso.rotation.y = 0.2; // angled towards girl
-    boyTorso.rotation.z = -0.06;
+    boyTorso.rotation.y = 0.28; // angled towards girl
+    boyTorso.rotation.z = -0.1; // romantic lean in
     boy.add(boyTorso);
 
     const boyHead = new THREE.Mesh(new THREE.SphereGeometry(0.12, 14, 14), skinMat);
     boyHead.position.set(0.04, 0.58, 0.02);
-    boyHead.rotation.y = 0.3; // looking fondly at girl
+    boyHead.rotation.y = 0.38; // looking lovingly into girl's eyes
     boy.add(boyHead);
 
     const boyHair = new THREE.Mesh(new THREE.SphereGeometry(0.13, 14, 14), boyHairMat);
@@ -653,23 +665,23 @@ export class BangladeshProps {
       boy.add(calve);
     });
 
-    // Boy arm reaching right holding girl's hand
+    // Boy arm reaching right holding girl's hand tight
     const boyArm = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.04, 0.34, 8), boyShirtMat);
-    boyArm.position.set(0.22, 0.14, -0.05);
+    boyArm.position.set(0.18, 0.14, -0.05);
     boyArm.rotation.z = -Math.PI / 4;
-    boyArm.rotation.x = -0.2;
+    boyArm.rotation.x = -0.18;
     boy.add(boyArm);
 
     coupleGroup.add(boy);
 
-    // B. Girl (sitting on right)
+    // B. Girl (sitting close on right, leaning sweetly on boy, holding red rose!)
     const girl = new THREE.Group();
-    girl.position.set(0.35, 0, 0);
+    girl.position.set(0.24, 0, 0);
 
     const girlTorso = new THREE.Mesh(new THREE.BoxGeometry(0.32, 0.42, 0.22), girlDressMat);
     girlTorso.position.set(0, 0.23, 0);
-    girlTorso.rotation.y = -0.2; // angled towards boy
-    girlTorso.rotation.z = 0.08;
+    girlTorso.rotation.y = -0.28; // angled towards boy
+    girlTorso.rotation.z = 0.1;  // romantic lean in
     girl.add(girlTorso);
 
     // Yellow Orna draped over shoulder
@@ -679,7 +691,7 @@ export class BangladeshProps {
 
     const girlHead = new THREE.Mesh(new THREE.SphereGeometry(0.11, 14, 14), skinMat);
     girlHead.position.set(-0.04, 0.54, 0.02);
-    girlHead.rotation.y = -0.3; // looking fondly at boy
+    girlHead.rotation.y = -0.38; // looking sweetly at boy
     girl.add(girlHead);
 
     const girlHair = new THREE.Mesh(new THREE.SphereGeometry(0.12, 14, 14), girlHairMat);
@@ -704,19 +716,63 @@ export class BangladeshProps {
       girl.add(calve);
     });
 
-    // Girl arm reaching left holding boy's hand
+    // Girl left arm reaching left holding boy's hand
     const girlArm = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.035, 0.32, 8), girlDressMat);
-    girlArm.position.set(-0.2, 0.14, -0.05);
+    girlArm.position.set(-0.16, 0.14, -0.05);
     girlArm.rotation.z = Math.PI / 4;
-    girlArm.rotation.x = -0.2;
+    girlArm.rotation.x = -0.18;
     girl.add(girlArm);
+
+    // ----------------------------------------------------
+    // RED ROSE IN GIRL'S HAND (একটি লাল গোলাপ - User Request!)
+    // ----------------------------------------------------
+    const roseGroup = new THREE.Group();
+    roseGroup.position.set(0.22, 0.16, -0.18); // Held gracefully in girl's right hand
+    roseGroup.rotation.x = -0.35;
+    roseGroup.rotation.z = -0.15;
+
+    // Green Flower Stem
+    const stemGeo = new THREE.CylinderGeometry(0.012, 0.014, 0.32, 8);
+    const stemMat = new THREE.MeshStandardMaterial({ color: 0x15803d, roughness: 0.8 });
+    const stem = new THREE.Mesh(stemGeo, stemMat);
+    roseGroup.add(stem);
+
+    // Green Rose Leaves
+    const leafGeo = new THREE.PlaneGeometry(0.08, 0.045);
+    const leafMat = new THREE.MeshStandardMaterial({ color: 0x16a34a, roughness: 0.6, side: THREE.DoubleSide });
+    [-1, 1].forEach((ls) => {
+      const leaf = new THREE.Mesh(leafGeo, leafMat);
+      leaf.position.set(ls * 0.04, -0.03, 0);
+      leaf.rotation.z = ls * 0.5;
+      roseGroup.add(leaf);
+    });
+
+    // Ruby Red Rose Bloom (Vivid Red Petals)
+    const roseMat = new THREE.MeshStandardMaterial({
+      color: 0xdc2626,
+      roughness: 0.4,
+      metalness: 0.08
+    });
+    const roseBudGeo = new THREE.SphereGeometry(0.065, 14, 14);
+    roseBudGeo.scale(1.1, 1.3, 1.1);
+    const roseBud = new THREE.Mesh(roseBudGeo, roseMat);
+    roseBud.position.set(0, 0.22, 0);
+    roseGroup.add(roseBud);
+
+    const outerPetalGeo = new THREE.TorusGeometry(0.055, 0.024, 8, 16);
+    outerPetalGeo.rotateX(Math.PI / 2);
+    const outerPetals = new THREE.Mesh(outerPetalGeo, roseMat);
+    outerPetals.position.set(0, 0.19, 0);
+    roseGroup.add(outerPetals);
+
+    girl.add(roseGroup);
 
     coupleGroup.add(girl);
 
-    // C. CLASPED HANDS ON THE BENCH (HOLDING HANDS ROMANTICALLY!)
-    const claspedHands = new THREE.Mesh(new THREE.SphereGeometry(0.05, 10, 10), skinMat);
+    // C. CLASPED HANDS ON THE BENCH (HOLDING HANDS ROMANTICALLY IN THE CENTER!)
+    const claspedHands = new THREE.Mesh(new THREE.SphereGeometry(0.055, 10, 10), skinMat);
     claspedHands.scale.set(1.5, 0.9, 1.1);
-    claspedHands.position.set(0, 0.08, -0.08);
+    claspedHands.position.set(0, 0.09, -0.07);
     coupleGroup.add(claspedHands);
 
     chawni.add(coupleGroup);
