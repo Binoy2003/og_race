@@ -78,9 +78,12 @@ export class CameraController {
   update(playerVehicle, speedKmh, isBoosting, delta) {
     const p = playerVehicle.group.position;
 
-    // 1. Dynamic FOV based on speed
+    // 1. Dynamic FOV based on speed + Mobile Portrait Aspect Ratio Compensation
     const normSpeed = Math.min(1.0, speedKmh / CONFIG.SPEED.MAX_NORMAL);
-    this.targetFOV = CONFIG.CAMERA.BASE_FOV + normSpeed * 10 + (isBoosting ? 8 : 0);
+    const aspect = this.camera.aspect;
+    // On vertical mobile screens (aspect < 1.0), broaden vertical FOV so all 3 highway lanes remain in view!
+    const portraitBonus = aspect < 1.0 ? Math.min(24, (1.0 - aspect) * 36) : 0;
+    this.targetFOV = CONFIG.CAMERA.BASE_FOV + portraitBonus + normSpeed * 10 + (isBoosting ? 8 : 0);
     this.camera.fov += (this.targetFOV - this.camera.fov) * Math.min(1.0, delta * CONFIG.CAMERA.FOV_LERP_SPEED);
     this.camera.updateProjectionMatrix();
 
@@ -144,8 +147,10 @@ export class CameraController {
   // Showcase orbit camera during Main Menu (dynamically framed for Truck, Rickshaw & CNG)
   orbitMenu(time) {
     const isSmall = this.currentVehicleType === 'rickshaw' || this.currentVehicleType === 'cng';
-    const radius = isSmall ? 4.8 : 8.2;
-    const height = isSmall ? (1.65 + Math.sin(time * 0.5) * 0.22) : (2.7 + Math.sin(time * 0.5) * 0.35);
+    const aspect = this.camera.aspect;
+    const portraitFactor = aspect < 1.0 ? 1.35 : 1.0;
+    const radius = (isSmall ? 4.8 : 8.2) * portraitFactor;
+    const height = (isSmall ? (1.65 + Math.sin(time * 0.5) * 0.22) : (2.7 + Math.sin(time * 0.5) * 0.35)) * (aspect < 1.0 ? 1.15 : 1.0);
     const targetY = isSmall ? 1.05 : 1.35;
     const angle = time * 0.35;
 

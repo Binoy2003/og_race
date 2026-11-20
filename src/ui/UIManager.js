@@ -176,6 +176,13 @@ export class UIManager {
       });
     });
 
+    // Developer Portfolio Links
+    document.querySelectorAll('.developer-link').forEach((link) => {
+      link.addEventListener('click', (e) => {
+        e.stopPropagation();
+      });
+    });
+
     // Mobile Virtual Touch Buttons
     this.setupMobileTouchButtons();
   }
@@ -198,6 +205,11 @@ export class UIManager {
     const btnAccel = document.getElementById('btn-touch-accel');
     const btnNitro = document.getElementById('btn-touch-nitro');
     const btnHorn = document.getElementById('btn-touch-horn');
+
+    // Prevent context menu and text selection on touch buttons
+    document.querySelectorAll('.touch-btn, .hud-icon-btn').forEach((btn) => {
+      btn.addEventListener('contextmenu', (e) => e.preventDefault());
+    });
 
     if (btnLeft) {
       btnLeft.addEventListener('pointerdown', (e) => {
@@ -262,9 +274,14 @@ export class UIManager {
       });
     }
 
+    // Instant Mobile Touch Detection on Android & iPhone
     if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
       document.body.classList.add('touch-active');
     }
+    window.addEventListener('touchstart', () => document.body.classList.add('touch-active'), { once: true, passive: true });
+    window.addEventListener('pointerdown', (e) => {
+      if (e.pointerType === 'touch') document.body.classList.add('touch-active');
+    }, { once: true, passive: true });
   }
 
   showHornEffect() {
@@ -314,6 +331,17 @@ export class UIManager {
     this.pauseScreen.classList.add('hidden');
     this.gameOverScreen.classList.add('hidden');
     this.hudLayer.classList.add('hidden');
+
+    // Manage mobile virtual touch controls visibility
+    if (this.mobileControls) {
+      if (state === STATES.PLAYING) {
+        this.mobileControls.classList.remove('hidden');
+        document.body.classList.add('game-playing');
+      } else {
+        this.mobileControls.classList.add('hidden');
+        document.body.classList.remove('game-playing');
+      }
+    }
 
     const modalHowToPlay = document.getElementById('modal-how-to-play');
     if (modalHowToPlay) {
