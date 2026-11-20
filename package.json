@@ -1,0 +1,18 @@
+{
+  "name": "supra-rush",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Smooth Endless 3D Car Racing Game featuring Toyota Supra MK5",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "msedge-tts": "^2.1.1",
+    "three": "^0.160.0"
+  },
+  "devDependencies": {
+    "vite": "^5.0.0"
+  }
+}

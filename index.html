@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>OG_RACE – Authentic Rural Bangladesh Cow Truck Racing</title>
+  <link rel="stylesheet" href="./styles/main.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,700;0,900;1,700;1,900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "./node_modules/three/build/three.module.js"
+      }
+    }
+  </script>
+</head>
+<body>
+  <!-- 3D WebGL Canvas Viewport -->
+  <div id="canvas-container"></div>
+
+  <!-- UI & Overlay Layers -->
+  <div class="ui-layer">
+    
+    <!-- 1. MAIN MENU SCREEN -->
+    <div id="menu-screen" class="screen">
+      <div class="panel">
+        <div class="menu-title-wrap">
+          <h1 class="game-title">OG_RACE</h1>
+          <div class="subtitle">BANGLADESH HIGHWAY RACING</div>
+        </div>
+
+        <!-- 3 Vehicle Modes Selector -->
+        <div class="vehicle-select-container">
+          <div class="select-label">CHOOSE YOUR VEHICLE</div>
+          <div class="vehicle-selector">
+            <button class="veh-btn active" data-veh="truck" title="Heavy Truck (Loaded with 5 Cows)">
+              <span class="veh-icon">🚛</span>
+              <span class="veh-name">TRUCK</span>
+            </button>
+            <button class="veh-btn" data-veh="rickshaw" title="Cycle Rickshaw (Cute Romantic Couple)">
+              <span class="veh-icon">🚲</span>
+              <span class="veh-name">RICKSHAW</span>
+            </button>
+            <button class="veh-btn" data-veh="cng" title="Green CNG Auto-Rickshaw">
+              <span class="veh-icon">🛺</span>
+              <span class="veh-name">CNG</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="high-score-badge">
+          <svg width="18" height="18" viewBox="0 0 24 24">
+            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+          </svg>
+          <span>BEST SCORE: <strong id="menu-best-score">0</strong></span>
+        </div>
+
+        <div class="menu-actions">
+          <button id="btn-start" class="btn btn-primary">
+            <span>START RACE</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M8 5v14l11-7z"/>
+            </svg>
+          </button>
+          
+          <button class="btn btn-secondary sound-toggle-btn" title="Toggle Sound">
+            🔊 SOUND ON
+          </button>
+        </div>
+
+        <div class="menu-footer">
+          <button id="btn-how-to-play" class="info-chip" type="button">
+            <span>🎮 Controls &amp; How to Play</span>
+          </button>
+        </div>
+
+        <div class="developer-credit-small">
+          Developed by <strong>Binoy</strong>
+        </div>
+      </div>
+    </div>
+
+    <!-- HOW TO PLAY MODAL -->
+    <div id="modal-how-to-play" class="modal-overlay">
+      <div class="modal-card">
+        <div class="modal-header">
+          <div class="modal-title">🎮 CONTROLS &amp; HOW TO PLAY</div>
+          <button id="btn-modal-close" class="modal-close-btn" aria-label="Close">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="ctrl-row">
+            <span>Steer Lane</span>
+            <div class="ctrl-keys"><kbd>A</kbd><kbd>D</kbd> or <kbd>←</kbd><kbd>→</kbd></div>
+          </div>
+          <div class="ctrl-row">
+            <span style="color: #34d399; font-weight: 700;">Accelerate (Speed Up)</span>
+            <div class="ctrl-keys"><kbd>W</kbd> or <kbd>↑</kbd></div>
+          </div>
+          <div class="ctrl-row">
+            <span style="color: var(--accent-amber); font-weight: 700;">Nitro Boost (Super Speed)</span>
+            <div class="ctrl-keys"><kbd>Space</kbd></div>
+          </div>
+          <div class="ctrl-row">
+            <span>Brake (Slow Down)</span>
+            <div class="ctrl-keys"><kbd>S</kbd> or <kbd>↓</kbd></div>
+          </div>
+          <div class="ctrl-row">
+            <span style="color: var(--accent-cyan); font-weight: 700;">Car Horn (Clear Traffic)</span>
+            <div class="ctrl-keys"><kbd>H</kbd><kbd>E</kbd><kbd>F</kbd> or <kbd>📢</kbd></div>
+          </div>
+          <div class="ctrl-row">
+            <span>Pause Game</span>
+            <div class="ctrl-keys"><kbd>P</kbd> or <kbd>Esc</kbd></div>
+          </div>
+          <div class="ctrl-row" style="border-bottom: none; margin-top: 0.8rem; font-size: 0.82rem; color: var(--text-secondary);">
+            <span>📱 On Mobile: Touch steering, Gas, Brake, Horn &amp; BOOST buttons!</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. IN-GAME HUD -->
+    <div id="hud-layer" class="hidden">
+      <!-- Top HUD -->
+      <div class="hud-top">
+        <div class="score-cluster">
+          <div class="hud-label">SCORE</div>
+          <div id="hud-score" class="hud-value">0</div>
+          <div id="hud-dist" class="distance-sub">0.00 km</div>
+        </div>
+
+        <div class="hud-controls-top">
+          <button id="btn-hud-horn" class="hud-icon-btn" title="Car Horn [H / E / F]">📢</button>
+          <button id="btn-hud-sound" class="hud-icon-btn sound-toggle-btn" title="Sound">🔊</button>
+          <button id="btn-fullscreen" class="hud-icon-btn" title="Fullscreen">⛶</button>
+          <button id="btn-hud-pause" class="hud-icon-btn" title="Pause">⏸</button>
+        </div>
+      </div>
+
+      <!-- Near-Miss Pop-up Alert Banner -->
+      <div id="near-miss-banner">
+        <span>⚡ CLOSE CALL! +300</span>
+        <div id="near-miss-combo" class="combo-pill">x2</div>
+      </div>
+
+      <!-- SPECIAL BOOST OVERLAY: "TAN DE MAMA!" -->
+      <div id="tan-de-banner">TAN DE MAMA!</div>
+
+      <!-- Bottom HUD: Speedometer & Nitro -->
+      <div class="hud-bottom">
+        <div></div> <!-- Left spacer -->
+        <div class="speedo-cluster">
+          <div style="display: flex; align-items: baseline; gap: 0.4rem;">
+            <div id="hud-speed" class="speedo-num">90</div>
+            <div class="speedo-unit">KM/H</div>
+          </div>
+          
+          <!-- Diesel Boost Meter -->
+          <div class="nitro-wrap">
+            <div class="nitro-header">
+              <span>NITRO BOOST</span>
+              <span>[SPACE]</span>
+            </div>
+            <div class="nitro-bar-bg">
+              <div id="nitro-bar-fill" class="nitro-bar-fill"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. PAUSE SCREEN -->
+    <div id="pause-screen" class="screen hidden">
+      <div class="panel">
+        <h2 style="font-size: 2.4rem; font-weight: 900; letter-spacing: 0.15em; margin-bottom: 1.5rem;">OG_RACE PAUSED</h2>
+
+        <div class="menu-actions">
+          <button id="btn-resume" class="btn btn-primary">RESUME</button>
+          <button id="btn-restart" class="btn btn-secondary">RESTART</button>
+          <button class="btn btn-secondary sound-toggle-btn">🔊 SOUND</button>
+          <button id="btn-pause-menu" class="btn btn-secondary">MAIN MENU</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. GAME OVER SCREEN -->
+    <div id="gameover-screen" class="screen hidden">
+      <div class="panel">
+        <div class="gameover-title">CRASHED!</div>
+        <div class="crash-voice-bubble">💥 "এটা কি করলি মামা!"</div>
+        <div id="go-new-record" class="new-record-tag hidden">★ NEW HIGH SCORE! ★</div>
+
+        <div class="stats-grid">
+          <div class="stat-item highlight">
+            <div class="stat-label">FINAL SCORE</div>
+            <div id="go-score" class="stat-val" style="color: #ff3b3b;">0</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-label">DISTANCE</div>
+            <div id="go-dist" class="stat-val">0 m</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-label">NEAR MISSES</div>
+            <div id="go-near-miss" class="stat-val" style="color: var(--accent-gold);">0</div>
+          </div>
+          <div class="stat-item" style="grid-column: span 2;">
+            <div class="stat-label">BEST RECORD</div>
+            <div id="go-best" class="stat-val">0</div>
+          </div>
+        </div>
+
+        <div class="menu-actions">
+          <button id="btn-gameover-restart" class="btn btn-primary">PLAY AGAIN</button>
+          <button id="btn-gameover-menu" class="btn btn-secondary">MAIN MENU</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. ON-SCREEN TOUCH BUTTONS FOR MOBILE -->
+    <div id="mobile-controls">
+      <div class="touch-group-left">
+        <button id="btn-touch-left" class="touch-btn" aria-label="Steer Left">◀</button>
+        <button id="btn-touch-right" class="touch-btn" aria-label="Steer Right">▶</button>
+        <button id="btn-touch-horn" class="touch-btn horn-btn" aria-label="Air Horn">📢</button>
+      </div>
+
+      <div class="touch-group-right">
+        <!-- Brake Button -->
+        <button id="btn-touch-brake" class="touch-btn brake-btn" aria-label="Brake">BRAKE</button>
+        <!-- Accelerate / Gas Button -->
+        <button id="btn-touch-accel" class="touch-btn accel-btn" aria-label="Accelerate">▲ GAS</button>
+        <!-- Dedicated Nitro Boost Button -->
+        <button id="btn-touch-nitro" class="touch-btn nitro-btn" aria-label="Nitro Boost">🔥 BOOST</button>
+      </div>
+    </div>
+
+  </div>
+
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>
