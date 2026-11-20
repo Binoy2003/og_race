@@ -183,6 +183,486 @@ export class DeshiTruck {
     const dalaTexture = new THREE.CanvasTexture(dalaCanvas);
 
     // ----------------------------------------------------
+    // D. AUTHENTIC BANGLADESHI TRUCK TAILGATE ART (Dala Backside - from User Image!)
+    // Symmetrical 3-Panel Layout with Folk Bird, Floral Rosettes, Flared Wings & Yellow Dot Columns!
+    // ----------------------------------------------------
+    const tailgateCanvas = document.createElement('canvas');
+    tailgateCanvas.width = 1024;
+    tailgateCanvas.height = 680;
+    const tCtx = tailgateCanvas.getContext('2d');
+
+    // 1. Primary Deshi Truck Sky-Blue Body Base (Image 1)
+    tCtx.fillStyle = '#4a90e2';
+    tCtx.fillRect(0, 0, 1024, 680);
+
+    // 2. Flared Corner Crown Wings (Taj / Wing Tips at top-left and top-right)
+    // Dark Navy Blue Triangular Wing Tips (Image 1)
+    tCtx.fillStyle = '#172554';
+    // Top-left wing tip
+    tCtx.beginPath();
+    tCtx.moveTo(0, 0);
+    tCtx.lineTo(110, 0);
+    tCtx.lineTo(0, 85);
+    tCtx.closePath();
+    tCtx.fill();
+
+    // Top-right wing tip
+    tCtx.beginPath();
+    tCtx.moveTo(1024, 0);
+    tCtx.lineTo(914, 0);
+    tCtx.lineTo(1024, 85);
+    tCtx.closePath();
+    tCtx.fill();
+
+    // Flared angle cut lines
+    tCtx.strokeStyle = '#18181b';
+    tCtx.lineWidth = 5;
+    tCtx.beginPath();
+    tCtx.moveTo(0, 85);
+    tCtx.lineTo(110, 0);
+    tCtx.lineTo(914, 0);
+    tCtx.lineTo(1024, 85);
+    tCtx.stroke();
+
+    // 3. Top Decorative Trim Beam (y: 35 to 85)
+    tCtx.fillStyle = '#2563eb';
+    tCtx.fillRect(100, 35, 824, 45);
+    tCtx.strokeStyle = '#18181b';
+    tCtx.lineWidth = 3;
+    tCtx.strokeRect(100, 35, 824, 45);
+
+    // Decorative Dark Blue Sawtooth / Scallop Triangles along top beam (from Image 1)
+    tCtx.fillStyle = '#1e3a8a';
+    for (let x = 110; x <= 900; x += 32) {
+      tCtx.beginPath();
+      tCtx.moveTo(x, 80);
+      tCtx.lineTo(x + 16, 45);
+      tCtx.lineTo(x + 32, 80);
+      tCtx.closePath();
+      tCtx.fill();
+    }
+
+    // 4. Left and Right Yellow Vertical Bead Columns (from Image 1)
+    const drawYellowBorderColumn = (colX) => {
+      // Yellow Column Background
+      tCtx.fillStyle = '#facc15';
+      tCtx.fillRect(colX, 85, 54, 345);
+      tCtx.strokeStyle = '#18181b';
+      tCtx.lineWidth = 4;
+      tCtx.strokeRect(colX, 85, 54, 345);
+
+      // Vertical Column of Folk Red Bullseye Dots
+      for (let y = 104; y <= 415; y += 26) {
+        // Red outer ring
+        tCtx.fillStyle = '#dc2626';
+        tCtx.beginPath();
+        tCtx.arc(colX + 27, y, 9.5, 0, Math.PI * 2);
+        tCtx.fill();
+
+        // Yellow inner core
+        tCtx.fillStyle = '#fde047';
+        tCtx.beginPath();
+        tCtx.arc(colX + 27, y, 4.5, 0, Math.PI * 2);
+        tCtx.fill();
+      }
+    };
+    drawYellowBorderColumn(36);
+    drawYellowBorderColumn(934);
+
+    // 5. Three Main Tailgate Panels (divided by blue framing)
+    const panelTopY = 90;
+    const panelHeight = 335;
+    const panelBotY = panelTopY + panelHeight; // 425
+
+    // A. Left Display Panel (Folk Floral Rosette)
+    const leftPX = 104;
+    const panelW = 252;
+    tCtx.fillStyle = '#78aee6'; // Soft sky blue interior (Image 1)
+    tCtx.fillRect(leftPX, panelTopY, panelW, panelHeight);
+    tCtx.strokeStyle = '#18181b';
+    tCtx.lineWidth = 6;
+    tCtx.strokeRect(leftPX, panelTopY, panelW, panelHeight);
+
+    // B. Center Display Panel (The Masterpiece Folk Bird)
+    const midPX = 386;
+    tCtx.fillStyle = '#78aee6';
+    tCtx.fillRect(midPX, panelTopY, panelW, panelHeight);
+    tCtx.strokeStyle = '#18181b';
+    tCtx.lineWidth = 6;
+    tCtx.strokeRect(midPX, panelTopY, panelW, panelHeight);
+
+    // C. Right Display Panel (Folk Floral Rosette)
+    const rightPX = 668;
+    tCtx.fillStyle = '#78aee6';
+    tCtx.fillRect(rightPX, panelTopY, panelW, panelHeight);
+    tCtx.strokeStyle = '#18181b';
+    tCtx.lineWidth = 6;
+    tCtx.strokeRect(rightPX, panelTopY, panelW, panelHeight);
+
+    // 6. Draw Symmetrical Folk Floral Rosettes on Left & Right Panels (from Image 1)
+    const drawFloralRosette = (cx, cy) => {
+      // 4 Cardinal Palmette / Leaf Clusters (North, South, East, West)
+      const dirs = [
+        { dx: 0, dy: -1 }, // North
+        { dx: 0, dy: 1 },  // South
+        { dx: 1, dy: 0 },  // East
+        { dx: -1, dy: 0 }  // West
+      ];
+
+      dirs.forEach(({ dx, dy }) => {
+        // Main pointed center leaf (Forest Green)
+        tCtx.fillStyle = '#15803d';
+        tCtx.beginPath();
+        const tipX = cx + dx * 72;
+        const tipY = cy + dy * 72;
+        const perpX = -dy * 16;
+        const perpY = dx * 16;
+        tCtx.moveTo(cx + dx * 24, cy + dy * 24);
+        tCtx.quadraticCurveTo(cx + dx * 46 + perpX, cy + dy * 46 + perpY, tipX, tipY);
+        tCtx.quadraticCurveTo(cx + dx * 46 - perpX, cy + dy * 46 - perpY, cx + dx * 24, cy + dy * 24);
+        tCtx.fill();
+
+        // Left curving side leaf
+        tCtx.fillStyle = '#166534';
+        tCtx.beginPath();
+        const sideTip1X = cx + dx * 52 + perpX * 1.5;
+        const sideTip1Y = cy + dy * 52 + perpY * 1.5;
+        tCtx.moveTo(cx + dx * 22, cy + dy * 22);
+        tCtx.quadraticCurveTo(cx + dx * 34 + perpX * 1.8, cy + dy * 34 + perpY * 1.8, sideTip1X, sideTip1Y);
+        tCtx.quadraticCurveTo(cx + dx * 38 + perpX * 0.8, cy + dy * 38 + perpY * 0.8, cx + dx * 22, cy + dy * 22);
+        tCtx.fill();
+
+        // Right curving side leaf
+        tCtx.beginPath();
+        const sideTip2X = cx + dx * 52 - perpX * 1.5;
+        const sideTip2Y = cy + dy * 52 - perpY * 1.5;
+        tCtx.moveTo(cx + dx * 22, cy + dy * 22);
+        tCtx.quadraticCurveTo(cx + dx * 34 - perpX * 1.8, cy + dy * 34 - perpY * 1.8, sideTip2X, sideTip2Y);
+        tCtx.quadraticCurveTo(cx + dx * 38 - perpX * 0.8, cy + dy * 38 - perpY * 0.8, cx + dx * 22, cy + dy * 22);
+        tCtx.fill();
+
+        // Fine light-green vein
+        tCtx.strokeStyle = '#4ade80';
+        tCtx.lineWidth = 1.8;
+        tCtx.beginPath();
+        tCtx.moveTo(cx + dx * 26, cy + dy * 26);
+        tCtx.lineTo(tipX * 0.95 + cx * 0.05, tipY * 0.95 + cy * 0.05);
+        tCtx.stroke();
+      });
+
+      // 4 Diagonal Corner Leaves (NE, NW, SE, SW)
+      const diags = [
+        { dx: 0.707, dy: -0.707 },
+        { dx: -0.707, dy: -0.707 },
+        { dx: 0.707, dy: 0.707 },
+        { dx: -0.707, dy: 0.707 }
+      ];
+      diags.forEach(({ dx, dy }) => {
+        tCtx.fillStyle = '#16a34a';
+        tCtx.beginPath();
+        const tipX = cx + dx * 46;
+        const tipY = cy + dy * 46;
+        const perpX = -dy * 10;
+        const perpY = dx * 10;
+        tCtx.moveTo(cx + dx * 22, cy + dy * 22);
+        tCtx.quadraticCurveTo(cx + dx * 32 + perpX, cy + dy * 32 + perpY, tipX, tipY);
+        tCtx.quadraticCurveTo(cx + dx * 32 - perpX, cy + dy * 32 - perpY, cx + dx * 22, cy + dy * 22);
+        tCtx.fill();
+      });
+
+      // Central Golden-Yellow & Orange Flower Core (Image 1)
+      // Radiating yellow petal teeth
+      tCtx.fillStyle = '#facc15';
+      for (let a = 0; a < Math.PI * 2; a += Math.PI / 8) {
+        tCtx.beginPath();
+        tCtx.arc(cx + Math.cos(a) * 27, cy + Math.sin(a) * 27, 4.5, 0, Math.PI * 2);
+        tCtx.fill();
+      }
+
+      // Main Golden-Yellow Outer Ring
+      tCtx.fillStyle = '#facc15';
+      tCtx.beginPath();
+      tCtx.arc(cx, cy, 25, 0, Math.PI * 2);
+      tCtx.fill();
+      tCtx.strokeStyle = '#ca8a04';
+      tCtx.lineWidth = 2;
+      tCtx.stroke();
+
+      // Inner Rich Orange Core
+      tCtx.fillStyle = '#ea580c';
+      tCtx.beginPath();
+      tCtx.arc(cx, cy, 14, 0, Math.PI * 2);
+      tCtx.fill();
+
+      // Bright yellow center dot
+      tCtx.fillStyle = '#fef08a';
+      tCtx.beginPath();
+      tCtx.arc(cx, cy, 6, 0, Math.PI * 2);
+      tCtx.fill();
+    };
+
+    drawFloralRosette(leftPX + panelW * 0.5, panelTopY + panelHeight * 0.5);
+    drawFloralRosette(rightPX + panelW * 0.5, panelTopY + panelHeight * 0.5);
+
+    // 7. Draw the Masterpiece Folk Art Bird on Center Panel (from Image 1!)
+    const drawFolkBird = (cx, cy, floorY) => {
+      // Bird Claws and Legs perched on the bottom black frame line (Image 1)
+      tCtx.strokeStyle = '#18181b';
+      tCtx.lineWidth = 3.5;
+      tCtx.lineCap = 'round';
+
+      // Left leg
+      tCtx.beginPath();
+      tCtx.moveTo(cx - 24, floorY); // foot on line
+      tCtx.lineTo(cx - 30, floorY - 5);
+      tCtx.moveTo(cx - 24, floorY);
+      tCtx.lineTo(cx - 18, floorY - 5);
+      tCtx.moveTo(cx - 24, floorY);
+      tCtx.lineTo(cx - 22, floorY - 22); // ankle
+      tCtx.lineTo(cx - 32, floorY - 52); // knee angled back
+      tCtx.lineTo(cx - 18, floorY - 80); // upper thigh into belly
+      tCtx.stroke();
+
+      // Right leg
+      tCtx.beginPath();
+      tCtx.moveTo(cx + 12, floorY);
+      tCtx.lineTo(cx + 6, floorY - 5);
+      tCtx.moveTo(cx + 12, floorY);
+      tCtx.lineTo(cx + 18, floorY - 5);
+      tCtx.moveTo(cx + 12, floorY);
+      tCtx.lineTo(cx + 14, floorY - 22);
+      tCtx.lineTo(cx + 24, floorY - 52);
+      tCtx.lineTo(cx + 8, floorY - 84);
+      tCtx.stroke();
+
+      // Fanned Golden-Yellow Tail Feathers with Red Accented Tips (Image 1)
+      const tailLobes = [
+        { tipX: cx + 72, tipY: cy - 25, midX: cx + 45, midY: cy - 8 },   // Top Lobe
+        { tipX: cx + 95, tipY: cy - 2,  midX: cx + 56, midY: cy + 12 },  // Upper-Mid Lobe
+        { tipX: cx + 104, tipY: cy + 24, midX: cx + 58, midY: cy + 32 }, // Lower-Mid Lobe
+        { tipX: cx + 82, tipY: cy + 50, midX: cx + 48, midY: cy + 46 }   // Bottom Lobe
+      ];
+
+      // Draw golden-yellow fan body
+      tailLobes.forEach(({ tipX, tipY, midX, midY }) => {
+        tCtx.fillStyle = '#facc15'; // Golden yellow tail feather
+        tCtx.beginPath();
+        tCtx.moveTo(cx + 16, cy + 30); // tail root
+        tCtx.quadraticCurveTo(midX, midY - 12, tipX, tipY);
+        tCtx.quadraticCurveTo(tipX + 6, tipY + 12, tipX - 12, tipY + 18);
+        tCtx.quadraticCurveTo(midX, midY + 12, cx + 16, cy + 38);
+        tCtx.closePath();
+        tCtx.fill();
+        tCtx.strokeStyle = '#18181b';
+        tCtx.lineWidth = 2.5;
+        tCtx.stroke();
+
+        // Ruby Red Scalloped Cap on Tail Feather Tip (Image 1)
+        tCtx.fillStyle = '#dc2626';
+        tCtx.beginPath();
+        tCtx.moveTo(tipX - 18, tipY + 4);
+        tCtx.quadraticCurveTo(tipX - 4, tipY - 8, tipX, tipY);
+        tCtx.quadraticCurveTo(tipX + 6, tipY + 12, tipX - 12, tipY + 18);
+        tCtx.quadraticCurveTo(tipX - 12, tipY + 10, tipX - 18, tipY + 4);
+        tCtx.closePath();
+        tCtx.fill();
+      });
+
+      // Yellow Lower Belly / Flank
+      tCtx.fillStyle = '#facc15';
+      tCtx.beginPath();
+      tCtx.moveTo(cx - 36, cy + 44);
+      tCtx.quadraticCurveTo(cx - 2, cy + 72, cx + 34, cy + 46);
+      tCtx.quadraticCurveTo(cx + 8, cy + 22, cx - 36, cy + 44);
+      tCtx.closePath();
+      tCtx.fill();
+      tCtx.strokeStyle = '#18181b';
+      tCtx.lineWidth = 2.5;
+      tCtx.stroke();
+
+      // Bold Ruby-Red Rounded Proud Chest / Breast (Image 1)
+      tCtx.fillStyle = '#dc2626';
+      tCtx.beginPath();
+      tCtx.moveTo(cx - 16, cy - 42); // base of throat
+      tCtx.quadraticCurveTo(cx - 62, cy - 2, cx - 42, cy + 46); // large rounded breast bulging forward
+      tCtx.quadraticCurveTo(cx + 12, cy + 34, cx + 4, cy - 22);
+      tCtx.closePath();
+      tCtx.fill();
+      tCtx.strokeStyle = '#18181b';
+      tCtx.lineWidth = 2.5;
+      tCtx.stroke();
+
+      // Scalloped Blue Wing Feathers (Over the back - Image 1)
+      tCtx.fillStyle = '#0284c7';
+      tCtx.beginPath();
+      tCtx.moveTo(cx - 18, cy - 28);
+      tCtx.quadraticCurveTo(cx + 24, cy - 35, cx + 58, cy - 14); // upper wing edge
+      tCtx.lineTo(cx + 52, cy + 12);
+      tCtx.quadraticCurveTo(cx + 14, cy + 18, cx - 22, cy + 12);
+      tCtx.closePath();
+      tCtx.fill();
+      tCtx.strokeStyle = '#18181b';
+      tCtx.lineWidth = 2.5;
+      tCtx.stroke();
+
+      // Light Sky-Blue Scalloped Wing Feather Tips (Image 1)
+      tCtx.fillStyle = '#38bdf8';
+      const wingTips = [
+        { x: cx + 58, y: cy - 14 },
+        { x: cx + 64, y: cy + 4 },
+        { x: cx + 52, y: cy + 18 }
+      ];
+      wingTips.forEach(({ x, y }) => {
+        tCtx.beginPath();
+        tCtx.ellipse(x, y, 9, 6, -Math.PI / 4, 0, Math.PI * 2);
+        tCtx.fill();
+        tCtx.strokeStyle = '#18181b';
+        tCtx.lineWidth = 1.8;
+        tCtx.stroke();
+      });
+
+      // Wing quill lines
+      tCtx.strokeStyle = '#1e3a8a';
+      tCtx.lineWidth = 2;
+      tCtx.beginPath();
+      tCtx.moveTo(cx - 4, cy - 18);
+      tCtx.lineTo(cx + 42, cy - 8);
+      tCtx.moveTo(cx - 2, cy - 6);
+      tCtx.lineTo(cx + 44, cy + 4);
+      tCtx.stroke();
+
+      // Royal Blue Neck & Head (Image 1)
+      tCtx.fillStyle = '#0284c7';
+      tCtx.beginPath();
+      tCtx.moveTo(cx - 24, cy - 32); // nape
+      tCtx.quadraticCurveTo(cx - 28, cy - 68, cx - 2, cy - 78); // crown arch
+      tCtx.quadraticCurveTo(cx + 24, cy - 74, cx + 22, cy - 48); // face front
+      tCtx.quadraticCurveTo(cx + 8, cy - 28, cx - 16, cy - 22); // throat
+      tCtx.closePath();
+      tCtx.fill();
+      tCtx.strokeStyle = '#18181b';
+      tCtx.lineWidth = 2.5;
+      tCtx.stroke();
+
+      // Orange-Red Curved Beak (Image 1)
+      tCtx.fillStyle = '#ea580c';
+      tCtx.beginPath();
+      tCtx.moveTo(cx + 20, cy - 58); // upper beak base
+      tCtx.quadraticCurveTo(cx + 36, cy - 54, cx + 44, cy - 42); // curved sharp tip
+      tCtx.quadraticCurveTo(cx + 28, cy - 42, cx + 18, cy - 44); // lower beak base
+      tCtx.closePath();
+      tCtx.fill();
+      tCtx.strokeStyle = '#18181b';
+      tCtx.lineWidth = 2.2;
+      tCtx.stroke();
+
+      // Black mouth dividing line
+      tCtx.beginPath();
+      tCtx.moveTo(cx + 20, cy - 50);
+      tCtx.lineTo(cx + 42, cy - 43);
+      tCtx.stroke();
+
+      // Eye: White circle with black pupil and highlight glint (Image 1)
+      tCtx.fillStyle = '#ffffff';
+      tCtx.beginPath();
+      tCtx.arc(cx + 6, cy - 58, 8.5, 0, Math.PI * 2);
+      tCtx.fill();
+      tCtx.strokeStyle = '#18181b';
+      tCtx.lineWidth = 2;
+      tCtx.stroke();
+
+      tCtx.fillStyle = '#18181b';
+      tCtx.beginPath();
+      tCtx.arc(cx + 8, cy - 58, 4.2, 0, Math.PI * 2);
+      tCtx.fill();
+
+      // White catchlight
+      tCtx.fillStyle = '#ffffff';
+      tCtx.beginPath();
+      tCtx.arc(cx + 7, cy - 60, 1.8, 0, Math.PI * 2);
+      tCtx.fill();
+    };
+
+    drawFolkBird(midPX + panelW * 0.5, panelTopY + panelHeight * 0.52, panelBotY);
+
+    // 8. Horizontal Hinge & Latch Beam (y: 425 to 470)
+    tCtx.fillStyle = '#3b82f6';
+    tCtx.fillRect(20, panelBotY, 984, 45);
+    tCtx.strokeStyle = '#18181b';
+    tCtx.lineWidth = 4;
+    tCtx.strokeRect(20, panelBotY, 984, 45);
+
+    // 3 Steel Hinge / Latch Bracket Plates (Image 1)
+    const drawHinge = (hx) => {
+      tCtx.fillStyle = '#94a3b8';
+      tCtx.fillRect(hx, panelBotY + 8, 54, 28);
+      tCtx.strokeStyle = '#18181b';
+      tCtx.lineWidth = 2.5;
+      tCtx.strokeRect(hx, panelBotY + 8, 54, 28);
+
+      // Center lock pin
+      tCtx.fillStyle = '#334155';
+      tCtx.fillRect(hx + 22, panelBotY + 4, 10, 36);
+
+      // Bolts
+      tCtx.fillStyle = '#f8fafc';
+      tCtx.fillRect(hx + 6, panelBotY + 18, 6, 8);
+      tCtx.fillRect(hx + 42, panelBotY + 18, 6, 8);
+    };
+    drawHinge(205);
+    drawHinge(485);
+    drawHinge(765);
+
+    // 9. Lower Tailgate Skirt with Stepped Center Cutout (Image 1)
+    const skirtTopY = 470;
+    tCtx.fillStyle = '#4a90e2';
+    tCtx.beginPath();
+    tCtx.moveTo(20, skirtTopY);
+    tCtx.lineTo(20, 580);
+    tCtx.lineTo(315, 580);
+    tCtx.lineTo(365, 635); // stepped down center
+    tCtx.lineTo(659, 635);
+    tCtx.lineTo(709, 580); // stepped up
+    tCtx.lineTo(1004, 580);
+    tCtx.lineTo(1004, skirtTopY);
+    tCtx.closePath();
+    tCtx.fill();
+    tCtx.strokeStyle = '#18181b';
+    tCtx.lineWidth = 5;
+    tCtx.stroke();
+
+    // 10. Horizontal Multi-Chamber Taillights (Yellow, Red, White - from Image 1)
+    const drawTaillightCluster = (lx, isLeft) => {
+      // Outer black frame box
+      tCtx.fillStyle = '#18181b';
+      tCtx.fillRect(lx - 4, 498, 172, 64);
+      tCtx.strokeStyle = '#facc15';
+      tCtx.lineWidth = 3;
+      tCtx.strokeRect(lx - 4, 498, 172, 64);
+
+      const chambers = isLeft
+        ? ['#f59e0b', '#ef4444', '#f8fafc'] // Amber/Yellow (turn), Red (brake), White (reverse)
+        : ['#f8fafc', '#ef4444', '#f59e0b']; // White (reverse), Red (brake), Amber/Yellow (turn)
+
+      chambers.forEach((color, i) => {
+        tCtx.fillStyle = color;
+        tCtx.fillRect(lx + i * 54 + 2, 504, 50, 52);
+        tCtx.strokeStyle = '#18181b';
+        tCtx.lineWidth = 2.5;
+        tCtx.strokeRect(lx + i * 54 + 2, 504, 50, 52);
+
+        // Lens ridges
+        tCtx.fillStyle = 'rgba(255,255,255,0.25)';
+        tCtx.fillRect(lx + i * 54 + 6, 508, 42, 6);
+      });
+    };
+
+    drawTaillightCluster(118, true);
+    drawTaillightCluster(742, false);
+
+    const tailgateTexture = new THREE.CanvasTexture(tailgateCanvas);
+
+    // ----------------------------------------------------
     // 2. Base Materials
     // ----------------------------------------------------
     this.yellowPaint = new THREE.MeshStandardMaterial({
@@ -470,31 +950,102 @@ export class DeshiTruck {
     frontBoard.position.set(0, 0.25, -1.68);
     dalaGroup.add(frontBoard);
 
-    const tailBoardGeo = new THREE.BoxGeometry(2.2, 1.05, 0.1);
-    const tailBoard = new THREE.Mesh(tailBoardGeo, this.yellowPaint);
-    tailBoard.position.set(0, 0.2, 1.68);
-    tailBoard.castShadow = true;
-    dalaGroup.add(tailBoard);
+    // ----------------------------------------------------
+    // 8B. AUTHENTIC BANGLADESHI TRUCK TAILGATE ASSEMBLY (from User Image!)
+    // Featuring 3-Panel Tailgate with Folk Bird, Floral Rosettes, Flared Taj Wings & 3D Taillights!
+    // ----------------------------------------------------
+    const tailgateGroup = new THREE.Group();
+    tailgateGroup.position.set(0, 0, 1.68);
 
-    const rearBumperGeo = new THREE.BoxGeometry(2.25, 0.18, 0.15);
-    const rearBumper = new THREE.Mesh(rearBumperGeo, this.chassisMat);
-    rearBumper.position.set(0, -0.65, 1.72);
-    dalaGroup.add(rearBumper);
+    // 1. Structural Blue Tailgate Backing Board
+    const tailBackingGeo = new THREE.BoxGeometry(2.28, 1.45, 0.08);
+    const tailBackingMat = new THREE.MeshStandardMaterial({
+      color: 0x4a90e2,
+      roughness: 0.45
+    });
+    const tailBacking = new THREE.Mesh(tailBackingGeo, tailBackingMat);
+    tailBacking.position.set(0, 0.08, 0);
+    tailBacking.castShadow = true;
+    tailgateGroup.add(tailBacking);
 
-    [-0.85, 0.85].forEach((x) => {
-      const tlGeo = new THREE.BoxGeometry(0.32, 0.14, 0.05);
-      const tl = new THREE.Mesh(tlGeo, this.taillightMat);
-      tl.position.set(x, -0.65, 1.82);
-      dalaGroup.add(tl);
-      this.brakeLights.push(tl);
+    // 2. High-Resolution Tailgate Artwork Face (Facing +Z directly towards player chase camera!)
+    const tailFaceGeo = new THREE.PlaneGeometry(2.28, 1.45);
+    const tailFaceMat = new THREE.MeshStandardMaterial({
+      map: tailgateTexture,
+      roughness: 0.35,
+      metalness: 0.15
+    });
+    const tailFace = new THREE.Mesh(tailFaceGeo, tailFaceMat);
+    tailFace.position.set(0, 0.08, 0.045);
+    tailgateGroup.add(tailFace);
+
+    // 3. Flared Corner Crown Wings (Taj / Outward Angled Ears at top-left & top-right from Image 1)
+    [-1, 1].forEach((dir) => {
+      // Wing ear shape sloping outwards and upwards
+      const earShape = new THREE.Shape();
+      earShape.moveTo(0, 0);
+      earShape.lineTo(dir * 0.18, 0.28);
+      earShape.lineTo(0, 0.28);
+      earShape.closePath();
+
+      const extrudeSettings = { depth: 0.08, bevelEnabled: false };
+      const earGeo = new THREE.ExtrudeGeometry(earShape, extrudeSettings);
+      const earMat = new THREE.MeshStandardMaterial({ color: 0x172554, roughness: 0.4 }); // Dark navy tip
+      const earMesh = new THREE.Mesh(earGeo, earMat);
+      earMesh.position.set(dir * 1.14, 0.68, -0.04);
+      tailgateGroup.add(earMesh);
     });
 
-    [-0.85, 0.85].forEach((x) => {
-      const flapGeo = new THREE.BoxGeometry(0.4, 0.45, 0.04);
-      const flap = new THREE.Mesh(flapGeo, this.tireMat);
-      flap.position.set(x, -0.9, 1.74);
-      dalaGroup.add(flap);
+    // 4. 3D Multi-Chamber Taillight Assemblies (Segmented: Yellow, Red, White)
+    // The Red Brake Light chamber lights up brilliantly during braking!
+    [-0.78, 0.78].forEach((tx, idx) => {
+      const isLeft = idx === 0;
+
+      // Outer Black Frame Housing
+      const tHousing = new THREE.Mesh(
+        new THREE.BoxGeometry(0.42, 0.16, 0.05),
+        this.chassisMat
+      );
+      tHousing.position.set(tx, -0.42, 0.08);
+      tailgateGroup.add(tHousing);
+
+      // Yellow / Amber Turn Lens
+      const amberLens = new THREE.Mesh(
+        new THREE.BoxGeometry(0.12, 0.12, 0.03),
+        new THREE.MeshStandardMaterial({ color: 0xf59e0b, emissive: 0xd97706, emissiveIntensity: 0.3 })
+      );
+      amberLens.position.set(isLeft ? tx - 0.13 : tx + 0.13, -0.42, 0.10);
+      tailgateGroup.add(amberLens);
+
+      // Red Brake Light Lens (Connected to this.brakeLights for dynamic braking response!)
+      const redLens = new THREE.Mesh(
+        new THREE.BoxGeometry(0.12, 0.12, 0.03),
+        this.taillightMat
+      );
+      redLens.position.set(tx, -0.42, 0.10);
+      tailgateGroup.add(redLens);
+      this.brakeLights.push(redLens);
+
+      // White Reverse Light Lens
+      const whiteLens = new THREE.Mesh(
+        new THREE.BoxGeometry(0.12, 0.12, 0.03),
+        new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.3 })
+      );
+      whiteLens.position.set(isLeft ? tx + 0.13 : tx - 0.13, -0.42, 0.10);
+      tailgateGroup.add(whiteLens);
     });
+
+    // 5. Heavy-Duty Rear Mudflaps (behind dual rear tires)
+    [-0.85, 0.85].forEach((mx) => {
+      const flap = new THREE.Mesh(
+        new THREE.BoxGeometry(0.42, 0.44, 0.03),
+        this.tireMat
+      );
+      flap.position.set(mx, -0.80, 0.06);
+      tailgateGroup.add(flap);
+    });
+
+    dalaGroup.add(tailgateGroup);
 
     // ----------------------------------------------------
     // 9. 5 COWS LOADED INSIDE THE TRUCK CARGO BED! (গোরু-ভর্তি ট্রাক)
