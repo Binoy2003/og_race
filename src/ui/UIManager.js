@@ -54,6 +54,7 @@ export class UIManager {
     this.onBrake = null;
     this.onNitro = null;
     this.onHorn = null;
+    this.onSelectVehicle = null;
 
     this.initListeners();
     this.updateSoundButtons();
@@ -162,8 +163,32 @@ export class UIManager {
       });
     }
 
+    // 3-Vehicle Mode Selector
+    const vehButtons = document.querySelectorAll('.veh-btn');
+    vehButtons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        vehButtons.forEach((b) => b.classList.remove('active'));
+        btn.classList.add('active');
+        this.soundManager.playClick();
+        if (this.onSelectVehicle) {
+          this.onSelectVehicle(btn.dataset.veh);
+        }
+      });
+    });
+
     // Mobile Virtual Touch Buttons
     this.setupMobileTouchButtons();
+  }
+
+  setSelectedVehicle(type) {
+    const vehButtons = document.querySelectorAll('.veh-btn');
+    vehButtons.forEach((btn) => {
+      if (btn.dataset.veh === type) {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+      }
+    });
   }
 
   setupMobileTouchButtons() {

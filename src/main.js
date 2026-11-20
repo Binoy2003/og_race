@@ -9,6 +9,8 @@ import { InputManager } from './core/InputManager.js';
 import { CameraController } from './core/CameraController.js';
 import { SoundManager } from './audio/SoundManager.js';
 import { DeshiTruck } from './models/DeshiTruck.js';
+import { DeshiRickshaw } from './models/DeshiRickshaw.js';
+import { DeshiCNG } from './models/DeshiCNG.js';
 import { RoadManager } from './world/RoadManager.js';
 import { Environment } from './world/Environment.js';
 import { TrafficManager } from './world/TrafficManager.js';
@@ -51,9 +53,29 @@ class BangladeshTruckGame {
     this.environment = new Environment(this.scene);
     this.roadManager = new RoadManager(this.scene);
 
-    // Authentic Bangladeshi Bedford/Tata Heavy Commercial Truck
-    this.playerTruck = new DeshiTruck();
-    this.scene.add(this.playerTruck.group);
+    // 4. Authentic Bangladeshi Player Vehicles (Truck, Rickshaw, CNG)
+    this.vehicles = {
+      truck: new DeshiTruck(),
+      rickshaw: new DeshiRickshaw(),
+      cng: new DeshiCNG()
+    };
+
+    Object.values(this.vehicles).forEach((v) => {
+      this.scene.add(v.group);
+      v.group.visible = false;
+    });
+
+    this.currentVehicleType = localStorage.getItem('og_race_vehicle') || 'truck';
+    if (!this.vehicles[this.currentVehicleType]) {
+      this.currentVehicleType = 'truck';
+    }
+
+    this.playerVehicle = this.vehicles[this.currentVehicleType];
+    this.playerVehicle.group.visible = true;
+    this.playerTruck = this.playerVehicle;
+
+    this.soundManager.setVehicleType(this.currentVehicleType);
+    this.uiManager.setSelectedVehicle(this.currentVehicleType);
 
     this.trafficManager = new TrafficManager(this.scene);
     this.particleSystem = new ParticleSystem(this.scene);
@@ -64,15 +86,29 @@ class BangladeshTruckGame {
     this.clock = new THREE.Clock();
     this.menuTime = 0;
     this.wasBoosting = false;
-    this.wasBoosting = false;
     this.wasBraking = false;
 
     this.bindEvents();
     this.initGame();
   }
 
+  setVehicle(type) {
+    if (!this.vehicles[type]) return;
+    this.currentVehicleType = type;
+    localStorage.setItem('og_race_vehicle', type);
+
+    Object.entries(this.vehicles).forEach(([k, v]) => {
+      v.group.visible = (k === type);
+    });
+
+    this.playerVehicle = this.vehicles[type];
+    this.playerTruck = this.playerVehicle;
+    this.soundManager.setVehicleType(type);
+    this.cameraController.init(this.playerVehicle);
+  }
+
   initGame() {
-    this.cameraController.init(this.playerTruck);
+    this.cameraController.init(this.playerVehicle);
     this.uiManager.setScreen(STATES.MENU, this.gameState);
 
     // Start Master Render Loop
@@ -93,6 +129,7 @@ class BangladeshTruckGame {
     this.uiManager.onResume = () => this.resumeGame();
     this.uiManager.onRestart = () => this.restartGame();
     this.uiManager.onMainMenu = () => this.returnToMenu();
+    this.uiManager.onSelectVehicle = (type) => this.setVehicle(type);
 
     // Pause toggle via UI or keyboard
     const togglePause = () => {
@@ -126,11 +163,11 @@ class BangladeshTruckGame {
 
   startGame() {
     this.gameState.startNewGame();
-    this.playerTruck.reset();
+    this.playerVehicle.reset();
     this.roadManager.reset();
     this.trafficManager.reset();
     this.particleSystem.reset();
-    this.cameraController.init(this.playerTruck);
+    this.cameraController.init(this.playerVehicle);
     this.wasBoosting = false;
     this.wasBraking = false;
 
@@ -151,7 +188,7 @@ class BangladeshTruckGame {
   returnToMenu() {
     this.gameState.state = STATES.MENU;
     this.soundManager.stopAll();
-    this.playerTruck.reset();
+    this.playerVehicle.reset();
     this.roadManager.reset();
     this.trafficManager.reset();
     this.particleSystem.reset();
@@ -160,8 +197,8 @@ class BangladeshTruckGame {
 
   triggerHorn() {
     this.soundManager.playTruckHorn();
-    this.playerTruck.flashHorn();
-    this.trafficManager.onPlayerHorn(this.playerTruck);
+    this.playerVehicle.flashHorn();
+    this.trafficManager.onPlayerHorn(this.playerVehicle);
     this.uiManager.showHornEffect();
   }
 
@@ -175,12 +212,12 @@ class BangladeshTruckGame {
     this.cameraController.shake(1.3, 0.95);
 
     // Particle explosion at collision point
-    const crashPos = this.playerTruck.group.position.clone();
+    const crashPos = this.playerVehicle.group.position.clone();
     crashPos.z -= 1.5;
     this.particleSystem.emitCrashEffect(crashPos);
 
-    // Visually knock the truck
-    this.playerTruck.triggerCrash();
+    // Visually knock the vehicle
+    this.playerVehicle.triggerCrash();
 
     // Show Game Over UI after brief impact shock
     setTimeout(() => {
@@ -197,10 +234,10 @@ class BangladeshTruckGame {
     const elapsedTime = this.clock.getElapsedTime();
 
     if (this.gameState.state === STATES.MENU) {
-      // Menu showcase orbit around Deshi Truck
+      // Menu showcase orbit around selected Deshi vehicle
       this.menuTime += delta;
       this.cameraController.orbitMenu(this.menuTime);
-      this.playerTruck.update(0, 0, 0, false, false, delta);
+      this.playerVehicle.update(0, 0, 0, false, false, delta);
 
       // Animate roadside cows, ducks, and environment in menu background
       this.roadManager.props.update(elapsedTime);
@@ -224,13 +261,13 @@ class BangladeshTruckGame {
       // 2. Update Game Physics & State
       this.gameState.update(delta, this.inputManager);
 
-      // 3. Move Truck forward along -Z and handle smooth lane shifting
+      // 3. Move Vehicle forward along -Z and handle smooth lane shifting
       const speedMs = (this.gameState.speedKmh * 1000) / 3600;
-      this.playerTruck.group.position.z -= speedMs * delta;
-      this.playerTruck.group.position.x = this.gameState.currentLaneX;
+      this.playerVehicle.group.position.z -= speedMs * delta;
+      this.playerVehicle.group.position.x = this.gameState.currentLaneX;
 
-      // Update truck animations (wheels, banking, lights, boost flames)
-      this.playerTruck.update(
+      // Update vehicle animations (wheels, banking, lights, boost flames)
+      this.playerVehicle.update(
         this.gameState.speedKmh,
         this.gameState.currentLaneX,
         this.gameState.targetLaneX,
@@ -241,26 +278,26 @@ class BangladeshTruckGame {
 
       // Emit tire smoke on heavy braking
       if (isBraking && this.gameState.speedKmh > 50) {
-        const leftRear = this.playerTruck.group.position.clone();
-        leftRear.x -= 1.05;
-        leftRear.z += 1.85;
-        const rightRear = this.playerTruck.group.position.clone();
-        rightRear.x += 1.05;
-        rightRear.z += 1.85;
+        const leftRear = this.playerVehicle.group.position.clone();
+        leftRear.x -= 0.85;
+        leftRear.z += 1.6;
+        const rightRear = this.playerVehicle.group.position.clone();
+        rightRear.x += 0.85;
+        rightRear.z += 1.6;
 
         this.particleSystem.emitTireSmoke(leftRear);
         this.particleSystem.emitTireSmoke(rightRear);
       }
 
       // 4. Update Rural Bangladesh Road, Props, Animals & Infinite Chunks
-      this.roadManager.update(this.playerTruck.group.position.z, elapsedTime);
+      this.roadManager.update(this.playerVehicle.group.position.z, elapsedTime);
 
       // 5. Update Distant Bengali Environment & Birds
-      this.environment.update(this.playerTruck.group.position.z, elapsedTime);
+      this.environment.update(this.playerVehicle.group.position.z, elapsedTime);
 
       // 6. Update Traffic Vehicles (including cow-loaded trucks) & Near-Miss Detection
       this.trafficManager.update(
-        this.playerTruck,
+        this.playerVehicle,
         this.gameState.speedKmh,
         this.gameState.distanceMeters,
         delta,
@@ -273,21 +310,21 @@ class BangladeshTruckGame {
       );
 
       // 7. Check Vehicle Collision
-      const hitCar = this.trafficManager.checkCollision(this.playerTruck);
+      const hitCar = this.trafficManager.checkCollision(this.playerVehicle);
       if (hitCar) {
         this.onCrash(hitCar);
       }
 
       // 8. Update Speed Lines & Camera
       this.speedLines.update(
-        this.playerTruck,
+        this.playerVehicle,
         this.gameState.speedKmh,
         this.gameState.isBoosting,
         delta
       );
 
       this.cameraController.update(
-        this.playerTruck,
+        this.playerVehicle,
         this.gameState.speedKmh,
         this.gameState.isBoosting,
         delta
@@ -306,13 +343,13 @@ class BangladeshTruckGame {
     } else if (this.gameState.state === STATES.GAMEOVER) {
       // Continue updating particles and slow camera settle
       this.cameraController.update(
-        this.playerTruck,
+        this.playerVehicle,
         0,
         false,
         delta
       );
       this.roadManager.props.update(elapsedTime);
-      this.environment.update(this.playerTruck.group.position.z, elapsedTime);
+      this.environment.update(this.playerVehicle.group.position.z, elapsedTime);
     }
 
     // Always update active particles
