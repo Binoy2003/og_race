@@ -42,9 +42,9 @@ export class CameraController {
       this.defaultOffset.set(0, 3.5, 7.6);
       this.lookOffset.set(0, 1.25, -16.0);
     } else if (type === 'cng') {
-      // True Dhaka CNG perspective: reveals the iconic "আল্লাহ সর্বশক্তিমান" rear art & gives clear view of cars ahead!
-      this.defaultOffset.set(0, 3.3, 6.8);
-      this.lookOffset.set(0, 1.35, -16.0);
+      // Elevated CNG perspective: gives crystal clear view of rear louvers, yellow stripe & highway ahead
+      this.defaultOffset.set(0, 3.1, 6.2);
+      this.lookOffset.set(0, 1.25, -16.0);
     } else {
       // Heavy Truck elevated view
       this.defaultOffset.set(0, 4.4, 9.4);
