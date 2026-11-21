@@ -149,6 +149,8 @@ export class RoadManager {
     const group = new THREE.Group();
     group.position.z = zPos;
 
+    const isBridge = (index % 4 === 3);
+
     // ----------------------------------------------------
     // 1. Three-Lane Asphalt Road Surface
     // ----------------------------------------------------
@@ -158,32 +160,63 @@ export class RoadManager {
     roadMesh.receiveShadow = true;
     group.add(roadMesh);
 
-    // ----------------------------------------------------
-    // 2. Earthen Soil Verge / Shoulders (Left & Right)
-    // ----------------------------------------------------
-    const vergeWidth = 3.5;
-    [-1, 1].forEach((side) => {
-      const vergeGeo = new THREE.PlaneGeometry(vergeWidth, this.segmentLength);
-      vergeGeo.rotateX(-Math.PI / 2);
-      const verge = new THREE.Mesh(vergeGeo, this.dirtVergeMaterial);
-      verge.position.set((this.roadWidth * 0.5 + vergeWidth * 0.5) * side, -0.01, 0);
-      verge.receiveShadow = true;
-      group.add(verge);
-    });
+    if (!isBridge) {
+      // ----------------------------------------------------
+      // 2. Earthen Soil Verge / Shoulders (Left & Right)
+      // ----------------------------------------------------
+      const vergeWidth = 3.5;
+      [-1, 1].forEach((side) => {
+        const vergeGeo = new THREE.PlaneGeometry(vergeWidth, this.segmentLength);
+        vergeGeo.rotateX(-Math.PI / 2);
+        const verge = new THREE.Mesh(vergeGeo, this.dirtVergeMaterial);
+        verge.position.set((this.roadWidth * 0.5 + vergeWidth * 0.5) * side, -0.01, 0);
+        verge.receiveShadow = true;
+        group.add(verge);
+      });
 
-    // ----------------------------------------------------
-    // 3. Expansive Green Paddy Fields (Dhan Khet)
-    // ----------------------------------------------------
-    const fieldWidth = 60;
-    [-1, 1].forEach((side) => {
-      const fieldGeo = new THREE.PlaneGeometry(fieldWidth, this.segmentLength);
-      fieldGeo.rotateX(-Math.PI / 2);
-      const field = new THREE.Mesh(fieldGeo, this.paddyFieldMaterial);
-      const fieldX = (this.roadWidth * 0.5 + vergeWidth + fieldWidth * 0.5) * side;
-      field.position.set(fieldX, -0.05, 0);
-      field.receiveShadow = true;
-      group.add(field);
-    });
+      // ----------------------------------------------------
+      // 3. Expansive Green Paddy Fields (Dhan Khet)
+      // ----------------------------------------------------
+      const fieldWidth = 60;
+      [-1, 1].forEach((side) => {
+        const fieldGeo = new THREE.PlaneGeometry(fieldWidth, this.segmentLength);
+        fieldGeo.rotateX(-Math.PI / 2);
+        const field = new THREE.Mesh(fieldGeo, this.paddyFieldMaterial);
+        const fieldX = (this.roadWidth * 0.5 + vergeWidth + fieldWidth * 0.5) * side;
+        field.position.set(fieldX, -0.05, 0);
+        field.receiveShadow = true;
+        group.add(field);
+      });
+    } else {
+      // ----------------------------------------------------
+      // 2B. RIVER BRIDGE APPROACH VERGES & EMBANKMENTS
+      // ----------------------------------------------------
+      const vergeWidth = 3.5;
+      const approachLen = 6.0;
+      [-1, 1].forEach((side) => {
+        [-1, 1].forEach((dir) => {
+          const vergeGeo = new THREE.PlaneGeometry(vergeWidth, approachLen);
+          vergeGeo.rotateX(-Math.PI / 2);
+          const verge = new THREE.Mesh(vergeGeo, this.dirtVergeMaterial);
+          verge.position.set((this.roadWidth * 0.5 + vergeWidth * 0.5) * side, -0.01, dir * 27);
+          group.add(verge);
+
+          const fieldGeo = new THREE.PlaneGeometry(60, approachLen);
+          fieldGeo.rotateX(-Math.PI / 2);
+          const field = new THREE.Mesh(fieldGeo, this.paddyFieldMaterial);
+          field.position.set((this.roadWidth * 0.5 + vergeWidth + 30) * side, -0.05, dir * 27);
+          group.add(field);
+        });
+      });
+
+      // ----------------------------------------------------
+      // 3B. AUTHENTIC BANGLADESHI RIVER BRIDGE (User Photos)
+      // Red concrete posts, white horizontal rails, diagonal hazard striped curbs,
+      // galvanized utility pipeline, red piers, wide river, dingi boat & kochuripana!
+      // ----------------------------------------------------
+      const bridge = this.props.createBangladeshiRiverBridge(this.roadWidth, this.segmentLength);
+      group.add(bridge);
+    }
 
     // ----------------------------------------------------
     // 4. Authentic Bangladeshi Roadside Elements
@@ -199,6 +232,7 @@ export class RoadManager {
 
   populateBangladeshiScenery(group, index) {
     const p = this.props;
+    const isBridge = (index % 4 === 3);
 
     // A. Rural Electric Poles (Palli Bidyut) with overhead wires along the right side
     const pole = p.createElectricPole();
@@ -218,23 +252,25 @@ export class RoadManager {
     group.add(wire);
 
     // B. SPECIAL FOCUS: DESHI COWS (Tied to wooden posts or trees beside road)
-    // Safely placed on opposite side of passenger shed
-    const cowSide = (index % 2 === 0) ? -1 : 1;
-    const cowColor = index % 3 === 0 ? 'white' : (index % 3 === 1 ? 'brown' : 'black');
-    const cow = p.createCow(cowColor);
-    const cowX = (this.roadWidth * 0.5 + 2.8 + Math.random() * 1.5) * cowSide;
-    const cowZ = 6 + Math.random() * 14;
-    cow.position.set(cowX, 0, cowZ);
-    cow.rotation.y = cowSide > 0 ? -Math.PI / 2 + (Math.random() - 0.5) * 0.6 : Math.PI / 2 + (Math.random() - 0.5) * 0.6;
-    group.add(cow);
+    // Only on land segments (never in the river!)
+    if (!isBridge) {
+      const cowSide = (index % 2 === 0) ? -1 : 1;
+      const cowColor = index % 3 === 0 ? 'white' : (index % 3 === 1 ? 'brown' : 'black');
+      const cow = p.createCow(cowColor);
+      const cowX = (this.roadWidth * 0.5 + 2.8 + Math.random() * 1.5) * cowSide;
+      const cowZ = 6 + Math.random() * 14;
+      cow.position.set(cowX, 0, cowZ);
+      cow.rotation.y = cowSide > 0 ? -Math.PI / 2 + (Math.random() - 0.5) * 0.6 : Math.PI / 2 + (Math.random() - 0.5) * 0.6;
+      group.add(cow);
 
-    // Occasionally add a second cow or calf grazing nearby
-    if (index % 2 === 1) {
-      const cow2 = p.createCow('brown');
-      cow2.scale.set(0.75, 0.75, 0.75); // calf size
-      cow2.position.set(cowX + (cowSide > 0 ? 3.0 : -3.0), 0, cowZ + 3.5);
-      cow2.rotation.y = cow.rotation.y + 0.5;
-      group.add(cow2);
+      // Occasionally add a second cow or calf grazing nearby
+      if (index % 2 === 1) {
+        const cow2 = p.createCow('brown');
+        cow2.scale.set(0.75, 0.75, 0.75); // calf size
+        cow2.position.set(cowX + (cowSide > 0 ? 3.0 : -3.0), 0, cowZ + 3.5);
+        cow2.rotation.y = cow.rotation.y + 0.5;
+        group.add(cow2);
+      }
     }
 
     // C. Traditional Village Houses (Tin er Ghor) & Homesteads
@@ -290,61 +326,50 @@ export class RoadManager {
       }
     }
 
-    // F. Rural Culvert / Small Concrete Bridge Parapets (every 4th segment)
-    if (index % 4 === 3) {
-      [-this.roadWidth * 0.5 - 0.4, this.roadWidth * 0.5 + 0.4].forEach((rx) => {
-        const parapetGeo = new THREE.BoxGeometry(0.35, 0.75, 14);
-        const parapet = new THREE.Mesh(parapetGeo, this.culvertRailingMaterial);
-        parapet.position.set(rx, 0.38, 0);
-        parapet.castShadow = true;
-        group.add(parapet);
+    // F. Lush Flora: Coconut Palms, Banana Trees, Bamboo Groves
+    if (!isBridge) {
+      const treeSide = index % 2 === 0 ? 1 : -1;
 
-        // Black and white hazard stripes on culvert edges
-        [-7, 7].forEach((cz) => {
-          const postGeo = new THREE.BoxGeometry(0.45, 0.9, 0.45);
-          const post = new THREE.Mesh(postGeo, this.culvertRailingMaterial);
-          post.position.set(rx, 0.45, cz);
-          group.add(post);
-        });
+      // Coconut tree
+      const palm = p.createCoconutTree();
+      palm.position.set((this.roadWidth * 0.5 + 7.5 + Math.random() * 5.0) * treeSide, 0, -22);
+      group.add(palm);
+
+      // Bamboo grove
+      const bamboo = p.createBambooGrove();
+      bamboo.position.set((this.roadWidth * 0.5 + 9.0 + Math.random() * 6.0) * (-treeSide), 0, 18);
+      group.add(bamboo);
+
+      // Banana tree
+      const banana = p.createBananaTree();
+      banana.position.set((this.roadWidth * 0.5 + 5.8 + Math.random() * 2.5) * treeSide, 0, 4);
+      group.add(banana);
+    } else {
+      // Lush vegetation along River Banks (Photo 2)
+      [-1, 1].forEach((dir) => {
+        const rPalm = p.createCoconutTree();
+        rPalm.position.set(this.roadWidth * 0.5 + 9.0, 0, dir * 26);
+        group.add(rPalm);
+
+        const rBamboo = p.createBambooGrove();
+        rBamboo.position.set(-this.roadWidth * 0.5 - 10.0, 0, dir * 26);
+        group.add(rBamboo);
       });
     }
 
-    // G. Lush Flora: Coconut Palms, Banana Trees, Bamboo Groves
-    const treeSide = index % 2 === 0 ? 1 : -1;
+    // G. AUTHENTIC BANGLADESHI JATRI CHAWNI (যাত্রী ছাউনি / PASSENGER SHED / BUS STOP)
+    // Spawns in regular highway segments (never in the middle of a river bridge!)
+    if (!isBridge) {
+      const chawniSide = (index % 2 === 0) ? 1 : -1;
+      const chawni = p.createJatriChawni(chawniSide);
+      const chawniX = (this.roadWidth * 0.5 + 3.4) * chawniSide;
+      const chawniZ = (index === 0) ? -14 : -18;
+      chawni.position.set(chawniX, 0, chawniZ);
+      chawni.rotation.y = chawniSide > 0 ? (Math.PI * 0.5 + 0.32) : (-Math.PI * 0.5 - 0.32);
+      group.add(chawni);
+    }
 
-    // Coconut tree
-    const palm = p.createCoconutTree();
-    palm.position.set((this.roadWidth * 0.5 + 7.5 + Math.random() * 5.0) * treeSide, 0, -22);
-    group.add(palm);
-
-    // Bamboo grove
-    const bamboo = p.createBambooGrove();
-    bamboo.position.set((this.roadWidth * 0.5 + 9.0 + Math.random() * 6.0) * (-treeSide), 0, 18);
-    group.add(bamboo);
-
-    // Banana tree
-    const banana = p.createBananaTree();
-    banana.position.set((this.roadWidth * 0.5 + 5.8 + Math.random() * 2.5) * treeSide, 0, 4);
-    group.add(banana);
-
-    // H. AUTHENTIC BANGLADESHI JATRI CHAWNI (যাত্রী ছাউনি / PASSENGER SHED / BUS STOP)
-    // Features seating arrangement & cute teenage couple in love holding hands + girl holding a red rose!
-    // Spawns in EVERY segment, alternating right and left, with front opening angled towards oncoming traffic!
-    const chawniSide = (index % 2 === 0) ? 1 : -1;
-    const chawni = p.createJatriChawni(chawniSide);
-    // Safely positioned on roadside verge: road edge is at ±6.5m.
-    // Offset +3.4m places the center at ±9.9m, leaving >1.3m clearance from the road edge so it never enters the road!
-    const chawniX = (this.roadWidth * 0.5 + 3.4) * chawniSide;
-    const chawniZ = (index === 0) ? -14 : -18;
-    chawni.position.set(chawniX, 0, chawniZ);
-    // Angle shelter 18° towards oncoming traffic (+Z) so oncoming players look directly into the open shelter, signs & couple!
-    chawni.rotation.y = chawniSide > 0 ? (Math.PI * 0.5 + 0.32) : (-Math.PI * 0.5 - 0.32);
-    group.add(chawni);
-
-    // I. HIGHWAY CAFE ("HIGHWAY CAFE" / "ক্যাফে ও রেস্তোরাঁ") & HIGHWAY BAR ("HIGHWAY BAR" / "মদের বার")
-    // User request: Roadside cafe, alcohol bar, and guys standing and smoking cigarettes!
-    // Safely positioned on roadside verge (|x| >= 12.0m for buildings, |x| >= 8.9m for people)
-    // Front openings and signboards angled towards oncoming traffic (+Z)
+    // H. HIGHWAY CAFE ("HIGHWAY CAFE" / "ক্যাফে ও রেস্তোরাঁ") & HIGHWAY BAR ("HIGHWAY BAR" / "মদের বার")
     if (index % 4 === 1 || index % 4 === 2) {
       // HIGHWAY CAFE
       const cafeSide = (index % 4 === 2) ? 1 : -1;
@@ -363,9 +388,9 @@ export class RoadManager {
       guys.position.set(guysX, 0, guysZ);
       guys.rotation.y = guysSide > 0 ? -0.4 : 0.4;
       group.add(guys);
-    } else {
+    } else if (index % 4 === 0) {
       // HIGHWAY BAR ("মদের বার" / "HIGHWAY BAR & LOUNGE")
-      const barSide = (index % 4 === 0) ? 1 : -1;
+      const barSide = 1;
       const bar = p.createHighwayBar(barSide);
       const barX = (this.roadWidth * 0.5 + 5.6) * barSide;
       const barZ = 12;
@@ -384,7 +409,7 @@ export class RoadManager {
     }
 
     // Beside the Village Tea Stall (Cha er Tong at index % 3 === 1), also place smoking guys!
-    if (index % 3 === 1) {
+    if (index % 3 === 1 && !isBridge) {
       const teaGuys = p.createSmokingGuysGroup(1);
       teaGuys.position.set(this.roadWidth * 0.5 + 2.6, 0, 7);
       teaGuys.rotation.y = -0.3;

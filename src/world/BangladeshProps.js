@@ -182,6 +182,77 @@ export class BangladeshProps {
       transparent: true,
       opacity: 0.35
     });
+
+    // 6. Authentic Bangladeshi River Bridge Materials (User Photos)
+    this.bridgeRedMat = new THREE.MeshStandardMaterial({
+      color: 0xdc2626, // Vibrant red for vertical posts, piers & side girders
+      roughness: 0.55
+    });
+
+    this.bridgeWhiteMat = new THREE.MeshStandardMaterial({
+      color: 0xf8fafc, // Clean off-white for horizontal concrete rails & caps
+      roughness: 0.5
+    });
+
+    // 45-degree diagonal red-and-white hazard striped curb texture
+    const curbCanvas = document.createElement('canvas');
+    curbCanvas.width = 256;
+    curbCanvas.height = 128;
+    const cCtx = curbCanvas.getContext('2d');
+    cCtx.fillStyle = '#ffffff';
+    cCtx.fillRect(0, 0, 256, 128);
+    cCtx.fillStyle = '#dc2626';
+    const stripeW = 32;
+    for (let x = -128; x < 384; x += stripeW * 2) {
+      cCtx.beginPath();
+      cCtx.moveTo(x, 0);
+      cCtx.lineTo(x + stripeW, 0);
+      cCtx.lineTo(x + stripeW - 128, 128);
+      cCtx.lineTo(x - 128, 128);
+      cCtx.closePath();
+      cCtx.fill();
+    }
+    const curbTex = new THREE.CanvasTexture(curbCanvas);
+    curbTex.wrapS = THREE.RepeatWrapping;
+    curbTex.wrapT = THREE.RepeatWrapping;
+    curbTex.repeat.set(24, 1);
+
+    this.bridgeCurbMat = new THREE.MeshStandardMaterial({
+      map: curbTex,
+      roughness: 0.6
+    });
+
+    // Galvanized utility pipeline running along bridge railing
+    this.pipelineMat = new THREE.MeshStandardMaterial({
+      color: 0x94a3b8,
+      metalness: 0.8,
+      roughness: 0.25
+    });
+
+    // Deep tranquil river water (Nodi)
+    this.riverWaterMat = new THREE.MeshStandardMaterial({
+      color: 0x155e75,
+      roughness: 0.12,
+      metalness: 0.35,
+      transparent: true,
+      opacity: 0.92
+    });
+
+    // Striped Guide Post / Bollard Material (Photo 2)
+    const bollardCanvas = document.createElement('canvas');
+    bollardCanvas.width = 64;
+    bollardCanvas.height = 128;
+    const bCtx = bollardCanvas.getContext('2d');
+    bCtx.fillStyle = '#dc2626'; // Red
+    bCtx.fillRect(0, 0, 64, 128);
+    bCtx.fillStyle = '#ffffff'; // White stripes
+    bCtx.fillRect(0, 24, 64, 30);
+    bCtx.fillRect(0, 78, 64, 30);
+    const bollardTex = new THREE.CanvasTexture(bollardCanvas);
+    this.bollardMat = new THREE.MeshStandardMaterial({
+      map: bollardTex,
+      roughness: 0.5
+    });
   }
 
   // ========================================================
@@ -2382,9 +2453,504 @@ export class BangladeshProps {
     return group;
   }
 
+  // ========================================================
+  // 12. TRADITIONAL WOODEN DINGI BOAT (ডিঙ্গি নৌকা - Photo 2)
+  // Curved Wooden Hull, Bamboo Woven Canopy (Chhoi), Boatman (Majhi) & Oar (Boitha)
+  // ========================================================
+  createDingiBoat() {
+    const boat = new THREE.Group();
+    boat.name = 'dingi_nouka';
+
+    const hullWoodMat = new THREE.MeshStandardMaterial({
+      color: 0x3e2723, // Weathered dark mahogany / sal wood
+      roughness: 0.8
+    });
+
+    // Main boat floor & bottom
+    const floorGeo = new THREE.BoxGeometry(1.1, 0.12, 3.8);
+    const floor = new THREE.Mesh(floorGeo, hullWoodMat);
+    floor.position.y = 0.06;
+    boat.add(floor);
+
+    // Left and Right flaring side planks
+    [-0.55, 0.55].forEach((sx) => {
+      const sidePlankGeo = new THREE.BoxGeometry(0.08, 0.45, 3.8);
+      const sidePlank = new THREE.Mesh(sidePlankGeo, hullWoodMat);
+      sidePlank.position.set(sx, 0.28, 0);
+      sidePlank.rotation.z = sx > 0 ? 0.25 : -0.25;
+      boat.add(sidePlank);
+    });
+
+    // Pointed upturned Bow (Golui) and Stern
+    [-1, 1].forEach((dir) => {
+      const tipGeo = new THREE.ConeGeometry(0.55, 1.2, 5);
+      tipGeo.rotateX(dir > 0 ? -Math.PI / 3 : Math.PI / 3);
+      const tip = new THREE.Mesh(tipGeo, hullWoodMat);
+      tip.position.set(0, 0.35, dir * 2.3);
+      tip.scale.set(0.9, 0.5, 1.1);
+      boat.add(tip);
+
+      // Brass / metal ornamental cap on prow
+      const prowCap = new THREE.Mesh(
+        new THREE.SphereGeometry(0.08, 8, 8),
+        new THREE.MeshStandardMaterial({ color: 0xf59e0b, metalness: 0.8, roughness: 0.3 })
+      );
+      prowCap.position.set(0, 0.65, dir * 2.7);
+      boat.add(prowCap);
+    });
+
+    // Arched Bamboo Canopy (Chhoi / বাঁশের ছই - Photo 2)
+    const chhoiGeo = new THREE.CylinderGeometry(0.68, 0.68, 1.9, 16, 1, true, 0, Math.PI);
+    chhoiGeo.rotateZ(Math.PI / 2);
+    chhoiGeo.rotateY(Math.PI / 2);
+    const chhoi = new THREE.Mesh(chhoiGeo, this.bambooWallMat);
+    chhoi.position.set(0, 0.48, -0.2);
+    boat.add(chhoi);
+
+    // Woven bamboo ribs / hoops supporting chhoi
+    [-0.8, 0, 0.8].forEach((rz) => {
+      const ribGeo = new THREE.TorusGeometry(0.69, 0.025, 6, 16, Math.PI);
+      ribGeo.rotateZ(Math.PI / 2);
+      ribGeo.rotateY(Math.PI / 2);
+      const rib = new THREE.Mesh(ribGeo, this.woodMat);
+      rib.position.set(0, 0.48, -0.2 + rz);
+      boat.add(rib);
+    });
+
+    // Boatman (Majhi / মাঝি) sitting at stern
+    const majhiGroup = new THREE.Group();
+    majhiGroup.position.set(0, 0.22, 1.35);
+
+    const skinMat = new THREE.MeshStandardMaterial({ color: 0xd4a373, roughness: 0.7 });
+    const lungiMat = new THREE.MeshStandardMaterial({ color: 0x0284c7, roughness: 0.8 }); // Blue lungi
+    const hairMat = new THREE.MeshStandardMaterial({ color: 0x18181b, roughness: 0.5 });
+
+    // Seated Lungi legs
+    const lungi = new THREE.Mesh(new THREE.BoxGeometry(0.38, 0.28, 0.42), lungiMat);
+    lungi.position.y = 0.14;
+    majhiGroup.add(lungi);
+
+    // Torso (sleeveless / bare chest)
+    const torso = new THREE.Mesh(new THREE.BoxGeometry(0.32, 0.42, 0.2), skinMat);
+    torso.position.set(0, 0.46, -0.05);
+    torso.rotation.x = -0.15; // Leaning forward slightly as he rows
+    majhiGroup.add(torso);
+
+    // Head & Hair
+    const head = new THREE.Mesh(new THREE.SphereGeometry(0.11, 10, 10), skinMat);
+    head.position.set(0, 0.74, -0.1);
+    majhiGroup.add(head);
+
+    const hair = new THREE.Mesh(new THREE.SphereGeometry(0.115, 10, 10), hairMat);
+    hair.position.set(0, 0.77, -0.1);
+    hair.scale.set(1.02, 1.05, 1.02);
+    majhiGroup.add(hair);
+
+    // Majhi Hat (Mathal / বাঁশের মাথাল - Traditional cone hat)
+    const mathalGeo = new THREE.ConeGeometry(0.24, 0.12, 12);
+    const mathal = new THREE.Mesh(mathalGeo, this.bambooWallMat);
+    mathal.position.set(0, 0.86, -0.1);
+    majhiGroup.add(mathal);
+
+    // Rowing Oar (Boitha / বৈঠা)
+    const oarGroup = new THREE.Group();
+    oarGroup.position.set(0.32, 0.4, 0);
+    oarGroup.rotation.z = -Math.PI * 0.32;
+    oarGroup.rotation.x = Math.PI * 0.25;
+
+    // Shaft
+    const oarShaft = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.025, 0.025, 2.2, 8),
+      this.woodMat
+    );
+    oarShaft.position.y = -0.5;
+    oarGroup.add(oarShaft);
+
+    // Paddle Blade dipping in water
+    const oarBlade = new THREE.Mesh(
+      new THREE.BoxGeometry(0.18, 0.55, 0.02),
+      this.woodMat
+    );
+    oarBlade.position.y = -1.4;
+    oarGroup.add(oarBlade);
+
+    majhiGroup.add(oarGroup);
+    boat.add(majhiGroup);
+
+    return boat;
+  }
+
+  // ========================================================
+  // 13. FLOATING WATER HYACINTH CLUSTERS (কচুরিপানা - Photo 2)
+  // ========================================================
+  createWaterHyacinthCluster() {
+    const cluster = new THREE.Group();
+    cluster.name = 'kochuripana_cluster';
+
+    const leafMat = new THREE.MeshStandardMaterial({ color: 0x15803d, roughness: 0.5 });
+    const flowerMat = new THREE.MeshBasicMaterial({ color: 0xc084fc }); // delicate violet/lilac
+
+    for (let i = 0; i < 7; i++) {
+      const angle = (i / 7) * Math.PI * 2 + Math.random() * 0.4;
+      const dist = 0.25 + Math.random() * 0.45;
+      const lx = Math.cos(angle) * dist;
+      const lz = Math.sin(angle) * dist;
+
+      // Rounded heart/oval leaf pad
+      const leafGeo = new THREE.SphereGeometry(0.12, 8, 6);
+      leafGeo.scale(1.3, 0.2, 1.0);
+      const leaf = new THREE.Mesh(leafGeo, leafMat);
+      leaf.position.set(lx, 0.02, lz);
+      cluster.add(leaf);
+
+      // Occasional tiny lilac flower spike
+      if (i % 2 === 0) {
+        const flower = new THREE.Mesh(
+          new THREE.ConeGeometry(0.04, 0.12, 6),
+          flowerMat
+        );
+        flower.position.set(lx * 0.8, 0.08, lz * 0.8);
+        cluster.add(flower);
+      }
+    }
+
+    return cluster;
+  }
+
+  // ========================================================
+  // 14. AUTHENTIC BANGLADESHI RIVER BRIDGE (নদীর ওপর লাল-সাদা সেতু - User Photos)
+  // Exact Colors & Architecture:
+  // - Vivid Red Concrete Vertical Posts & Chamfered Caps
+  // - Two Tiers of Clean Off-White Concrete Horizontal Railings
+  // - Raised Warning Curbs with 45-degree Diagonal Red & White Warning Stripes
+  // - Galvanized Utility Pipeline with Red Mounting Brackets on Left Railing
+  // - Subtle Parabolic Arch Profile Rising over the River Center
+  // - Red Fascia Girder Beams & Red Trestle Support Piers in River Water
+  // - Wide Flowing River (নদী), Traditional Dingi Boat (ডিঙ্গি নৌকা), Kochuripana & RHD Plaque!
+  // ========================================================
+  createBangladeshiRiverBridge(roadWidth = 13.0, bridgeLength = 60) {
+    const bridge = new THREE.Group();
+    bridge.name = 'bangladeshi_river_bridge';
+
+    const halfW = roadWidth * 0.5;
+    const archH = 0.45; // Gentle parabolic rise at center
+
+    // 1. Concrete Sub-Deck Slab (Underneath the roadway)
+    const subDeckGeo = new THREE.BoxGeometry(roadWidth + 0.8, 0.45, bridgeLength);
+    const subDeckMat = new THREE.MeshStandardMaterial({ color: 0x475569, roughness: 0.8 });
+    const subDeck = new THREE.Mesh(subDeckGeo, subDeckMat);
+    subDeck.position.set(0, -0.225, 0);
+    subDeck.receiveShadow = true;
+    bridge.add(subDeck);
+
+    // Expansion Joint strips at both ends of bridge
+    [-bridgeLength * 0.5 + 0.3, bridgeLength * 0.5 - 0.3].forEach((ez) => {
+      const jointGeo = new THREE.BoxGeometry(roadWidth + 0.4, 0.04, 0.35);
+      const joint = new THREE.Mesh(jointGeo, new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.9 }));
+      joint.position.set(0, 0.01, ez);
+      bridge.add(joint);
+    });
+
+    // 2. Red Side-Fascia Girder Beams (Along bridge sides below deck - Photo 2)
+    [-1, 1].forEach((side) => {
+      const gx = (halfW + 0.3) * side;
+
+      // Heavy Red Girder
+      const girderGeo = new THREE.BoxGeometry(0.38, 0.85, bridgeLength);
+      const girder = new THREE.Mesh(girderGeo, this.bridgeRedMat);
+      girder.position.set(gx, -0.45, 0);
+      girder.castShadow = true;
+      bridge.add(girder);
+
+      // Off-white bottom flange trim
+      const flangeGeo = new THREE.BoxGeometry(0.44, 0.12, bridgeLength);
+      const flange = new THREE.Mesh(flangeGeo, this.bridgeWhiteMat);
+      flange.position.set(gx, -0.85, 0);
+      bridge.add(flange);
+    });
+
+    // 3. Trestle Pier Bents dipping into River Water (Photo 2)
+    const pierZPositions = [-18, -6, 6, 18];
+    pierZPositions.forEach((pz) => {
+      const pierBent = new THREE.Group();
+      pierBent.position.set(0, 0, pz);
+
+      // Red Cap Beam under deck
+      const capGeo = new THREE.BoxGeometry(roadWidth + 1.2, 0.45, 0.95);
+      const cap = new THREE.Mesh(capGeo, this.bridgeRedMat);
+      cap.position.y = -0.55;
+      pierBent.add(cap);
+
+      // 4 Heavy Inclined Red Concrete Columns extending into riverbed (y = -3.2m)
+      [-5.2, -1.8, 1.8, 5.2].forEach((cx) => {
+        const colGeo = new THREE.CylinderGeometry(0.24, 0.28, 3.2, 10);
+        const col = new THREE.Mesh(colGeo, this.bridgeRedMat);
+        col.position.set(cx, -1.95, 0);
+        col.rotation.z = cx > 0 ? -0.06 : 0.06; // slight trestle batter
+        pierBent.add(col);
+
+        // Dark waterline ring stain
+        const waterRing = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.29, 0.29, 0.28, 10),
+          new THREE.MeshStandardMaterial({ color: 0x0f2922, roughness: 0.9 })
+        );
+        waterRing.position.set(cx, -1.35, 0);
+        pierBent.add(waterRing);
+      });
+
+      // Horizontal Cross-brace
+      const braceGeo = new THREE.BoxGeometry(roadWidth + 0.6, 0.22, 0.3);
+      const brace = new THREE.Mesh(braceGeo, this.bridgeRedMat);
+      brace.position.y = -1.6;
+      pierBent.add(brace);
+
+      bridge.add(pierBent);
+    });
+
+    // 4. Raised Warning Curbs with Diagonal Red & White Stripes (Photo 1)
+    [-1, 1].forEach((side) => {
+      const cx = (halfW + 0.16) * side;
+      const curbGeo = new THREE.BoxGeometry(0.34, 0.28, bridgeLength);
+      const curb = new THREE.Mesh(curbGeo, this.bridgeCurbMat);
+      curb.position.set(cx, 0.14, 0);
+      curb.receiveShadow = true;
+      bridge.add(curb);
+    });
+
+    // 5. Red & White Concrete Railings with Arch Profile (Photo 1 & Photo 2)
+    // Posts spaced every 1.5m from z = -28.5 to +28.5
+    const postZList = [];
+    for (let z = -28.5; z <= 28.51; z += 1.5) {
+      postZList.push(z);
+    }
+
+    [-1, 1].forEach((side) => {
+      const rx = (halfW + 0.16) * side;
+
+      // Vertical Posts (লাল রঙের পিলার)
+      postZList.forEach((pz) => {
+        const archY = Math.sin(((pz + 28.5) / 57) * Math.PI) * archH;
+
+        // Post shaft
+        const postGeo = new THREE.BoxGeometry(0.22, 0.96, 0.22);
+        const post = new THREE.Mesh(postGeo, this.bridgeRedMat);
+        post.position.set(rx, 0.28 + 0.48 + archY, pz);
+        post.castShadow = true;
+        bridge.add(post);
+
+        // Pyramid chamfered cap on top of post
+        const capGeo = new THREE.ConeGeometry(0.18, 0.08, 4);
+        capGeo.rotateY(Math.PI / 4);
+        const pCap = new THREE.Mesh(capGeo, this.bridgeRedMat);
+        pCap.position.set(rx, 0.28 + 0.96 + 0.04 + archY, pz);
+        bridge.add(pCap);
+
+        // Red mounting bracket for utility pipeline (on left railing only - Photo 1)
+        if (side === -1) {
+          const bracketGeo = new THREE.TorusGeometry(0.075, 0.016, 8, 16);
+          const bracket = new THREE.Mesh(bracketGeo, this.bridgeRedMat);
+          bracket.position.set(rx + 0.09, 0.28 + 0.32 + archY, pz);
+          bridge.add(bracket);
+        }
+      });
+
+      // Horizontal Rails (সাদা রঙের রেলিং) between posts
+      for (let i = 0; i < postZList.length - 1; i++) {
+        const z1 = postZList[i];
+        const z2 = postZList[i + 1];
+        const midZ = (z1 + z2) * 0.5;
+        const segLen = z2 - z1;
+        const archY = Math.sin(((midZ + 28.5) / 57) * Math.PI) * archH;
+
+        // Mid Rail (Off-white concrete)
+        const midRailGeo = new THREE.BoxGeometry(0.14, 0.12, segLen);
+        const midRail = new THREE.Mesh(midRailGeo, this.bridgeWhiteMat);
+        midRail.position.set(rx, 0.28 + 0.44 + archY, midZ);
+        bridge.add(midRail);
+
+        // Top Continuous Rail / Handrail (Off-white concrete)
+        const topRailGeo = new THREE.BoxGeometry(0.2, 0.12, segLen);
+        const topRail = new THREE.Mesh(topRailGeo, this.bridgeWhiteMat);
+        topRail.position.set(rx, 0.28 + 0.92 + archY, midZ);
+        bridge.add(topRail);
+
+        // Utility Pipeline segment (Galvanized steel pipe on left railing - Photo 1)
+        if (side === -1) {
+          const pipeGeo = new THREE.CylinderGeometry(0.065, 0.065, segLen, 10);
+          pipeGeo.rotateX(Math.PI / 2);
+          const pipe = new THREE.Mesh(pipeGeo, this.pipelineMat);
+          pipe.position.set(rx + 0.09, 0.28 + 0.32 + archY, midZ);
+          bridge.add(pipe);
+        }
+      }
+    });
+
+    // 6. The Wide River (নদী) Beneath the Bridge (Photo 2)
+    // Expansive water surface spanning x = -90m to +90m and z = -24m to +24m
+    const riverGeo = new THREE.PlaneGeometry(180, 48);
+    riverGeo.rotateX(-Math.PI / 2);
+    const river = new THREE.Mesh(riverGeo, this.riverWaterMat);
+    river.position.set(0, -1.35, 0);
+    river.receiveShadow = true;
+    bridge.add(river);
+
+    // Riverbed beneath the water
+    const bedGeo = new THREE.PlaneGeometry(180, 48);
+    bedGeo.rotateX(-Math.PI / 2);
+    const bed = new THREE.Mesh(bedGeo, new THREE.MeshStandardMaterial({ color: 0x1c1917, roughness: 0.95 }));
+    bed.position.set(0, -3.2, 0);
+    bridge.add(bed);
+
+    // Sloping River Embankments (নদীর পার) at upstream and downstream ends
+    [-1, 1].forEach((dir) => {
+      const bankZ = dir * 26.5; // z = -26.5 and +26.5
+      // Left and right embankment banks
+      [-1, 1].forEach((side) => {
+        const bankGeo = new THREE.PlaneGeometry(75, 7);
+        bankGeo.rotateX(dir > 0 ? -Math.PI * 0.38 : Math.PI * 0.38);
+        const bank = new THREE.Mesh(bankGeo, this.mudPlinthMat);
+        bank.position.set(side * 48, -0.7, bankZ);
+        bridge.add(bank);
+      });
+    });
+
+    // 7. Traditional Wooden Dingi Boat (ডিঙ্গি নৌকা - Photo 2)
+    // Floating on the river water near the bridge
+    const dingi = this.createDingiBoat();
+    dingi.position.set(16.5, -1.35, 3.5);
+    dingi.rotation.y = 0.45;
+    bridge.add(dingi);
+
+    // Register dingi boat for water bobbing animation
+    this.animatedAnimals.push({
+      type: 'dingi',
+      mesh: dingi,
+      startY: -1.35,
+      seed: Math.random() * 10
+    });
+
+    // 8. Water Hyacinth Patches (কচুরিপানা - Photo 2)
+    const hyacinthPositions = [
+      [14.5, -1.34, 1.5],
+      [19.0, -1.34, 5.5],
+      [-15.0, -1.34, -4.0],
+      [-7.5, -1.34, 6.0],
+      [7.5, -1.34, -6.0]
+    ];
+    hyacinthPositions.forEach(([hx, hy, hz]) => {
+      const cluster = this.createWaterHyacinthCluster();
+      cluster.position.set(hx, hy, hz);
+      bridge.add(cluster);
+    });
+
+    // 9. RHD Bridge Approach Signboard / Milestone (Photo 1)
+    // Placed at the bridge approach corner
+    const signGroup = new THREE.Group();
+    signGroup.position.set(halfW + 0.95, 0, -28.8);
+
+    // Concrete striped milestone post
+    const postMesh = new THREE.Mesh(
+      new THREE.BoxGeometry(0.35, 1.2, 0.35),
+      this.bridgeCurbMat
+    );
+    postMesh.position.y = 0.6;
+    signGroup.add(postMesh);
+
+    // Official RHD Bridge Plaque Canvas
+    const bpCanvas = document.createElement('canvas');
+    bpCanvas.width = 512;
+    bpCanvas.height = 320;
+    const bpCtx = bpCanvas.getContext('2d');
+
+    // RHD Forest Green
+    bpCtx.fillStyle = '#15803d';
+    bpCtx.fillRect(0, 0, 512, 320);
+
+    // Gold border
+    bpCtx.strokeStyle = '#facc15';
+    bpCtx.lineWidth = 12;
+    bpCtx.strokeRect(8, 8, 496, 304);
+
+    // White inner border
+    bpCtx.strokeStyle = '#ffffff';
+    bpCtx.lineWidth = 4;
+    bpCtx.strokeRect(22, 22, 468, 276);
+
+    // Bengali Bridge Name
+    bpCtx.fillStyle = '#ffffff';
+    bpCtx.font = 'bold 56px sans-serif';
+    bpCtx.textAlign = 'center';
+    bpCtx.textBaseline = 'middle';
+    bpCtx.fillText('মেঘনা নদী সেতু', 256, 85);
+
+    // English Bridge Name
+    bpCtx.fillStyle = '#facc15';
+    bpCtx.font = '900 44px sans-serif';
+    bpCtx.fillText('MEGHNA RIVER BRIDGE', 256, 160);
+
+    // Length & Authority
+    bpCtx.fillStyle = '#e2e8f0';
+    bpCtx.font = 'bold 28px sans-serif';
+    bpCtx.fillText('দৈর্ঘ্য: ৬০ মিটার | LENGTH: 60M', 256, 225);
+
+    bpCtx.fillStyle = '#86efac';
+    bpCtx.font = 'bold 22px sans-serif';
+    bpCtx.fillText('সড়ক ও জনপথ অধিদপ্তর (RHD)', 256, 275);
+
+    const bpTex = new THREE.CanvasTexture(bpCanvas);
+    const bpMat = new THREE.MeshStandardMaterial({ map: bpTex, roughness: 0.4 });
+    const bpMesh = new THREE.Mesh(new THREE.PlaneGeometry(1.2, 0.75), bpMat);
+    bpMesh.position.set(0, 1.35, -0.05);
+    bpMesh.rotation.y = -Math.PI / 4; // Angled towards oncoming player!
+    signGroup.add(bpMesh);
+
+    bridge.add(signGroup);
+
+    // 10. Red & White Striped Guide Posts / Bollards lining Approaches (Photo 2)
+    [-1, 1].forEach((side) => {
+      const bx = (halfW + 0.38) * side;
+      // Approach 1 (entering bridge)
+      for (let bz = -29.2; bz <= -23.5; bz += 1.4) {
+        const bollard = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.1, 0.1, 0.85, 12),
+          this.bollardMat
+        );
+        bollard.position.set(bx, 0.425, bz);
+        bollard.castShadow = true;
+        bridge.add(bollard);
+
+        const cap = new THREE.Mesh(
+          new THREE.SphereGeometry(0.1, 12, 8, 0, Math.PI * 2, 0, Math.PI * 0.5),
+          this.bridgeRedMat
+        );
+        cap.position.set(bx, 0.85, bz);
+        bridge.add(cap);
+      }
+      // Approach 2 (exiting bridge)
+      for (let bz = 23.5; bz <= 29.2; bz += 1.4) {
+        const bollard = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.1, 0.1, 0.85, 12),
+          this.bollardMat
+        );
+        bollard.position.set(bx, 0.425, bz);
+        bollard.castShadow = true;
+        bridge.add(bollard);
+
+        const cap = new THREE.Mesh(
+          new THREE.SphereGeometry(0.1, 12, 8, 0, Math.PI * 2, 0, Math.PI * 0.5),
+          this.bridgeRedMat
+        );
+        cap.position.set(bx, 0.85, bz);
+        bridge.add(cap);
+      }
+    });
+
+    return bridge;
+  }
+
   // Update animal animations, environmental motion, and smoke every frame
   update(time) {
-    // 1. Animals & Figures (Cows chewing/grazing, ducks, romantic couple, smoking guys)
+    // 1. Animals & Figures (Cows chewing/grazing, ducks, romantic couple, smoking guys, dingi boats)
     this.animatedAnimals.forEach((anim) => {
       if (anim.type === 'cow') {
         // Natural head grazing / nodding
@@ -2414,6 +2980,11 @@ export class BangladeshProps {
           const drag = Math.sin(time * 1.8 + anim.seed) * 0.04;
           anim.head.rotation.x = -0.12 + Math.max(0, drag);
         }
+      } else if (anim.type === 'dingi') {
+        // Gentle water bobbing and slow drifting of dingi boat in river (Photo 2)
+        anim.mesh.position.y = anim.startY + Math.sin(time * 2.2 + anim.seed) * 0.035;
+        anim.mesh.rotation.z = Math.sin(time * 1.8 + anim.seed) * 0.04;
+        anim.mesh.rotation.x = Math.cos(time * 1.4 + anim.seed) * 0.025;
       }
     });
 
