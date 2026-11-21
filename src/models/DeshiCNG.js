@@ -463,32 +463,64 @@ export class DeshiCNG {
     this.bodyGroup.add(frontFloor);
 
     // ========================================================
-    // 4. CURVED CANOPY ROOF DOME (Image 2 & 3)
-    // Dark Charcoal / Black rounded dome curving over top
+    // 4. AUTHENTIC COMPACT DOME ROOF CANOPY (Image 2 & 3)
+    // Sized to exactly 1.26m cabin width (NO oversized wings or overhang!)
     // ========================================================
     const roofGroup = new THREE.Group();
 
-    // Curved Central Canopy Slab
-    const roofCurveGeo = new THREE.CylinderGeometry(0.72, 0.72, 2.12, 24, 1, false, Math.PI * 0.15, Math.PI * 0.70);
-    roofCurveGeo.rotateZ(Math.PI / 2);
+    // Top Dome Arched Surface:
+    // Cylinder radius R = 1.55m, arc spans across X = -0.63m to +0.63m (Exact Width = 1.26m)
+    // Cylinder length L = 2.16m along Z axis (from z = -1.08m to +1.08m)
+    const roofArcHalfAngle = Math.asin(0.63 / 1.55); // ~0.418 rad (~24 deg each side, total 48 deg)
+    const roofArcAngle = roofArcHalfAngle * 2;
+    const roofLength = 2.16;
+
+    const roofCurveGeo = new THREE.CylinderGeometry(
+      1.55, 1.55,
+      roofLength,
+      24, 1,
+      false,
+      Math.PI * 0.5 - roofArcHalfAngle,
+      roofArcAngle
+    );
+    // Rotate around X so length runs along Z axis (front-to-back)!
+    roofCurveGeo.rotateX(Math.PI / 2);
+
     const roofCurve = new THREE.Mesh(roofCurveGeo, darkCanopyMat);
-    roofCurve.position.set(0, 1.62, -0.05);
+    // Position center of curvature so crown peak is at y = 1.67m and side eaves drop to y = 1.55m
+    roofCurve.position.set(0, 0.12, -0.01);
     roofCurve.castShadow = true;
     roofGroup.add(roofCurve);
 
-    // Front Beveled Canopy Overhang (over windshield)
-    const frontRoofCapGeo = new THREE.BoxGeometry(1.26, 0.12, 0.32);
-    const frontRoofCap = new THREE.Mesh(frontRoofCapGeo, darkCanopyMat);
-    frontRoofCap.position.set(0, 1.66, -1.05);
-    frontRoofCap.rotation.x = 0.12;
-    roofGroup.add(frontRoofCap);
+    // Front Sloping Sun-Visor Brow (over windshield header, z = -1.08m to -1.16m)
+    const frontVisorGeo = new THREE.BoxGeometry(1.26, 0.07, 0.16);
+    const frontVisor = new THREE.Mesh(frontVisorGeo, darkCanopyMat);
+    frontVisor.position.set(0, 1.56, -1.12);
+    frontVisor.rotation.x = 0.15;
+    roofGroup.add(frontVisor);
 
-    // Rear Beveled Canopy Cap
-    const rearRoofCapGeo = new THREE.BoxGeometry(1.26, 0.12, 0.22);
-    const rearRoofCap = new THREE.Mesh(rearRoofCapGeo, darkCanopyMat);
-    rearRoofCap.position.set(0, 1.66, 0.98);
-    rearRoofCap.rotation.x = -0.10;
-    roofGroup.add(rearRoofCap);
+    // Rear Sloping Canopy Cap (over rear face header, z = +1.06m to +1.12m)
+    const rearCapGeo = new THREE.BoxGeometry(1.26, 0.07, 0.12);
+    const rearCap = new THREE.Mesh(rearCapGeo, darkCanopyMat);
+    rearCap.position.set(0, 1.56, 1.08);
+    rearCap.rotation.x = -0.12;
+    roofGroup.add(rearCap);
+
+    // Side Rain Gutters / Roof Trim Rails along left and right eaves (x = ±0.63m)
+    [-0.63, 0.63].forEach((sx) => {
+      const gutterGeo = new THREE.CylinderGeometry(0.016, 0.016, roofLength, 8);
+      gutterGeo.rotateX(Math.PI / 2);
+      const gutter = new THREE.Mesh(gutterGeo, new THREE.MeshStandardMaterial({ color: 0x18181b, roughness: 0.7 }));
+      gutter.position.set(sx, 1.55, -0.01);
+      roofGroup.add(gutter);
+    });
+
+    // Interior Ceiling Panel (cleanly closes the cabin ceiling from underneath)
+    const ceilingGeo = new THREE.PlaneGeometry(1.24, roofLength);
+    ceilingGeo.rotateX(Math.PI / 2);
+    const ceiling = new THREE.Mesh(ceilingGeo, new THREE.MeshStandardMaterial({ color: 0x18181b, roughness: 0.9 }));
+    ceiling.position.set(0, 1.54, -0.01);
+    roofGroup.add(ceiling);
 
     this.bodyGroup.add(roofGroup);
 
