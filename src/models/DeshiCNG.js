@@ -61,9 +61,19 @@ export class DeshiCNG {
     rearCanvas.height = 1024;
     const rCtx = rearCanvas.getContext('2d');
 
-    // 1. Top Section (y: 0 to 420): Rounded Charcoal/Black Canvas Canopy
+    // 1. Top Section (y: 0 to 420): Rounded Charcoal/Black Canvas Canopy (Image 3)
+    rCtx.clearRect(0, 0, 1024, 1024);
+
+    rCtx.beginPath();
+    rCtx.moveTo(0, 420);
+    rCtx.lineTo(0, 150);
+    rCtx.quadraticCurveTo(0, 18, 175, 18);
+    rCtx.lineTo(849, 18);
+    rCtx.quadraticCurveTo(1024, 18, 1024, 150);
+    rCtx.lineTo(1024, 420);
+    rCtx.closePath();
     rCtx.fillStyle = '#1c1917';
-    rCtx.fillRect(0, 0, 1024, 420);
+    rCtx.fill();
 
     // Subtle dark canvas weave texture
     rCtx.fillStyle = 'rgba(255, 255, 255, 0.025)';
@@ -249,8 +259,18 @@ export class DeshiCNG {
     const fCtx = frontCanvas.getContext('2d');
 
     // 1. Top Section (y: 0 to 480): Bright Yellow Windshield Cowl (Image 3!)
+    fCtx.clearRect(0, 0, 1024, 1024);
+
+    fCtx.beginPath();
+    fCtx.moveTo(0, 480);
+    fCtx.lineTo(0, 140);
+    fCtx.quadraticCurveTo(0, 18, 175, 18);
+    fCtx.lineTo(849, 18);
+    fCtx.quadraticCurveTo(1024, 18, 1024, 140);
+    fCtx.lineTo(1024, 480);
+    fCtx.closePath();
     fCtx.fillStyle = '#facc15';
-    fCtx.fillRect(0, 0, 1024, 480);
+    fCtx.fill();
 
     // Windshield Gasket & Frame
     fCtx.fillStyle = '#09090b';
@@ -430,14 +450,18 @@ export class DeshiCNG {
       map: rearTexture,
       roughness: 0.4,
       metalness: 0.1,
-      side: THREE.DoubleSide
+      side: THREE.DoubleSide,
+      transparent: true,
+      alphaTest: 0.2
     });
 
     const frontFaceMat = new THREE.MeshStandardMaterial({
       map: frontTexture,
       roughness: 0.4,
       metalness: 0.1,
-      side: THREE.DoubleSide
+      side: THREE.DoubleSide,
+      transparent: true,
+      alphaTest: 0.2
     });
 
     const sidePanelMat = new THREE.MeshStandardMaterial({
@@ -463,63 +487,209 @@ export class DeshiCNG {
     this.bodyGroup.add(frontFloor);
 
     // ========================================================
-    // 4. AUTHENTIC COMPACT DOME ROOF CANOPY (Image 2 & 3)
-    // Sized to exactly 1.26m cabin width (NO oversized wings or overhang!)
+    // 4. AUTHENTIC 3D CONTOURED CANOPY ROOF (Image 2 & 3)
+    // 100% Custom Parametric BufferGeometry — ZERO pie slices, ZERO downward wedges, ZERO shadow glitches!
+    // Fitted snugly to 1.26m cabin width with rounded shoulders, front sun-visor & canvas hoop ribs.
     // ========================================================
     const roofGroup = new THREE.Group();
 
-    // Top Dome Arched Surface:
-    // Cylinder radius R = 1.55m, arc spans across X = -0.63m to +0.63m (Exact Width = 1.26m)
-    // Cylinder length L = 2.16m along Z axis (from z = -1.08m to +1.08m)
-    const roofArcHalfAngle = Math.asin(0.63 / 1.55); // ~0.418 rad (~24 deg each side, total 48 deg)
-    const roofArcAngle = roofArcHalfAngle * 2;
-    const roofLength = 2.16;
+    const createRoofCanopyGeometry = () => {
+      const segX = 24;
+      const segZ = 32;
+      const halfW = 0.63; // exact 1.26m cabin width
+      const zMin = -1.16; // extends slightly over windshield header
+      const zMax = 1.08;  // meets rear window header
+      const zLen = zMax - zMin;
 
-    const roofCurveGeo = new THREE.CylinderGeometry(
-      1.55, 1.55,
-      roofLength,
-      24, 1,
-      false,
-      Math.PI * 0.5 - roofArcHalfAngle,
-      roofArcAngle
-    );
-    // Rotate around X so length runs along Z axis (front-to-back)!
-    roofCurveGeo.rotateX(Math.PI / 2);
+      const positions = [];
+      const uvs = [];
+      const indices = [];
 
-    const roofCurve = new THREE.Mesh(roofCurveGeo, darkCanopyMat);
-    // Position center of curvature so crown peak is at y = 1.67m and side eaves drop to y = 1.55m
-    roofCurve.position.set(0, 0.12, -0.01);
-    roofCurve.castShadow = true;
-    roofGroup.add(roofCurve);
+      // Calculate (x, y, z) for grid coordinates u in [-1, 1], v in [0, 1]
+      const getRoofPoint = (u, v) => {
+        // Taper slightly at the front and rear corners for rounded footprint
+        let curW = halfW;
+        const z = zMin + v * zLen;
+        if (z < -0.88) {
+          const t = (-0.88 - z) / 0.28;
+          curW = halfW - t * 0.05; // 0.63 -> 0.58
+        } else if (z > 0.85) {
+          const t = (z - 0.85) / 0.23;
+          curW = halfW - t * 0.035; // 0.63 -> 0.595
+        }
 
-    // Front Sloping Sun-Visor Brow (over windshield header, z = -1.08m to -1.16m)
-    const frontVisorGeo = new THREE.BoxGeometry(1.26, 0.07, 0.16);
-    const frontVisor = new THREE.Mesh(frontVisorGeo, darkCanopyMat);
-    frontVisor.position.set(0, 1.56, -1.12);
-    frontVisor.rotation.x = 0.15;
-    roofGroup.add(frontVisor);
+        const x = u * curW;
 
-    // Rear Sloping Canopy Cap (over rear face header, z = +1.06m to +1.12m)
-    const rearCapGeo = new THREE.BoxGeometry(1.26, 0.07, 0.12);
-    const rearCap = new THREE.Mesh(rearCapGeo, darkCanopyMat);
-    rearCap.position.set(0, 1.56, 1.08);
-    rearCap.rotation.x = -0.12;
-    roofGroup.add(rearCap);
+        // Arch across width (X): flat top with smoothly rounded shoulders
+        const archX = Math.max(0, 1.0 - Math.pow(Math.abs(u), 2.3));
 
-    // Side Rain Gutters / Roof Trim Rails along left and right eaves (x = ±0.63m)
-    [-0.63, 0.63].forEach((sx) => {
-      const gutterGeo = new THREE.CylinderGeometry(0.016, 0.016, roofLength, 8);
+        // Longitudinal arch along length (Z): smooth rise over driver & passenger, gentle visor drop
+        const archZ = Math.sin(Math.PI * (0.10 + 0.80 * v));
+
+        // Baseline eaves height: 1.54m
+        const yEave = 1.54 - 0.015 * Math.pow(v - 0.5, 2) * 4;
+
+        // Peak crown height is 1.66m (12cm curve rise)
+        const y = yEave + 0.12 * archX * archZ;
+
+        return new THREE.Vector3(x, y, z);
+      };
+
+      // A. Top Dome Surface
+      for (let j = 0; j <= segZ; j++) {
+        const v = j / segZ;
+        for (let i = 0; i <= segX; i++) {
+          const u = (i / segX) * 2 - 1;
+          const pt = getRoofPoint(u, v);
+          positions.push(pt.x, pt.y, pt.z);
+          uvs.push(i / segX, j / segZ);
+        }
+      }
+
+      const rowStride = segX + 1;
+      for (let j = 0; j < segZ; j++) {
+        for (let i = 0; i < segX; i++) {
+          const a = j * rowStride + i;
+          const b = (j + 1) * rowStride + i;
+          const c = (j + 1) * rowStride + (i + 1);
+          const d = j * rowStride + (i + 1);
+          indices.push(a, b, d);
+          indices.push(b, c, d);
+        }
+      }
+
+      // B. Perimeter Skirts (Vertical Eaves / Rims of 6cm height)
+      const skirtDrop = 0.06;
+
+      // 1. Left Skirt (u = -1)
+      let offset = positions.length / 3;
+      for (let j = 0; j <= segZ; j++) {
+        const v = j / segZ;
+        const pt = getRoofPoint(-1, v);
+        positions.push(pt.x, pt.y, pt.z);
+        uvs.push(0, v);
+        positions.push(pt.x, pt.y - skirtDrop, pt.z);
+        uvs.push(1, v);
+      }
+      for (let j = 0; j < segZ; j++) {
+        const a = offset + j * 2;
+        const b = offset + (j + 1) * 2;
+        const c = offset + (j + 1) * 2 + 1;
+        const d = offset + j * 2 + 1;
+        indices.push(a, d, b);
+        indices.push(b, d, c);
+      }
+
+      // 2. Right Skirt (u = +1)
+      offset = positions.length / 3;
+      for (let j = 0; j <= segZ; j++) {
+        const v = j / segZ;
+        const pt = getRoofPoint(1, v);
+        positions.push(pt.x, pt.y, pt.z);
+        uvs.push(0, v);
+        positions.push(pt.x, pt.y - skirtDrop, pt.z);
+        uvs.push(1, v);
+      }
+      for (let j = 0; j < segZ; j++) {
+        const a = offset + j * 2;
+        const b = offset + (j + 1) * 2;
+        const c = offset + (j + 1) * 2 + 1;
+        const d = offset + j * 2 + 1;
+        indices.push(a, b, d);
+        indices.push(b, d, c);
+      }
+
+      // 3. Front Brow Visor Skirt (v = 0)
+      offset = positions.length / 3;
+      for (let i = 0; i <= segX; i++) {
+        const u = (i / segX) * 2 - 1;
+        const pt = getRoofPoint(u, 0);
+        positions.push(pt.x, pt.y, pt.z);
+        uvs.push(i / segX, 0);
+        positions.push(pt.x, pt.y - skirtDrop, pt.z);
+        uvs.push(i / segX, 1);
+      }
+      for (let i = 0; i < segX; i++) {
+        const a = offset + i * 2;
+        const b = offset + (i + 1) * 2;
+        const c = offset + (i + 1) * 2 + 1;
+        const d = offset + i * 2 + 1;
+        indices.push(a, d, b);
+        indices.push(b, d, c);
+      }
+
+      // 4. Rear Skirt (v = 1)
+      offset = positions.length / 3;
+      for (let i = 0; i <= segX; i++) {
+        const u = (i / segX) * 2 - 1;
+        const pt = getRoofPoint(u, 1);
+        positions.push(pt.x, pt.y, pt.z);
+        uvs.push(i / segX, 0);
+        positions.push(pt.x, pt.y - skirtDrop, pt.z);
+        uvs.push(i / segX, 1);
+      }
+      for (let i = 0; i < segX; i++) {
+        const a = offset + i * 2;
+        const b = offset + (i + 1) * 2;
+        const c = offset + (i + 1) * 2 + 1;
+        const d = offset + i * 2 + 1;
+        indices.push(a, b, d);
+        indices.push(b, d, c);
+      }
+
+      const geo = new THREE.BufferGeometry();
+      geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+      geo.setAttribute('uv', new THREE.Float32BufferAttribute(uvs, 2));
+      geo.setIndex(indices);
+      geo.computeVertexNormals();
+      return geo;
+    };
+
+    const roofMesh = new THREE.Mesh(createRoofCanopyGeometry(), darkCanopyMat);
+    roofMesh.castShadow = true;
+    roofMesh.receiveShadow = true;
+    roofGroup.add(roofMesh);
+
+    // 4 Curved Transverse Canvas Hoop Ribs across the roof (Image 2 & 3 quilted canvas structure)
+    const ribZPositions = [-0.68, -0.18, 0.32, 0.76];
+    const ribMat = new THREE.MeshStandardMaterial({ color: 0x27272a, roughness: 0.65 });
+    ribZPositions.forEach((rz) => {
+      const v = (rz - (-1.16)) / (1.08 - (-1.16));
+      const ribCurvePoints = [];
+      for (let k = 0; k <= 16; k++) {
+        const u = (k / 16) * 2 - 1;
+        const archX = Math.max(0, 1.0 - Math.pow(Math.abs(u), 2.3));
+        const archZ = Math.sin(Math.PI * (0.10 + 0.80 * v));
+        const y = 1.54 + 0.12 * archX * archZ + 0.006;
+        ribCurvePoints.push(new THREE.Vector3(u * 0.625, y, rz));
+      }
+      const ribCurve = new THREE.CatmullRomCurve3(ribCurvePoints);
+      const ribGeo = new THREE.TubeGeometry(ribCurve, 16, 0.012, 6, false);
+      const ribMesh = new THREE.Mesh(ribGeo, ribMat);
+      roofGroup.add(ribMesh);
+    });
+
+    // Side Rain Gutter Moldings along left and right eaves
+    [-0.63, 0.63].forEach((gx) => {
+      const gutterGeo = new THREE.CylinderGeometry(0.012, 0.012, 2.16, 8);
       gutterGeo.rotateX(Math.PI / 2);
-      const gutter = new THREE.Mesh(gutterGeo, new THREE.MeshStandardMaterial({ color: 0x18181b, roughness: 0.7 }));
-      gutter.position.set(sx, 1.55, -0.01);
+      const gutter = new THREE.Mesh(gutterGeo, ribMat);
+      gutter.position.set(gx, 1.53, -0.04);
       roofGroup.add(gutter);
     });
 
-    // Interior Ceiling Panel (cleanly closes the cabin ceiling from underneath)
-    const ceilingGeo = new THREE.PlaneGeometry(1.24, roofLength);
+    // Front Visor Brow Molding over windshield header
+    const visorGeo = new THREE.BoxGeometry(1.20, 0.035, 0.08);
+    const visorMesh = new THREE.Mesh(visorGeo, ribMat);
+    visorMesh.position.set(0, 1.54, -1.15);
+    roofGroup.add(visorMesh);
+
+    // Clean Underneath Ceiling Panel closing cabin interior
+    const ceilingGeo = new THREE.PlaneGeometry(1.22, 2.18);
     ceilingGeo.rotateX(Math.PI / 2);
-    const ceiling = new THREE.Mesh(ceilingGeo, new THREE.MeshStandardMaterial({ color: 0x18181b, roughness: 0.9 }));
-    ceiling.position.set(0, 1.54, -0.01);
+    const ceilingMat = new THREE.MeshStandardMaterial({ color: 0x18181b, roughness: 0.95 });
+    const ceiling = new THREE.Mesh(ceilingGeo, ceilingMat);
+    ceiling.position.set(0, 1.48, -0.04);
     roofGroup.add(ceiling);
 
     this.bodyGroup.add(roofGroup);
@@ -868,7 +1038,7 @@ export class DeshiCNG {
     fWheelGroup.add(forkArm);
 
     // Green Front Mudguard / Fender wrapping over tire (Image 2 & 3)
-    const fMudguardGeo = new THREE.CylinderGeometry(0.28, 0.28, 0.18, 16, 1, false, Math.PI * 0.2, Math.PI * 0.65);
+    const fMudguardGeo = new THREE.CylinderGeometry(0.28, 0.28, 0.18, 16, 1, true, Math.PI * 0.2, Math.PI * 0.65);
     fMudguardGeo.rotateZ(Math.PI / 2);
     const fMudguard = new THREE.Mesh(fMudguardGeo, cngGreenMat);
     fMudguard.position.set(0, 0.05, 0);
