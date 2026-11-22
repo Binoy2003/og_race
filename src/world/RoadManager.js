@@ -279,24 +279,13 @@ export class RoadManager {
       }
     }
 
-    // C. Traditional Village Houses (Tin er Ghor) & Homesteads
+    // C. AUTHENTIC PUTHIA SHIVA TEMPLE (User Reference Photo 2 - ৫-রত্ন শিব মন্দির)
+    // Replaces the small roadside house; set back from the road with front verandah, 5 shikharas & marigold flowers!
     if (index % 2 === 0 && !hasUIU) {
-      const houseSide = -1; // Left side village homestead
-      const house = p.createVillageHouse(index % 4 === 0);
-      const houseX = (this.roadWidth * 0.5 + 11.5) * houseSide;
-      house.position.set(houseX, 0, -10);
-      house.rotation.y = Math.PI / 2;
-      group.add(house);
-
-      // Golden Haystack (Khorer Gada) near the house
-      const haystack = p.createHaystack();
-      haystack.position.set(houseX - 5.5, 0, 4);
-      group.add(haystack);
-
-      // Bamboo Fence (Bash er Bera) bordering the homestead
-      const fence = p.createBambooFence(24);
-      fence.position.set((this.roadWidth * 0.5 + 5.5) * houseSide, 0, -5);
-      group.add(fence);
+      const templeSide = -1; // Left side of the road
+      const temple = p.createPuthiaTemple(templeSide);
+      temple.position.set(0, 0, -6);
+      group.add(temple);
     }
 
     // D. Village Tea Stall (Cha er Tong) with benches
@@ -431,6 +420,14 @@ export class RoadManager {
       const uiuCampus = p.createUIUCampus(uiuSide);
       uiuCampus.position.set(0, 0, 0);
       group.add(uiuCampus);
+    }
+
+    // K. OVERHEAD HIGHWAY SIGN GANTRY (User Reference Photo 1: Tangail 98 KM, UIU 1 KM, Biye ∞)
+    // Spans across the entire expressway road with 3 green destination panels
+    if (!isBridge && (index % 4 === 0 || index === 2)) {
+      const gantry = p.createHighwaySignGantry(this.roadWidth);
+      gantry.position.set(0, 0, -18);
+      group.add(gantry);
     }
   }
 
