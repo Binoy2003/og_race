@@ -180,9 +180,9 @@ export class RoadManager {
       });
 
       // ----------------------------------------------------
-      // 3. Expansive Green Paddy Fields (Dhan Khet)
+      // 3. Expansive Green Paddy Fields & Countryside Terrain
       // ----------------------------------------------------
-      const fieldWidth = 60;
+      const fieldWidth = 160;
       [-1, 1].forEach((side) => {
         const fieldGeo = new THREE.PlaneGeometry(fieldWidth, this.segmentLength);
         fieldGeo.rotateX(-Math.PI / 2);

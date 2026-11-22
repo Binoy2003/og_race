@@ -33,95 +33,119 @@ export class InputManager {
   }
 
   bindEvents() {
-    // Keyboard keydown
+    // Keyboard keydown with full cross-layout & multi-key boost support
     window.addEventListener('keydown', (e) => {
-      if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', ' '].includes(e.key)) {
+      // Prevent browser scroll for game controls
+      if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', ' ', 'Space'].includes(e.key) || e.code === 'Space') {
         e.preventDefault();
       }
 
-      switch (e.code) {
-        case 'ArrowLeft':
-        case 'KeyA':
-          if (!this.keys.left) {
-            this.laneChangeRequested = -1;
-          }
-          this.keys.left = true;
-          break;
+      // Check both e.code and e.key to guarantee compatibility across all keyboard layouts (including Bangla Avro/Bijoy)
+      const code = e.code;
+      const key = e.key;
 
-        case 'ArrowRight':
-        case 'KeyD':
-          if (!this.keys.right) {
-            this.laneChangeRequested = 1;
-          }
-          this.keys.right = true;
-          break;
+      // 1. STEER LEFT (ArrowLeft, A)
+      if (code === 'ArrowLeft' || code === 'KeyA' || key === 'ArrowLeft' || key === 'a' || key === 'A') {
+        // Immediate lane switch on first press or repeat
+        if (!this.keys.left || e.repeat) {
+          this.laneChangeRequested = -1;
+        }
+        this.keys.left = true;
+      }
 
-        case 'ArrowUp':
-        case 'KeyW':
-          this.keys.accelerate = true;
-          break;
+      // 2. STEER RIGHT (ArrowRight, D)
+      else if (code === 'ArrowRight' || code === 'KeyD' || key === 'ArrowRight' || key === 'd' || key === 'D') {
+        // Immediate lane switch on first press or repeat
+        if (!this.keys.right || e.repeat) {
+          this.laneChangeRequested = 1;
+        }
+        this.keys.right = true;
+      }
 
-        case 'Space':
-          this.keys.boost = true;
-          break;
+      // 3. ACCELERATE (ArrowUp, W)
+      if (code === 'ArrowUp' || code === 'KeyW' || key === 'ArrowUp' || key === 'w' || key === 'W') {
+        this.keys.accelerate = true;
+      }
 
-        case 'ArrowDown':
-        case 'KeyS':
-          this.keys.brake = true;
-          break;
+      // 4. NITRO BOOST (Spacebar, ShiftLeft, ShiftRight, N, X)
+      // Supporting Shift alongside Space solves hardware keyboard ghosting on membrane keyboards!
+      if (
+        code === 'Space' ||
+        code === 'ShiftLeft' ||
+        code === 'ShiftRight' ||
+        code === 'KeyN' ||
+        code === 'KeyX' ||
+        key === ' ' ||
+        key === 'Shift' ||
+        key === 'n' ||
+        key === 'N' ||
+        key === 'x' ||
+        key === 'X'
+      ) {
+        this.keys.boost = true;
+      }
 
-        case 'KeyH':
-        case 'KeyE':
-        case 'KeyF':
-        case 'KeyB':
-          this.keys.horn = true;
-          if (this.onHorn) this.onHorn();
-          break;
+      // 5. BRAKE (ArrowDown, S)
+      if (code === 'ArrowDown' || code === 'KeyS' || key === 'ArrowDown' || key === 's' || key === 'S') {
+        this.keys.brake = true;
+      }
 
-        case 'KeyP':
-        case 'Escape':
-          if (this.onPauseToggle) this.onPauseToggle();
-          break;
+      // 6. HORN (H, E, F)
+      if (code === 'KeyH' || code === 'KeyE' || code === 'KeyF' || key === 'h' || key === 'H' || key === 'e' || key === 'E' || key === 'f' || key === 'F') {
+        this.keys.horn = true;
+        if (this.onHorn) this.onHorn();
+      }
 
-        case 'KeyR':
-          if (this.onRestart) this.onRestart();
-          break;
+      // 7. PAUSE / RESUME (P, Escape)
+      if (code === 'KeyP' || code === 'Escape' || key === 'p' || key === 'P' || key === 'Escape') {
+        if (this.onPauseToggle) this.onPauseToggle();
+      }
+
+      // 8. RESTART (R)
+      if (code === 'KeyR' || key === 'r' || key === 'R') {
+        if (this.onRestart) this.onRestart();
       }
     });
 
     // Keyboard keyup
     window.addEventListener('keyup', (e) => {
-      switch (e.code) {
-        case 'ArrowLeft':
-        case 'KeyA':
-          this.keys.left = false;
-          break;
+      const code = e.code;
+      const key = e.key;
 
-        case 'ArrowRight':
-        case 'KeyD':
-          this.keys.right = false;
-          break;
+      if (code === 'ArrowLeft' || code === 'KeyA' || key === 'ArrowLeft' || key === 'a' || key === 'A') {
+        this.keys.left = false;
+      }
 
-        case 'ArrowUp':
-        case 'KeyW':
-          this.keys.accelerate = false;
-          break;
+      if (code === 'ArrowRight' || code === 'KeyD' || key === 'ArrowRight' || key === 'd' || key === 'D') {
+        this.keys.right = false;
+      }
 
-        case 'Space':
-          this.keys.boost = false;
-          break;
+      if (code === 'ArrowUp' || code === 'KeyW' || key === 'ArrowUp' || key === 'w' || key === 'W') {
+        this.keys.accelerate = false;
+      }
 
-        case 'ArrowDown':
-        case 'KeyS':
-          this.keys.brake = false;
-          break;
+      if (
+        code === 'Space' ||
+        code === 'ShiftLeft' ||
+        code === 'ShiftRight' ||
+        code === 'KeyN' ||
+        code === 'KeyX' ||
+        key === ' ' ||
+        key === 'Shift' ||
+        key === 'n' ||
+        key === 'N' ||
+        key === 'x' ||
+        key === 'X'
+      ) {
+        this.keys.boost = false;
+      }
 
-        case 'KeyH':
-        case 'KeyE':
-        case 'KeyF':
-        case 'KeyB':
-          this.keys.horn = false;
-          break;
+      if (code === 'ArrowDown' || code === 'KeyS' || key === 'ArrowDown' || key === 's' || key === 'S') {
+        this.keys.brake = false;
+      }
+
+      if (code === 'KeyH' || code === 'KeyE' || code === 'KeyF' || key === 'h' || key === 'H' || key === 'e' || key === 'E' || key === 'f' || key === 'F') {
+        this.keys.horn = false;
       }
     });
 

@@ -91,6 +91,23 @@ export class GameState {
       this.switchLane(laneReq);
     }
 
+    // Continuous smooth steering when holding Left or Right (even while holding Spacebar/Shift Boost!)
+    if (input.keys.left && !input.keys.right) {
+      this.steerHoldTimer = (this.steerHoldTimer || 0) + delta;
+      if (this.steerHoldTimer > 0.22) {
+        this.switchLane(-1);
+        this.steerHoldTimer = 0.08;
+      }
+    } else if (input.keys.right && !input.keys.left) {
+      this.steerHoldTimer = (this.steerHoldTimer || 0) + delta;
+      if (this.steerHoldTimer > 0.22) {
+        this.switchLane(1);
+        this.steerHoldTimer = 0.08;
+      }
+    } else {
+      this.steerHoldTimer = 0;
+    }
+
     // Smooth lane position interpolation
     this.currentLaneX += (this.targetLaneX - this.currentLaneX) * Math.min(1.0, delta * CONFIG.STEERING.LANE_CHANGE_SPEED);
 
