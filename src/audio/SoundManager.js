@@ -84,7 +84,9 @@ export class SoundManager {
 
   loadCrashVoice() {
     if (!this.ctx) return;
-    fetch('/audio/eta_ki_korli_mama.mp3')
+    const base = (import.meta.env && import.meta.env.BASE_URL) ? import.meta.env.BASE_URL : './';
+    const audioUrl = `${base.endsWith('/') ? base : base + '/'}audio/eta_ki_korli_mama.mp3`;
+    fetch(audioUrl)
       .then((res) => {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         return res.arrayBuffer();

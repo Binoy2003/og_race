@@ -119,11 +119,18 @@ class BangladeshTruckGame {
   }
 
   bindEvents() {
-    // Window Resize
-    window.addEventListener('resize', () => {
-      this.camera.aspect = window.innerWidth / window.innerHeight;
+    // Dynamic Window Resize & Mobile Orientation Handling
+    const handleResize = () => {
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+      this.camera.aspect = width / height;
       this.camera.updateProjectionMatrix();
-      this.renderer.setSize(window.innerWidth, window.innerHeight);
+      this.renderer.setSize(width, height);
+      this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2.0));
+    };
+    window.addEventListener('resize', handleResize);
+    window.addEventListener('orientationchange', () => {
+      setTimeout(handleResize, 100);
     });
 
     // UI Callbacks
