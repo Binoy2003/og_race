@@ -250,21 +250,50 @@ export class UIManager {
       });
     };
 
-    if (btnLeft) {
-      btnLeft.addEventListener('pointerdown', (e) => {
-        e.preventDefault();
-        document.body.classList.add('touch-active');
-        if (this.onSteerLeft) this.onSteerLeft();
-      });
-    }
+    // Steer Buttons with Instant Tap + Smooth Auto-Repeat while held
+    const bindSteerBtn = (btn, onSteer) => {
+      if (!btn) return;
+      let steerInterval = null;
+      let steerTimeout = null;
 
-    if (btnRight) {
-      btnRight.addEventListener('pointerdown', (e) => {
-        e.preventDefault();
+      const triggerSteer = (e) => {
+        if (e) e.preventDefault();
         document.body.classList.add('touch-active');
-        if (this.onSteerRight) this.onSteerRight();
-      });
-    }
+        if (btn.setPointerCapture && e && e.pointerId !== undefined) {
+          try { btn.setPointerCapture(e.pointerId); } catch (_) {}
+        }
+        onSteer();
+
+        clearTimeout(steerTimeout);
+        clearInterval(steerInterval);
+        steerTimeout = setTimeout(() => {
+          steerInterval = setInterval(() => {
+            onSteer();
+          }, 210);
+        }, 260);
+      };
+
+      const stopSteer = (e) => {
+        clearTimeout(steerTimeout);
+        clearInterval(steerInterval);
+        if (btn.releasePointerCapture && e && e.pointerId !== undefined) {
+          try { btn.releasePointerCapture(e.pointerId); } catch (_) {}
+        }
+      };
+
+      btn.addEventListener('pointerdown', triggerSteer);
+      btn.addEventListener('pointerup', stopSteer);
+      btn.addEventListener('pointercancel', stopSteer);
+      btn.addEventListener('pointerleave', stopSteer);
+    };
+
+    bindSteerBtn(btnLeft, () => {
+      if (this.onSteerLeft) this.onSteerLeft();
+    });
+
+    bindSteerBtn(btnRight, () => {
+      if (this.onSteerRight) this.onSteerRight();
+    });
 
     // Dedicated BRAKE button on mobile -> Slows down
     bindHoldableBtn(btnBrake, (active) => {

@@ -87,7 +87,10 @@ export class RoadManager {
     this.roadMaterial = new THREE.MeshStandardMaterial({
       map: roadTexture,
       roughness: 0.82,
-      metalness: 0.12
+      metalness: 0.12,
+      polygonOffset: true,
+      polygonOffsetFactor: -1.0,
+      polygonOffsetUnits: -1.0
     });
 
     // 2. Lush Green Paddy Field Texture (Dhan Khet)
@@ -157,6 +160,8 @@ export class RoadManager {
     const roadGeo = new THREE.PlaneGeometry(this.roadWidth, this.segmentLength);
     roadGeo.rotateX(-Math.PI / 2);
     const roadMesh = new THREE.Mesh(roadGeo, this.roadMaterial);
+    // On bridges, elevate road slightly above deck sub-structure to permanently eliminate blinking / Z-fighting
+    roadMesh.position.y = isBridge ? 0.003 : 0.0;
     roadMesh.receiveShadow = true;
     group.add(roadMesh);
 
@@ -406,14 +411,6 @@ export class RoadManager {
       guys.position.set(guysX, 0, guysZ);
       guys.rotation.y = guysSide > 0 ? -0.4 : 0.4;
       group.add(guys);
-    }
-
-    // Beside the Village Tea Stall (Cha er Tong at index % 3 === 1), also place smoking guys!
-    if (index % 3 === 1 && !isBridge) {
-      const teaGuys = p.createSmokingGuysGroup(1);
-      teaGuys.position.set(this.roadWidth * 0.5 + 2.6, 0, 7);
-      teaGuys.rotation.y = -0.3;
-      group.add(teaGuys);
     }
   }
 

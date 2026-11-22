@@ -2641,19 +2641,20 @@ export class BangladeshProps {
     const halfW = roadWidth * 0.5;
     const archH = 0.45; // Gentle parabolic rise at center
 
-    // 1. Concrete Sub-Deck Slab (Underneath the roadway)
+    // 1. Concrete Sub-Deck Slab (Strictly beneath roadway to completely eliminate Z-fighting blinking)
     const subDeckGeo = new THREE.BoxGeometry(roadWidth + 0.8, 0.45, bridgeLength);
     const subDeckMat = new THREE.MeshStandardMaterial({ color: 0x475569, roughness: 0.8 });
     const subDeck = new THREE.Mesh(subDeckGeo, subDeckMat);
-    subDeck.position.set(0, -0.225, 0);
+    // Lowered slightly so top of subDeck is at y = -0.055, safely below road plane (y = 0.003)
+    subDeck.position.set(0, -0.28, 0);
     subDeck.receiveShadow = true;
     bridge.add(subDeck);
 
-    // Expansion Joint strips at both ends of bridge
+    // Expansion Joint strips at both ends of bridge (sitting cleanly on asphalt)
     [-bridgeLength * 0.5 + 0.3, bridgeLength * 0.5 - 0.3].forEach((ez) => {
-      const jointGeo = new THREE.BoxGeometry(roadWidth + 0.4, 0.04, 0.35);
+      const jointGeo = new THREE.BoxGeometry(roadWidth + 0.2, 0.012, 0.35);
       const joint = new THREE.Mesh(jointGeo, new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.9 }));
-      joint.position.set(0, 0.01, ez);
+      joint.position.set(0, 0.006, ez);
       bridge.add(joint);
     });
 
@@ -2689,7 +2690,7 @@ export class BangladeshProps {
 
       // 4 Heavy Inclined Red Concrete Columns extending into riverbed (y = -3.2m)
       [-5.2, -1.8, 1.8, 5.2].forEach((cx) => {
-        const colGeo = new THREE.CylinderGeometry(0.24, 0.28, 3.2, 10);
+        const colGeo = new THREE.CylinderGeometry(0.24, 0.28, 3.2, 8);
         const col = new THREE.Mesh(colGeo, this.bridgeRedMat);
         col.position.set(cx, -1.95, 0);
         col.rotation.z = cx > 0 ? -0.06 : 0.06; // slight trestle batter
@@ -2697,7 +2698,7 @@ export class BangladeshProps {
 
         // Dark waterline ring stain
         const waterRing = new THREE.Mesh(
-          new THREE.CylinderGeometry(0.29, 0.29, 0.28, 10),
+          new THREE.CylinderGeometry(0.29, 0.29, 0.28, 8),
           new THREE.MeshStandardMaterial({ color: 0x0f2922, roughness: 0.9 })
         );
         waterRing.position.set(cx, -1.35, 0);
@@ -2723,11 +2724,11 @@ export class BangladeshProps {
       bridge.add(curb);
     });
 
-    // 5. Red & White Concrete Railings with Arch Profile (Photo 1 & Photo 2)
-    // Posts spaced every 1.5m from z = -28.5 to +28.5
+    // 5. Red & White Concrete Railings with Arch Profile (Optimized: 16 posts per side)
+    const postCount = 16;
     const postZList = [];
-    for (let z = -28.5; z <= 28.51; z += 1.5) {
-      postZList.push(z);
+    for (let i = 0; i < postCount; i++) {
+      postZList.push(-28.5 + (i / (postCount - 1)) * 57.0);
     }
 
     [-1, 1].forEach((side) => {
@@ -2744,20 +2745,12 @@ export class BangladeshProps {
         this.applyShadow(post);
         bridge.add(post);
 
-        // Pyramid chamfered cap on top of post
+        // Pyramid cap
         const capGeo = new THREE.ConeGeometry(0.18, 0.08, 4);
         capGeo.rotateY(Math.PI / 4);
         const pCap = new THREE.Mesh(capGeo, this.bridgeRedMat);
         pCap.position.set(rx, 0.28 + 0.96 + 0.04 + archY, pz);
         bridge.add(pCap);
-
-        // Red mounting bracket for utility pipeline (on left railing only - Photo 1)
-        if (side === -1) {
-          const bracketGeo = new THREE.TorusGeometry(0.075, 0.016, 8, 16);
-          const bracket = new THREE.Mesh(bracketGeo, this.bridgeRedMat);
-          bracket.position.set(rx + 0.09, 0.28 + 0.32 + archY, pz);
-          bridge.add(bracket);
-        }
       });
 
       // Horizontal Rails (সাদা রঙের রেলিং) between posts
@@ -2769,20 +2762,18 @@ export class BangladeshProps {
         const archY = Math.sin(((midZ + 28.5) / 57) * Math.PI) * archH;
 
         // Mid Rail (Off-white concrete)
-        const midRailGeo = new THREE.BoxGeometry(0.14, 0.12, segLen);
-        const midRail = new THREE.Mesh(midRailGeo, this.bridgeWhiteMat);
+        const midRail = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.12, segLen), this.bridgeWhiteMat);
         midRail.position.set(rx, 0.28 + 0.44 + archY, midZ);
         bridge.add(midRail);
 
-        // Top Continuous Rail / Handrail (Off-white concrete)
-        const topRailGeo = new THREE.BoxGeometry(0.2, 0.12, segLen);
-        const topRail = new THREE.Mesh(topRailGeo, this.bridgeWhiteMat);
+        // Top Continuous Handrail (Off-white concrete)
+        const topRail = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.12, segLen), this.bridgeWhiteMat);
         topRail.position.set(rx, 0.28 + 0.92 + archY, midZ);
         bridge.add(topRail);
 
-        // Utility Pipeline segment (Galvanized steel pipe on left railing - Photo 1)
+        // Utility Pipeline segment (Galvanized steel pipe on left railing)
         if (side === -1) {
-          const pipeGeo = new THREE.CylinderGeometry(0.065, 0.065, segLen, 10);
+          const pipeGeo = new THREE.CylinderGeometry(0.065, 0.065, segLen, 8);
           pipeGeo.rotateX(Math.PI / 2);
           const pipe = new THREE.Mesh(pipeGeo, this.pipelineMat);
           pipe.position.set(rx + 0.09, 0.28 + 0.32 + archY, midZ);

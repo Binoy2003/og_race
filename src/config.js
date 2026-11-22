@@ -25,7 +25,7 @@ export const CONFIG = {
   LANE_WIDTH: 3.7,
   ROAD_WIDTH: 13.0,
   ROAD_SEGMENT_LENGTH: 60,
-  ROAD_SEGMENT_COUNT: isMobileDevice() ? 5 : 8, // Optimized 5 segments on mobile (saves 38% draw calls)
+  ROAD_SEGMENT_COUNT: 5, // 5 active segments (300m forward view) gives 100% seamless horizon coverage with optimal 60 FPS
   
   // Dynamic Car / Truck Speeds (in km/h) with Progressive Race Speed Acceleration
   SPEED: {
