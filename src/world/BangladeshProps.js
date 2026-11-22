@@ -625,79 +625,86 @@ export class BangladeshProps {
       roughness: 0.4
     });
 
-    // 9. OVERHEAD HIGHWAY SIGN GANTRY (User Reference Photo 1: Tangail 98 KM, UIU 1 KM, Biye ∞)
+    // 9. OVERHEAD HIGHWAY SIGN GANTRY (User Photo 1: টাঙ্গাইল ৯৮ কিমি, ইউআইইউ ১ কিমি, বিয়ে ∞)
+    // Deep dark expressway green with bright luminous white & yellow Bengali typography
     const gantryCanvas = document.createElement('canvas');
-    gantryCanvas.width = 1024;
-    gantryCanvas.height = 360;
+    gantryCanvas.width = 2048;
+    gantryCanvas.height = 512;
     const gCtx = gantryCanvas.getContext('2d');
 
-    // Deep Bangladeshi Highway Green (Photo exact match in green color!)
-    gCtx.fillStyle = '#065f46';
-    gCtx.fillRect(0, 0, 1024, 360);
+    // Deep, rich dark expressway green (Exact photo match!)
+    gCtx.fillStyle = '#023c27';
+    gCtx.fillRect(0, 0, 2048, 512);
 
-    // Three Destination Panels side-by-side
+    // Three Destination Panels in Bengali
     const panels = [
-      { exit: 'EXIT 01 / N-4', bng: 'টাঙ্গাইল', eng: 'Tangail  98 KM', x: 18, w: 310 },
-      { exit: 'EXIT 02 / MADANI', bng: 'ইউআইইউ', eng: 'UIU  1 KM', x: 357, w: 310 },
-      { exit: 'EXIT ∞ / FOREVER', bng: 'বিয়ে', eng: 'Biye  ∞', x: 696, w: 310 }
+      { exit: 'প্রস্থান ০১', bng: 'টাঙ্গাইল', dist: '৯৮ কিমি', x: 36, w: 620 },
+      { exit: 'প্রস্থান ০২', bng: 'ইউআইইউ', dist: '১ কিমি', x: 714, w: 620 },
+      { exit: 'প্রস্থান ∞', bng: 'বিয়ে', dist: '∞ কিমি', x: 1392, w: 620 }
     ];
 
     panels.forEach((p) => {
-      // Header Box (Exit / Route code)
-      gCtx.fillStyle = '#047857';
-      gCtx.fillRect(p.x, 14, p.w, 58);
+      // Outer Clean White Border
       gCtx.strokeStyle = '#ffffff';
-      gCtx.lineWidth = 3.5;
-      gCtx.strokeRect(p.x, 14, p.w, 58);
+      gCtx.lineWidth = 8;
+      gCtx.strokeRect(p.x, 24, p.w, 464);
+
+      // Header Box for Exit code
+      gCtx.fillStyle = '#045438';
+      gCtx.fillRect(p.x + 8, 32, p.w - 16, 84);
+      gCtx.strokeStyle = '#ffffff';
+      gCtx.lineWidth = 4;
+      gCtx.strokeRect(p.x + 8, 32, p.w - 16, 84);
 
       gCtx.fillStyle = '#ffffff';
-      gCtx.font = 'bold 22px "Montserrat", sans-serif';
+      gCtx.font = 'bold 36px "Montserrat", sans-serif';
       gCtx.textAlign = 'center';
       gCtx.textBaseline = 'middle';
-      gCtx.fillText(p.exit, p.x + p.w * 0.5, 43);
+      gCtx.fillText(p.exit, p.x + p.w * 0.5, 74);
 
-      // Main Destination Sign Box
-      gCtx.fillStyle = '#065f46';
-      gCtx.fillRect(p.x, 80, p.w, 260);
-      gCtx.strokeStyle = '#ffffff';
-      gCtx.lineWidth = 5.0;
-      gCtx.strokeRect(p.x, 80, p.w, 260);
+      // Inner Decorative Thin Border
+      gCtx.strokeStyle = 'rgba(255, 255, 255, 0.35)';
+      gCtx.lineWidth = 3;
+      gCtx.strokeRect(p.x + 16, 128, p.w - 32, 350);
 
-      // Inner Border
-      gCtx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
-      gCtx.lineWidth = 2.0;
-      gCtx.strokeRect(p.x + 8, 88, p.w - 16, 244);
-
-      // Upward Lane Arrow (↑) on the left
-      const ax = p.x + 44;
+      // Upward Lane Arrow (↑) on left
+      const ax = p.x + 80;
       gCtx.fillStyle = '#ffffff';
       gCtx.beginPath();
-      gCtx.moveTo(ax, 140);
-      gCtx.lineTo(ax - 20, 175);
-      gCtx.lineTo(ax - 9, 175);
-      gCtx.lineTo(ax - 9, 255);
-      gCtx.lineTo(ax + 9, 255);
-      gCtx.lineTo(ax + 9, 175);
-      gCtx.lineTo(ax + 20, 175);
+      gCtx.moveTo(ax, 200);
+      gCtx.lineTo(ax - 36, 255);
+      gCtx.lineTo(ax - 16, 255);
+      gCtx.lineTo(ax - 16, 400);
+      gCtx.lineTo(ax + 16, 400);
+      gCtx.lineTo(ax + 16, 255);
+      gCtx.lineTo(ax + 36, 255);
       gCtx.closePath();
       gCtx.fill();
 
-      // Destination Name (Bengali top line, English bottom line)
+      // Destination Name (Bengali, Large, Pure White, Luminous & Bold)
       gCtx.textAlign = 'left';
       gCtx.fillStyle = '#ffffff';
-      gCtx.font = '900 42px "Montserrat", sans-serif';
-      gCtx.fillText(p.bng, p.x + 76, 160);
+      gCtx.font = '900 76px "Montserrat", sans-serif';
+      gCtx.shadowColor = 'rgba(255, 255, 255, 0.4)';
+      gCtx.shadowBlur = 8;
+      gCtx.fillText(p.bng, p.x + 150, 248);
+      gCtx.shadowBlur = 0;
 
-      gCtx.font = 'bold 32px "Montserrat", sans-serif';
-      gCtx.fillStyle = '#fef08a'; // Subtle warm tint for distance / symbol
-      gCtx.fillText(p.eng, p.x + 76, 225);
+      // Distance (Luminous Bright Yellow, Very Clear & Legible)
+      gCtx.fillStyle = '#fde047';
+      gCtx.font = 'bold 58px "Montserrat", sans-serif';
+      gCtx.shadowColor = 'rgba(253, 224, 71, 0.35)';
+      gCtx.shadowBlur = 6;
+      gCtx.fillText(p.dist, p.x + 150, 360);
+      gCtx.shadowBlur = 0;
     });
 
     const gantryTex = new THREE.CanvasTexture(gantryCanvas);
     this.highwayGantrySignMat = new THREE.MeshStandardMaterial({
       map: gantryTex,
-      roughness: 0.35,
-      emissive: 0x032818
+      roughness: 0.25,
+      emissive: 0x032818,
+      emissiveIntensity: 0.4
     });
 
     // Pylon Base Red & White Hazard Stripes
@@ -4451,7 +4458,8 @@ export class BangladeshProps {
       gantry.add(dStrut);
     }
 
-    // 3. The Three Green Destination Signboards (Tangail 98 KM, UIU 1 KM, Biye ∞)
+    // 3. The Three Green Destination Signboards (টাঙ্গাইল ৯৮ কিমি, ইউআইইউ ১ কিমি, বিয়ে ∞)
+    // Board is completely clean, spotless, and unobstructed (no black lines or bars in front!)
     const signGeo = new THREE.BoxGeometry(11.8, 2.6, 0.16);
     const signMaterials = [
       this.stageTrussMat, // right
@@ -4462,31 +4470,21 @@ export class BangladeshProps {
       this.stageTrussMat  // BACK face (-Z)
     ];
     const signMesh = new THREE.Mesh(signGeo, signMaterials);
-    signMesh.position.set(0, 7.6, 0.32);
+    signMesh.position.set(0, 7.6, 0.35);
     gantry.add(signMesh);
-
-    // Inspection catwalk beneath the signs
-    const catwalkGeo = new THREE.BoxGeometry(12.2, 0.1, 0.9);
-    const catwalk = new THREE.Mesh(catwalkGeo, this.stageTrussMat);
-    catwalk.position.set(0, 6.2, 0.45);
-    gantry.add(catwalk);
-
-    const railGeo = new THREE.BoxGeometry(12.2, 0.06, 0.06);
-    const rail = new THREE.Mesh(railGeo, this.stageTrussMat);
-    rail.position.set(0, 7.1, 0.9);
-    gantry.add(rail);
 
     return gantry;
   }
 
   // ========================================================
-  // 18. AUTHENTIC PUTHIA SHIVA TEMPLE (User Reference Photo 2 - ৫-রত্ন শিব মন্দির)
-  // - Replaces small roadside house, set back from road
-  // - Exact architecture: Whitewashed terracotta brick with cusped arches
-  // - Front Verandah Platform (বারান্দা টাইপের স্পেস) with railings & access stairs
+  // 18. AUTHENTIC PUTHIA SHIVA TEMPLE COMPLEX (User Photo: ৫-রত্ন শিব মন্দির, পুকুর ঘাট ও দোল মন্দির)
+  // - Modeled exactly after user's photo (Puthia Shiva Temple on lake/pond)
+  // - Raised white foundation with front access stairs leading into the water ghat
+  // - Front Verandah Platform (বারান্দা টাইপের স্পেস) with balustrade railings
   // - 5 Tiered Beehive Shikharas (Pancha-Ratna) with crowning brass kalasa & trishul
-  // - Decorated with Orange & Yellow Marigold Flower Garlands (ফুল দিয়ে সাজানো থাকবে)
-  // - Surrounded by lush banana trees, palms, and temple water tank
+  // - Octagonal Domed Pavilion (দোল মন্দির) on left bank
+  // - Decorated with Orange & Yellow Marigold Flower Garlands (ফুল দিয়ে সাজানো)
+  // - Water tank / pond in front with stone bathing ghat & lush banana trees
   // ========================================================
   createPuthiaTemple(side = -1) {
     const temple = new THREE.Group();
@@ -4522,13 +4520,31 @@ export class BangladeshProps {
       complex.add(sideRail);
     });
 
-    // Front access stairs (ঘাট / সিঁড়ি) leading down from verandah
-    const stairsGeo = new THREE.BoxGeometry(6.0, 0.35, 3.5);
-    const stairs = new THREE.Mesh(stairsGeo, this.templePlinthMat);
-    stairs.position.set(0, 0.7, 14.0);
-    complex.add(stairs);
+    // Front access stairs (ঘাট / সিঁড়ি) leading down from verandah into the pond
+    for (let s = 0; s < 5; s++) {
+      const step = new THREE.Mesh(
+        new THREE.BoxGeometry(9.0 + s * 0.8, 0.28, 0.9),
+        this.templePlinthMat
+      );
+      step.position.set(0, 1.4 - s * 0.28, 13.0 + s * 0.8);
+      complex.add(step);
+    }
 
-    // 3. Lower Temple Sanctum (গর্ভগৃহ ও নিচতলা)
+    // 3. Temple Pond / Water Tank & Bathing Ghat (পুকুর ও ঘাট - Photo Match!)
+    const pondGeo = new THREE.PlaneGeometry(28, 16);
+    pondGeo.rotateX(-Math.PI / 2);
+    const pond = new THREE.Mesh(pondGeo, this.riverWaterMat);
+    pond.position.set(0, 0.03, 24);
+    complex.add(pond);
+
+    // Floating water lily / kochuripana clusters on pond edge
+    [-6, 6].forEach((wx) => {
+      const lily = this.createWaterHyacinthCluster();
+      lily.position.set(wx, 0.04, 20);
+      complex.add(lily);
+    });
+
+    // 4. Lower Temple Sanctum (গর্ভগৃহ ও নিচতলা)
     const sanctumGeo = new THREE.BoxGeometry(12.5, 6.5, 12.5);
     const sanctum = new THREE.Mesh(sanctumGeo, this.templeWallMat);
     sanctum.position.set(0, 1.8 + 3.25, 0);
@@ -4550,14 +4566,14 @@ export class BangladeshProps {
     doorNiche.position.set(0, 4.0, 6.35);
     complex.add(doorNiche);
 
-    // 4. Upper Tier / Second Storey (দোতলা গর্ভগৃহ)
+    // 5. Upper Tier / Second Storey (দোতলা গর্ভগৃহ)
     const upperGeo = new THREE.BoxGeometry(8.5, 4.2, 8.5);
     const upper = new THREE.Mesh(upperGeo, this.templeWallMat);
     upper.position.set(0, 1.8 + 6.5 + 2.1, 0);
     this.applyShadow(upper);
     complex.add(upper);
 
-    // 5. The Iconic 5 Shikharas / Spire Towers (৫-রত্ন চূড়া - Photo Match!)
+    // 6. The Iconic 5 Shikharas / Spire Towers (৫-রত্ন চূড়া - Photo Match!)
     // A. Main Central Shikhara (মূল বড় রত্ন চূড়া)
     const mainShikharaGeo = new THREE.ConeGeometry(3.8, 10.5, 12);
     const mainShikhara = new THREE.Mesh(mainShikharaGeo, this.templeShikharaMat);
@@ -4598,7 +4614,42 @@ export class BangladeshProps {
       });
     });
 
-    // 6. Marigold Flower Garlands Decoration (ফুল দিয়ে সাজানো থাকবে - User Requirement!)
+    // 7. Octagonal Domed Pavilion (দোল মন্দির - User Photo Match on Left Bank!)
+    const dolGroup = new THREE.Group();
+    dolGroup.position.set(-13.5, 0, 4.0);
+
+    const dolPlinth = new THREE.Mesh(
+      new THREE.CylinderGeometry(3.2, 3.4, 1.2, 8),
+      this.templePlinthMat
+    );
+    dolPlinth.position.set(0, 0.6, 0);
+    dolGroup.add(dolPlinth);
+
+    const dolBody = new THREE.Mesh(
+      new THREE.CylinderGeometry(2.4, 2.6, 4.5, 8),
+      this.templeWallMat
+    );
+    dolBody.position.set(0, 3.45, 0);
+    dolGroup.add(dolBody);
+
+    // Hemispherical dome
+    const dolDome = new THREE.Mesh(
+      new THREE.SphereGeometry(2.5, 12, 10, 0, Math.PI * 2, 0, Math.PI * 0.5),
+      this.templeShikharaMat
+    );
+    dolDome.position.set(0, 5.7, 0);
+    dolGroup.add(dolDome);
+
+    const dolKalasa = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.08, 0.22, 1.5, 6),
+      this.templeBrassMat
+    );
+    dolKalasa.position.set(0, 8.4, 0);
+    dolGroup.add(dolKalasa);
+
+    complex.add(dolGroup);
+
+    // 8. Marigold Flower Garlands Decoration (ফুল দিয়ে সাজানো থাকবে - User Requirement!)
     const createGarlandCurve = (points, colorMat) => {
       const curve = new THREE.CatmullRomCurve3(points);
       const tubeGeo = new THREE.TubeGeometry(curve, 10, 0.08, 6, false);
@@ -4606,7 +4657,7 @@ export class BangladeshProps {
       complex.add(garland);
     };
 
-    // A. Flower garland draped across the main entrance archway
+    // A. Flower garland draped across main entrance archway
     createGarlandCurve([
       new THREE.Vector3(-1.8, 2.4, 6.55),
       new THREE.Vector3(-1.2, 5.8, 6.55),
@@ -4623,7 +4674,7 @@ export class BangladeshProps {
       new THREE.Vector3(1.6, 2.2, 6.58)
     ], this.marigoldYellowMat);
 
-    // B. Flower garlands draped along the front verandah railings
+    // B. Flower garlands draped along front verandah railings
     createGarlandCurve([
       new THREE.Vector3(-6.6, 2.7, 6.5),
       new THREE.Vector3(-6.6, 2.2, 9.5),
@@ -4654,7 +4705,7 @@ export class BangladeshProps {
       complex.add(tassel);
     });
 
-    // 7. Lush Tropical Greenery Framing the Temple (Photo Match: Banana Trees & Palms!)
+    // 9. Lush Tropical Greenery Framing the Temple (Photo Match: Banana Trees & Palms!)
     [-7.8, 7.8].forEach((bx) => {
       const b1 = this.createBananaTree();
       b1.position.set(bx, 0, 6);

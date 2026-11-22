@@ -279,9 +279,10 @@ export class RoadManager {
       }
     }
 
-    // C. AUTHENTIC PUTHIA SHIVA TEMPLE (User Reference Photo 2 - ৫-রত্ন শিব মন্দির)
+    // C. AUTHENTIC PUTHIA SHIVA TEMPLE (User Photo 2 - ৫-রত্ন শিব মন্দির, পুকুর ঘাট ও দোল মন্দির)
+    // Spawns very infrequently as a rare landmark ("অনেকক্ষণ পর পর আসবে, একটাই থাকবে শুধু")
     // Replaces the small roadside house; set back from the road with front verandah, 5 shikharas & marigold flowers!
-    if (index % 2 === 0 && !hasUIU) {
+    if (!isBridge && !hasUIU && index % 16 === 8) {
       const templeSide = -1; // Left side of the road
       const temple = p.createPuthiaTemple(templeSide);
       temple.position.set(0, 0, -6);
@@ -422,11 +423,11 @@ export class RoadManager {
       group.add(uiuCampus);
     }
 
-    // K. OVERHEAD HIGHWAY SIGN GANTRY (User Reference Photo 1: Tangail 98 KM, UIU 1 KM, Biye ∞)
-    // Spans across the entire expressway road with 3 green destination panels
-    if (!isBridge && (index % 4 === 0 || index === 2)) {
+    // K. OVERHEAD HIGHWAY SIGN GANTRY (টাঙ্গাইল ৯৮ কিমি, ইউআইইউ ১ কিমি, বিয়ে ∞)
+    // Spawns ONLY right before the bridge approach ("শুধু ব্রিজের সামনে থাকবে, আর কোথাও থাকবে না")
+    if (!isBridge && index % 4 === 2) {
       const gantry = p.createHighwaySignGantry(this.roadWidth);
-      gantry.position.set(0, 0, -18);
+      gantry.position.set(0, 0, -20);
       group.add(gantry);
     }
   }
