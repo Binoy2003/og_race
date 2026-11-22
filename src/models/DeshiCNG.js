@@ -478,6 +478,7 @@ export class DeshiCNG {
     const chassisGeo = new THREE.BoxGeometry(1.24, 0.24, 2.38);
     const chassis = new THREE.Mesh(chassisGeo, cngGreenMat);
     chassis.position.set(0, 0.34, 0);
+    chassis.castShadow = true;
     chassis.receiveShadow = true;
     this.bodyGroup.add(chassis);
 
@@ -485,6 +486,7 @@ export class DeshiCNG {
     const frontFloorGeo = new THREE.BoxGeometry(0.85, 0.22, 0.65);
     const frontFloor = new THREE.Mesh(frontFloorGeo, cngGreenMat);
     frontFloor.position.set(0, 0.33, -1.05);
+    frontFloor.castShadow = true;
     this.bodyGroup.add(frontFloor);
 
     // ========================================================
@@ -497,9 +499,9 @@ export class DeshiCNG {
     const createRoofCanopyGeometry = () => {
       const segX = 24;
       const segZ = 32;
-      const halfW = 0.63; // exact 1.26m cabin width
-      const zMin = -1.16; // extends slightly over windshield header
-      const zMax = 1.08;  // meets rear window header
+      const halfW = 0.635; // exact 1.27m cabin width
+      const zMin = -1.18;  // extends cleanly over windshield brow
+      const zMax = 1.09;   // extends cleanly over rear window header
       const zLen = zMax - zMin;
 
       const positions = [];
@@ -512,26 +514,26 @@ export class DeshiCNG {
         let curW = halfW;
         const z = zMin + v * zLen;
         if (z < -0.88) {
-          const t = (-0.88 - z) / 0.28;
-          curW = halfW - t * 0.05; // 0.63 -> 0.58
+          const t = (-0.88 - z) / 0.30;
+          curW = halfW - t * 0.05; // 0.635 -> 0.585
         } else if (z > 0.85) {
-          const t = (z - 0.85) / 0.23;
-          curW = halfW - t * 0.035; // 0.63 -> 0.595
+          const t = (z - 0.85) / 0.24;
+          curW = halfW - t * 0.035; // 0.635 -> 0.60
         }
 
         const x = u * curW;
 
         // Arch across width (X): flat top with smoothly rounded shoulders
-        const archX = Math.max(0, 1.0 - Math.pow(Math.abs(u), 2.3));
+        const archX = Math.max(0, 1.0 - Math.pow(Math.abs(u), 2.2));
 
         // Longitudinal arch along length (Z): smooth rise over driver & passenger, gentle visor drop
-        const archZ = Math.sin(Math.PI * (0.10 + 0.80 * v));
+        const archZ = Math.sin(Math.PI * (0.12 + 0.76 * v));
 
         // Baseline eaves height: 1.54m
-        const yEave = 1.54 - 0.015 * Math.pow(v - 0.5, 2) * 4;
+        const yEave = 1.54 - 0.012 * Math.pow(v - 0.5, 2) * 4;
 
-        // Peak crown height is 1.66m (12cm curve rise)
-        const y = yEave + 0.12 * archX * archZ;
+        // Peak crown height is 1.67m (13cm smooth curve rise in center)
+        const y = yEave + 0.13 * archX * archZ;
 
         return new THREE.Vector3(x, y, z);
       };
@@ -559,8 +561,8 @@ export class DeshiCNG {
         }
       }
 
-      // B. Perimeter Skirts (Vertical Eaves / Rims of 6cm height)
-      const skirtDrop = 0.06;
+      // B. Perimeter Skirts (Vertical Eaves / Rims of 6.5cm height for 3D thickness)
+      const skirtDrop = 0.065;
 
       // 1. Left Skirt (u = -1)
       let offset = positions.length / 3;
@@ -619,7 +621,7 @@ export class DeshiCNG {
         indices.push(b, d, c);
       }
 
-      // 4. Rear Skirt (v = 1)
+      // 4. Rear Overhang Skirt (v = 1)
       offset = positions.length / 3;
       for (let i = 0; i <= segX; i++) {
         const u = (i / segX) * 2 - 1;
@@ -655,14 +657,14 @@ export class DeshiCNG {
     const ribZPositions = [-0.68, -0.18, 0.32, 0.76];
     const ribMat = new THREE.MeshStandardMaterial({ color: 0x27272a, roughness: 0.65 });
     ribZPositions.forEach((rz) => {
-      const v = (rz - (-1.16)) / (1.08 - (-1.16));
+      const v = (rz - (-1.18)) / (1.09 - (-1.18));
       const ribCurvePoints = [];
       for (let k = 0; k <= 16; k++) {
         const u = (k / 16) * 2 - 1;
-        const archX = Math.max(0, 1.0 - Math.pow(Math.abs(u), 2.3));
-        const archZ = Math.sin(Math.PI * (0.10 + 0.80 * v));
-        const y = 1.54 + 0.12 * archX * archZ + 0.006;
-        ribCurvePoints.push(new THREE.Vector3(u * 0.625, y, rz));
+        const archX = Math.max(0, 1.0 - Math.pow(Math.abs(u), 2.2));
+        const archZ = Math.sin(Math.PI * (0.12 + 0.76 * v));
+        const y = 1.54 + 0.13 * archX * archZ + 0.005;
+        ribCurvePoints.push(new THREE.Vector3(u * 0.63, y, rz));
       }
       const ribCurve = new THREE.CatmullRomCurve3(ribCurvePoints);
       const ribGeo = new THREE.TubeGeometry(ribCurve, 16, 0.012, 6, false);
@@ -671,8 +673,8 @@ export class DeshiCNG {
     });
 
     // Side Rain Gutter Moldings along left and right eaves
-    [-0.63, 0.63].forEach((gx) => {
-      const gutterGeo = new THREE.CylinderGeometry(0.012, 0.012, 2.16, 8);
+    [-0.635, 0.635].forEach((gx) => {
+      const gutterGeo = new THREE.CylinderGeometry(0.012, 0.012, 2.22, 8);
       gutterGeo.rotateX(Math.PI / 2);
       const gutter = new THREE.Mesh(gutterGeo, ribMat);
       gutter.position.set(gx, 1.53, -0.04);
@@ -680,13 +682,19 @@ export class DeshiCNG {
     });
 
     // Front Visor Brow Molding over windshield header
-    const visorGeo = new THREE.BoxGeometry(1.20, 0.035, 0.08);
+    const visorGeo = new THREE.BoxGeometry(1.22, 0.035, 0.08);
     const visorMesh = new THREE.Mesh(visorGeo, ribMat);
-    visorMesh.position.set(0, 1.54, -1.15);
+    visorMesh.position.set(0, 1.54, -1.17);
     roofGroup.add(visorMesh);
 
+    // Rear Brow Molding over rear window header
+    const rearBrowGeo = new THREE.BoxGeometry(1.24, 0.035, 0.07);
+    const rearBrowMesh = new THREE.Mesh(rearBrowGeo, ribMat);
+    rearBrowMesh.position.set(0, 1.54, 1.08);
+    roofGroup.add(rearBrowMesh);
+
     // Clean Underneath Ceiling Panel closing cabin interior
-    const ceilingGeo = new THREE.PlaneGeometry(1.22, 2.18);
+    const ceilingGeo = new THREE.PlaneGeometry(1.24, 2.22);
     ceilingGeo.rotateX(Math.PI / 2);
     const ceilingMat = new THREE.MeshStandardMaterial({ color: 0x18181b, roughness: 0.95 });
     const ceiling = new THREE.Mesh(ceilingGeo, ceilingMat);
@@ -697,14 +705,15 @@ export class DeshiCNG {
 
     // ========================================================
     // 5. SIDE BODY PANELS & BELTLINE (Image 2)
+    // Sized to cleanly meet roof eaves without protruding above!
     // ========================================================
-    [-0.63, 0.63].forEach((sx, idx) => {
+    [-0.635, 0.635].forEach((sx, idx) => {
       // High-res Side Profile Panel (with open door cutout & yellow stripe)
       const sideMesh = new THREE.Mesh(
-        new THREE.PlaneGeometry(2.18, 1.28),
+        new THREE.PlaneGeometry(2.20, 1.16),
         sidePanelMat
       );
-      sideMesh.position.set(sx, 1.05, -0.05);
+      sideMesh.position.set(sx, 0.95, -0.04);
       sideMesh.rotation.y = idx === 0 ? -Math.PI / 2 : Math.PI / 2;
       this.bodyGroup.add(sideMesh);
 
@@ -716,44 +725,44 @@ export class DeshiCNG {
 
       // Tubular Black A-pillar framing windshield
       const aPillar = new THREE.Mesh(
-        new THREE.CylinderGeometry(0.022, 0.022, 1.05, 8),
+        new THREE.CylinderGeometry(0.022, 0.022, 1.02, 8),
         new THREE.MeshStandardMaterial({ color: 0x18181b, roughness: 0.5 })
       );
-      aPillar.position.set(sx * 0.96, 1.18, -1.0);
-      aPillar.rotation.x = 0.22;
+      aPillar.position.set(sx * 0.96, 1.16, -1.0);
+      aPillar.rotation.x = 0.20;
       this.bodyGroup.add(aPillar);
 
       // Tubular Black B-pillar behind driver
       const bPillar = new THREE.Mesh(
-        new THREE.CylinderGeometry(0.022, 0.022, 1.12, 8),
+        new THREE.CylinderGeometry(0.022, 0.022, 1.08, 8),
         new THREE.MeshStandardMaterial({ color: 0x18181b, roughness: 0.5 })
       );
-      bPillar.position.set(sx * 0.96, 1.12, -0.15);
+      bPillar.position.set(sx * 0.96, 1.10, -0.15);
       this.bodyGroup.add(bPillar);
 
       // Rear Corner C-pillar
       const cPillar = new THREE.Mesh(
-        new THREE.CylinderGeometry(0.022, 0.022, 1.12, 8),
+        new THREE.CylinderGeometry(0.022, 0.022, 1.08, 8),
         new THREE.MeshStandardMaterial({ color: 0x18181b, roughness: 0.5 })
       );
-      cPillar.position.set(sx * 0.96, 1.12, 1.02);
+      cPillar.position.set(sx * 0.96, 1.10, 1.02);
       this.bodyGroup.add(cPillar);
     });
 
     // ========================================================
     // 6. EXACT REAR ASSEMBLY (Image 3 - Right diagram!)
-    // This is the direct chase camera view!
+    // This is the direct chase camera view! Tucked cleanly under rear canopy overhang!
     // ========================================================
     const rearGroup = new THREE.Group();
-    rearGroup.position.set(0, 0, 1.08);
+    rearGroup.position.set(0, 0, 1.075);
 
     // High-Resolution Authentic Rear Face Plate
     // Normal faces +Z directly towards player chase camera!
     const rearFaceMesh = new THREE.Mesh(
-      new THREE.PlaneGeometry(1.28, 1.34),
+      new THREE.PlaneGeometry(1.26, 1.18),
       rearFaceMat
     );
-    rearFaceMesh.position.set(0, 1.02, 0.01);
+    rearFaceMesh.position.set(0, 0.95, 0.01);
     // Face directly towards camera (+Z)
     rearFaceMesh.rotation.y = 0;
     rearGroup.add(rearFaceMesh);
@@ -834,16 +843,17 @@ export class DeshiCNG {
 
     // ========================================================
     // 7. EXACT FRONT ASSEMBLY (Image 2 & 3 - Left diagram!)
+    // Tucked cleanly under front visor brow!
     // ========================================================
     const frontGroup = new THREE.Group();
-    frontGroup.position.set(0, 0, -1.14);
+    frontGroup.position.set(0, 0, -1.15);
 
     // High-Resolution Front Cowl & Windshield Apron
     const frontFaceMesh = new THREE.Mesh(
-      new THREE.PlaneGeometry(1.18, 1.34),
+      new THREE.PlaneGeometry(1.22, 1.18),
       frontFaceMat
     );
-    frontFaceMesh.position.set(0, 1.02, 0);
+    frontFaceMesh.position.set(0, 0.95, 0);
     // Face forward (-Z)
     frontFaceMesh.rotation.y = Math.PI;
     frontGroup.add(frontFaceMesh);
