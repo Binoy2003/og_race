@@ -3,7 +3,7 @@
 // ==========================================
 
 import * as THREE from 'three';
-import { CONFIG } from './config.js';
+import { CONFIG, isMobileDevice } from './config.js';
 import { GameState, STATES } from './core/GameState.js';
 import { InputManager } from './core/InputManager.js';
 import { CameraController } from './core/CameraController.js';
@@ -37,14 +37,26 @@ class BangladeshTruckGame {
       900
     );
 
+    this.isMobile = isMobileDevice();
+
     this.renderer = new THREE.WebGLRenderer({
-      antialias: true,
-      powerPreference: 'high-performance'
+      antialias: !this.isMobile, // Disable MSAA on mobile for huge fillrate saving
+      powerPreference: 'high-performance',
+      precision: this.isMobile ? 'mediump' : 'highp',
+      stencil: false,
+      depth: true
     });
     this.renderer.setSize(window.innerWidth, window.innerHeight);
-    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2.0));
+
+    // Dynamic DPR clamping: 1.35 on mobile (crystal-clear on AMOLED/Retina, 50%+ less fragment load), 2.0 on desktop
+    const initialDpr = this.isMobile
+      ? Math.min(window.devicePixelRatio, 1.35)
+      : Math.min(window.devicePixelRatio, 2.0);
+    this.renderer.setPixelRatio(initialDpr);
+
     this.renderer.shadowMap.enabled = true;
-    this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    // Fast 1-tap hardware PCF on mobile; multi-tap PCFSoft on desktop
+    this.renderer.shadowMap.type = this.isMobile ? THREE.PCFShadowMap : THREE.PCFSoftShadowMap;
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
     this.renderer.toneMappingExposure = 1.08;
     this.container.appendChild(this.renderer.domElement);
@@ -89,6 +101,10 @@ class BangladeshTruckGame {
     this.wasBoosting = false;
     this.wasBraking = false;
 
+    // Pre-allocated vectors for 60 FPS zero-GC tire smoke
+    this._leftRearPos = new THREE.Vector3();
+    this._rightRearPos = new THREE.Vector3();
+
     this.bindEvents();
     this.initGame();
   }
@@ -126,11 +142,15 @@ class BangladeshTruckGame {
       this.camera.aspect = width / height;
       this.camera.updateProjectionMatrix();
       this.renderer.setSize(width, height);
-      this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2.0));
+      this.isMobile = isMobileDevice();
+      const dpr = this.isMobile
+        ? Math.min(window.devicePixelRatio, 1.35)
+        : Math.min(window.devicePixelRatio, 2.0);
+      this.renderer.setPixelRatio(dpr);
     };
     window.addEventListener('resize', handleResize);
     window.addEventListener('orientationchange', () => {
-      setTimeout(handleResize, 100);
+      setTimeout(handleResize, 120);
     });
 
     // UI Callbacks
@@ -285,17 +305,17 @@ class BangladeshTruckGame {
         delta
       );
 
-      // Emit tire smoke on heavy braking
+      // Emit tire smoke on heavy braking (zero GC allocations)
       if (isBraking && this.gameState.speedKmh > 50) {
-        const leftRear = this.playerVehicle.group.position.clone();
-        leftRear.x -= 0.85;
-        leftRear.z += 1.6;
-        const rightRear = this.playerVehicle.group.position.clone();
-        rightRear.x += 0.85;
-        rightRear.z += 1.6;
+        this._leftRearPos.copy(this.playerVehicle.group.position);
+        this._leftRearPos.x -= 0.85;
+        this._leftRearPos.z += 1.6;
+        this._rightRearPos.copy(this.playerVehicle.group.position);
+        this._rightRearPos.x += 0.85;
+        this._rightRearPos.z += 1.6;
 
-        this.particleSystem.emitTireSmoke(leftRear);
-        this.particleSystem.emitTireSmoke(rightRear);
+        this.particleSystem.emitTireSmoke(this._leftRearPos);
+        this.particleSystem.emitTireSmoke(this._rightRearPos);
       }
 
       // 4. Update Rural Bangladesh Road, Props, Animals & Infinite Chunks

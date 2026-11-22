@@ -40,6 +40,13 @@ export class UIManager {
     this.fullscreenBtn = document.getElementById('btn-fullscreen');
     this.hornBtn = document.getElementById('btn-hud-horn');
 
+    // DOM Update Throttling Caches (Prevents forced layout reflows at 60 FPS)
+    this._lastScore = -1;
+    this._lastDistKm = '';
+    this._lastSpeed = -1;
+    this._lastNitro = -1;
+    this._lastBoosting = null;
+
     // Banner animation timeout
     this.bannerTimeout = null;
 
@@ -211,6 +218,38 @@ export class UIManager {
       btn.addEventListener('contextmenu', (e) => e.preventDefault());
     });
 
+    // Helper to safely bind holdable touch buttons with pointer capture
+    const bindHoldableBtn = (btn, onActiveChange, onSound = null) => {
+      if (!btn) return;
+      const setPressed = (active, e) => {
+        document.body.classList.add('touch-active');
+        onActiveChange(active);
+        if (active && onSound) onSound();
+      };
+
+      btn.addEventListener('pointerdown', (e) => {
+        e.preventDefault();
+        if (btn.setPointerCapture) {
+          try { btn.setPointerCapture(e.pointerId); } catch (_) {}
+        }
+        setPressed(true, e);
+      });
+
+      btn.addEventListener('pointerup', (e) => {
+        if (btn.releasePointerCapture) {
+          try { btn.releasePointerCapture(e.pointerId); } catch (_) {}
+        }
+        setPressed(false, e);
+      });
+
+      btn.addEventListener('pointercancel', (e) => {
+        if (btn.releasePointerCapture) {
+          try { btn.releasePointerCapture(e.pointerId); } catch (_) {}
+        }
+        setPressed(false, e);
+      });
+    };
+
     if (btnLeft) {
       btnLeft.addEventListener('pointerdown', (e) => {
         e.preventDefault();
@@ -228,43 +267,19 @@ export class UIManager {
     }
 
     // Dedicated BRAKE button on mobile -> Slows down
-    if (btnBrake) {
-      const handleBrake = (active) => {
-        document.body.classList.add('touch-active');
-        if (this.onBrake) this.onBrake(active);
-        if (active) {
-          this.soundManager.playAirBrake();
-        }
-      };
-      btnBrake.addEventListener('pointerdown', (e) => { e.preventDefault(); handleBrake(true); });
-      btnBrake.addEventListener('pointerup', () => handleBrake(false));
-      btnBrake.addEventListener('pointerleave', () => handleBrake(false));
-      btnBrake.addEventListener('pointercancel', () => handleBrake(false));
-    }
+    bindHoldableBtn(btnBrake, (active) => {
+      if (this.onBrake) this.onBrake(active);
+    }, () => this.soundManager.playAirBrake());
 
     // Dedicated GAS / ACCEL button on mobile -> Goes fast forward
-    if (btnAccel) {
-      const handleAccel = (active) => {
-        document.body.classList.add('touch-active');
-        if (this.onAccelerate) this.onAccelerate(active);
-      };
-      btnAccel.addEventListener('pointerdown', (e) => { e.preventDefault(); handleAccel(true); });
-      btnAccel.addEventListener('pointerup', () => handleAccel(false));
-      btnAccel.addEventListener('pointerleave', () => handleAccel(false));
-      btnAccel.addEventListener('pointercancel', () => handleAccel(false));
-    }
+    bindHoldableBtn(btnAccel, (active) => {
+      if (this.onAccelerate) this.onAccelerate(active);
+    });
 
     // Dedicated BOOST button on mobile -> Triggers Rocket Speed!
-    if (btnNitro) {
-      const handleNitro = (active) => {
-        document.body.classList.add('touch-active');
-        if (this.onNitro) this.onNitro(active);
-      };
-      btnNitro.addEventListener('pointerdown', (e) => { e.preventDefault(); handleNitro(true); });
-      btnNitro.addEventListener('pointerup', () => handleNitro(false));
-      btnNitro.addEventListener('pointerleave', () => handleNitro(false));
-      btnNitro.addEventListener('pointercancel', () => handleNitro(false));
-    }
+    bindHoldableBtn(btnNitro, (active) => {
+      if (this.onNitro) this.onNitro(active);
+    });
 
     if (btnHorn) {
       btnHorn.addEventListener('pointerdown', (e) => {
@@ -388,18 +403,33 @@ export class UIManager {
   }
 
   updateHUD(gameState) {
-    if (this.scoreVal) {
-      this.scoreVal.innerText = gameState.score.toLocaleString();
+    // Only touch DOM nodes when values change, and use textContent to prevent synchronous layout reflows
+    const score = Math.floor(gameState.score);
+    if (this._lastScore !== score && this.scoreVal) {
+      this._lastScore = score;
+      this.scoreVal.textContent = score.toLocaleString();
     }
-    if (this.distVal) {
-      this.distVal.innerText = `${(gameState.distanceMeters / 1000).toFixed(2)} km`;
+
+    const distKm = `${(gameState.distanceMeters / 1000).toFixed(2)} km`;
+    if (this._lastDistKm !== distKm && this.distVal) {
+      this._lastDistKm = distKm;
+      this.distVal.textContent = distKm;
     }
-    if (this.speedVal) {
-      this.speedVal.innerText = Math.round(gameState.speedKmh);
+
+    const speed = Math.round(gameState.speedKmh);
+    if (this._lastSpeed !== speed && this.speedVal) {
+      this._lastSpeed = speed;
+      this.speedVal.textContent = speed;
     }
-    if (this.nitroBar) {
-      const pct = (gameState.nitro / 100) * 100;
-      this.nitroBar.style.width = `${pct}%`;
+
+    const nitro = Math.round(gameState.nitro);
+    if (this._lastNitro !== nitro && this.nitroBar) {
+      this._lastNitro = nitro;
+      this.nitroBar.style.width = `${nitro}%`;
+    }
+
+    if (this._lastBoosting !== gameState.isBoosting && this.nitroBar) {
+      this._lastBoosting = gameState.isBoosting;
       if (gameState.isBoosting) {
         this.nitroBar.classList.add('boosting');
       } else {

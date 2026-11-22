@@ -38,6 +38,7 @@ export class DeshiCNG {
     // Collision Bounding Box (tuned for authentic CNG proportions)
     this.box = new THREE.Box3();
     this.collisionSize = new THREE.Vector3(1.32, 1.74, 2.58);
+    this._boxCenter = new THREE.Vector3();
 
     this.buildCNG();
 
@@ -1124,9 +1125,9 @@ export class DeshiCNG {
   }
 
   updateBoundingBox() {
-    const center = this.group.position.clone();
-    center.y += 0.88;
-    this.box.setFromCenterAndSize(center, this.collisionSize);
+    this._boxCenter.copy(this.group.position);
+    this._boxCenter.y += 0.88;
+    this.box.setFromCenterAndSize(this._boxCenter, this.collisionSize);
   }
 
   triggerCrash() {

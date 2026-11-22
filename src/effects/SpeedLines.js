@@ -3,11 +3,13 @@
 // ==========================================
 
 import * as THREE from 'three';
+import { isMobileDevice } from '../config.js';
 
 export class SpeedLines {
   constructor(scene) {
     this.scene = scene;
-    this.linesCount = 60;
+    const isMobile = isMobileDevice();
+    this.linesCount = isMobile ? 25 : 60;
     this.group = new THREE.Group();
 
     const lineMat = new THREE.LineBasicMaterial({

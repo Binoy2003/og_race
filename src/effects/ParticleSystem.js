@@ -3,13 +3,16 @@
 // ==========================================
 
 import * as THREE from 'three';
+import { isMobileDevice } from '../config.js';
 
 export class ParticleSystem {
   constructor(scene) {
     this.scene = scene;
+    this.isMobile = isMobileDevice();
 
     this.particles = [];
-    this.poolSize = 180;
+    this.poolSize = this.isMobile ? 70 : 180;
+    this._smokeThrottle = false;
 
     // Materials
     this.smokeMat = new THREE.MeshBasicMaterial({
@@ -58,6 +61,10 @@ export class ParticleSystem {
 
   // Tire smoke on hard braking
   emitTireSmoke(pos) {
+    if (this.isMobile) {
+      this._smokeThrottle = !this._smokeThrottle;
+      if (this._smokeThrottle) return;
+    }
     const p = this.getFreeParticle();
     if (!p) return;
 
@@ -83,8 +90,12 @@ export class ParticleSystem {
 
   // Crash impact sparks & vehicle debris
   emitCrashEffect(pos) {
+    const sparkCount = this.isMobile ? 18 : 35;
+    const debrisCount = this.isMobile ? 10 : 20;
+    const smokeCount = this.isMobile ? 14 : 25;
+
     // 1. Bright sparks
-    for (let i = 0; i < 35; i++) {
+    for (let i = 0; i < sparkCount; i++) {
       const p = this.getFreeParticle();
       if (!p) break;
 
@@ -110,7 +121,7 @@ export class ParticleSystem {
     }
 
     // 2. Flying mechanical debris pieces
-    for (let i = 0; i < 20; i++) {
+    for (let i = 0; i < debrisCount; i++) {
       const p = this.getFreeParticle();
       if (!p) break;
 
@@ -134,7 +145,7 @@ export class ParticleSystem {
     }
 
     // 3. Thick black crash smoke
-    for (let i = 0; i < 25; i++) {
+    for (let i = 0; i < smokeCount; i++) {
       const p = this.getFreeParticle();
       if (!p) break;
 

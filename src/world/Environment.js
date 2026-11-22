@@ -3,6 +3,7 @@
 // ==========================================
 
 import * as THREE from 'three';
+import { isMobileDevice } from '../config.js';
 
 export class Environment {
   constructor(scene) {
@@ -79,6 +80,8 @@ export class Environment {
   }
 
   initLighting() {
+    const isMobile = isMobileDevice();
+
     // Tropical Hemisphere Light (Lush green earth bounce, bright sky)
     this.hemiLight = new THREE.HemisphereLight(0xfff9e6, 0x2e7d32, 0.85);
     this.scene.add(this.hemiLight);
@@ -87,15 +90,22 @@ export class Environment {
     this.dirLight = new THREE.DirectionalLight(0xfff3d6, 1.35);
     this.dirLight.position.set(40, 55, -60);
     this.dirLight.castShadow = true;
-    this.dirLight.shadow.mapSize.width = 2048;
-    this.dirLight.shadow.mapSize.height = 2048;
+
+    // Mobile: 1024x1024 depth texture (75% less VRAM/bandwidth than 2048x2048)
+    const shadowMapSize = isMobile ? 1024 : 2048;
+    this.dirLight.shadow.mapSize.width = shadowMapSize;
+    this.dirLight.shadow.mapSize.height = shadowMapSize;
+
+    // Tightened frustum bounds: concentrates all shadow texels directly on road & vehicles
     this.dirLight.shadow.camera.near = 10;
-    this.dirLight.shadow.camera.far = 170;
-    this.dirLight.shadow.camera.left = -28;
-    this.dirLight.shadow.camera.right = 28;
-    this.dirLight.shadow.camera.top = 28;
-    this.dirLight.shadow.camera.bottom = -28;
-    this.dirLight.shadow.bias = -0.0005;
+    this.dirLight.shadow.camera.far = isMobile ? 120 : 160;
+    this.dirLight.shadow.camera.left = -16;
+    this.dirLight.shadow.camera.right = 16;
+    this.dirLight.shadow.camera.top = 22;
+    this.dirLight.shadow.camera.bottom = -22;
+    this.dirLight.shadow.bias = -0.0006;
+    this.dirLight.shadow.normalBias = 0.02; // Prevents shadow acne & Peter-Panning
+
     this.scene.add(this.dirLight);
     this.scene.add(this.dirLight.target);
   }

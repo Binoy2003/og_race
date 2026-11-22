@@ -5,7 +5,7 @@
 
 import * as THREE from 'three';
 import { TrafficVehicle } from '../models/TrafficVehicles.js';
-import { CONFIG } from '../config.js';
+import { CONFIG, isMobileDevice } from '../config.js';
 
 export class TrafficManager {
   constructor(scene) {
@@ -21,7 +21,8 @@ export class TrafficManager {
 
   initPool() {
     const types = ['cow_truck', 'truck', 'bus', 'sedan', 'suv'];
-    const totalPoolSize = 25;
+    const isMobile = isMobileDevice();
+    const totalPoolSize = isMobile ? 14 : 25;
 
     for (let i = 0; i < totalPoolSize; i++) {
       const type = types[i % types.length];

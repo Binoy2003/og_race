@@ -85,8 +85,11 @@ export class CameraController {
     // On vertical mobile screens (aspect < 1.0), broaden vertical FOV so all 3 highway lanes remain in view!
     const portraitBonus = aspect < 1.0 ? Math.min(24, (1.0 - aspect) * 36) : 0;
     this.targetFOV = CONFIG.CAMERA.BASE_FOV + portraitBonus + normSpeed * 10 + (isBoosting ? 8 : 0);
-    this.camera.fov += (this.targetFOV - this.camera.fov) * Math.min(1.0, delta * CONFIG.CAMERA.FOV_LERP_SPEED);
-    this.camera.updateProjectionMatrix();
+    const fovDiff = this.targetFOV - this.camera.fov;
+    if (Math.abs(fovDiff) > 0.04) {
+      this.camera.fov += fovDiff * Math.min(1.0, delta * CONFIG.CAMERA.FOV_LERP_SPEED);
+      this.camera.updateProjectionMatrix();
+    }
 
     // 2. Camera target positions
     const targetX = p.x + this.defaultOffset.x;

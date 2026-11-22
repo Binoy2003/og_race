@@ -2,13 +2,30 @@
 // OG_RACE - CONFIGURATION CONSTANTS
 // ==========================================
 
+export const isMobileDevice = () => {
+  if (typeof window === 'undefined') return false;
+  const ua = navigator.userAgent || navigator.vendor || window.opera || '';
+  const isMobileUA = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile|mobile|CriOS/i.test(ua);
+  const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+  const isSmallScreen = Math.min(window.innerWidth, window.innerHeight) <= 768 || window.innerWidth <= 1024;
+  return isMobileUA || (isTouch && isSmallScreen);
+};
+
+export const isIOS = () => {
+  if (typeof window === 'undefined') return false;
+  return /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+};
+
+export const IS_MOBILE = isMobileDevice();
+
 export const CONFIG = {
   // Road & Lane Geometry
   LANES: [-3.7, 0.0, 3.7], // X positions: Left (-1), Center (0), Right (1)
   LANE_WIDTH: 3.7,
   ROAD_WIDTH: 13.0,
   ROAD_SEGMENT_LENGTH: 60,
-  ROAD_SEGMENT_COUNT: 8, // Total active highway segments
+  ROAD_SEGMENT_COUNT: isMobileDevice() ? 5 : 8, // Optimized 5 segments on mobile (saves 38% draw calls)
   
   // Dynamic Car / Truck Speeds (in km/h) with Progressive Race Speed Acceleration
   SPEED: {

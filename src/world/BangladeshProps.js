@@ -3,12 +3,21 @@
 // ==========================================
 
 import * as THREE from 'three';
+import { isMobileDevice } from '../config.js';
 
 export class BangladeshProps {
   constructor() {
+    this.isMobile = isMobileDevice();
     this.initMaterials();
     this.animatedAnimals = []; // Cows, ducks, goats for frame updates
     this.smokeEmitters = [];    // Tea stall smoke
+  }
+
+  // Optimize mobile GPUs by disabling dynamic shadow passes on roadside background props
+  applyShadow(mesh) {
+    if (!this.isMobile) {
+      mesh.castShadow = true;
+    }
   }
 
   initMaterials() {
@@ -268,7 +277,7 @@ export class BangladeshProps {
     const bodyGeo = new THREE.BoxGeometry(0.9, 0.95, 1.7);
     const body = new THREE.Mesh(bodyGeo, bodyMat);
     body.position.set(0, 1.05, 0);
-    body.castShadow = true;
+    this.applyShadow(body);
     cow.add(body);
 
     // Zebu Dorsal Hump (Iconic Bangladeshi Deshi Cow Feature)
@@ -276,7 +285,7 @@ export class BangladeshProps {
     const hump = new THREE.Mesh(humpGeo, bodyMat);
     hump.position.set(0, 1.62, -0.45);
     hump.rotation.x = -0.2;
-    hump.castShadow = true;
+    this.applyShadow(hump);
     cow.add(hump);
 
     // Dewlap (Skin flap hanging under the neck)
@@ -340,7 +349,7 @@ export class BangladeshProps {
       const legGeo = new THREE.BoxGeometry(0.2, 0.75, 0.2);
       const leg = new THREE.Mesh(legGeo, bodyMat);
       leg.position.set(pos.x, 0.38, pos.z);
-      leg.castShadow = true;
+      this.applyShadow(leg);
       cow.add(leg);
 
       // Hoof
@@ -416,7 +425,7 @@ export class BangladeshProps {
     const wallGeo = new THREE.BoxGeometry(5.8, 2.6, 3.8);
     const walls = new THREE.Mesh(wallGeo, this.bambooWallMat);
     walls.position.set(0, 1.75, -0.4);
-    walls.castShadow = true;
+    this.applyShadow(walls);
     walls.receiveShadow = true;
     house.add(walls);
 
@@ -439,14 +448,14 @@ export class BangladeshProps {
     const roofLeft = new THREE.Mesh(roofLeftGeo, roofMat);
     roofLeft.position.set(0, 3.65, -0.9);
     roofLeft.rotation.x = -0.52;
-    roofLeft.castShadow = true;
+    this.applyShadow(roofLeft);
     house.add(roofLeft);
 
     const roofRightGeo = new THREE.BoxGeometry(6.6, 0.1, 3.4);
     const roofRight = new THREE.Mesh(roofRightGeo, roofMat);
     roofRight.position.set(0, 3.5, 0.8);
     roofRight.rotation.x = 0.46; // Extends forward over veranda
-    roofRight.castShadow = true;
+    this.applyShadow(roofRight);
     house.add(roofRight);
 
     // Front Veranda (Baranda) Wooden Support Pillars
@@ -454,7 +463,7 @@ export class BangladeshProps {
       const pillarGeo = new THREE.CylinderGeometry(0.08, 0.08, 2.3, 8);
       const pillar = new THREE.Mesh(pillarGeo, this.woodMat);
       pillar.position.set(x, 1.6, 2.1);
-      pillar.castShadow = true;
+      this.applyShadow(pillar);
       house.add(pillar);
     });
 
@@ -479,7 +488,7 @@ export class BangladeshProps {
     const roof = new THREE.Mesh(roofGeo, this.tinRoofMat);
     roof.position.set(0, 2.3, 0.2);
     roof.rotation.x = 0.2;
-    roof.castShadow = true;
+    this.applyShadow(roof);
     stall.add(roof);
 
     // Wooden Posts
@@ -544,19 +553,19 @@ export class BangladeshProps {
     const baseGeo = new THREE.CylinderGeometry(1.6, 1.9, 1.4, 12);
     const base = new THREE.Mesh(baseGeo, this.hayMat);
     base.position.y = 0.7;
-    base.castShadow = true;
+    this.applyShadow(base);
     haystack.add(base);
 
     const midGeo = new THREE.CylinderGeometry(1.0, 1.6, 1.2, 12);
     const mid = new THREE.Mesh(midGeo, this.hayMat);
     mid.position.y = 2.0;
-    mid.castShadow = true;
+    this.applyShadow(mid);
     haystack.add(mid);
 
     const topGeo = new THREE.ConeGeometry(1.0, 1.5, 12);
     const top = new THREE.Mesh(topGeo, this.hayMat);
     top.position.y = 3.35;
-    top.castShadow = true;
+    this.applyShadow(top);
     haystack.add(top);
 
     // Central Bamboo Pole protruding from top
@@ -593,7 +602,7 @@ export class BangladeshProps {
     const wallGeo = new THREE.BoxGeometry(4.8, 2.5, 0.18);
     const wall = new THREE.Mesh(wallGeo, this.brickMat);
     wall.position.set(0, 1.45, 1.02);
-    wall.castShadow = true;
+    this.applyShadow(wall);
     chawni.add(wall);
 
     // Whitewashed inner surface of back wall
@@ -613,7 +622,7 @@ export class BangladeshProps {
       const pGeo = new THREE.CylinderGeometry(0.08, 0.09, 2.6, 12);
       const pillar = new THREE.Mesh(pGeo, this.culvertRailingMaterial);
       pillar.position.set(px, 1.45, pz);
-      pillar.castShadow = true;
+      this.applyShadow(pillar);
       chawni.add(pillar);
 
       // Dark green base collar
@@ -628,7 +637,7 @@ export class BangladeshProps {
     roofGeo.rotateZ(Math.PI / 2);
     const roof = new THREE.Mesh(roofGeo, this.tinRoofMat);
     roof.position.set(0, 2.75, 0.05);
-    roof.castShadow = true;
+    this.applyShadow(roof);
     chawni.add(roof);
 
     // Roof Trusses (Metal beams supporting the roof)
@@ -640,9 +649,11 @@ export class BangladeshProps {
     });
 
     // Warm Lantern / Lamp under roof (illuminating the couple romantically!)
-    const lamp = new THREE.PointLight(0xffedd5, 3.5, 16);
-    lamp.position.set(0, 2.45, 0.25);
-    chawni.add(lamp);
+    if (!this.isMobile) {
+      const lamp = new THREE.PointLight(0xffedd5, 3.0, 14);
+      lamp.position.set(0, 2.45, 0.25);
+      chawni.add(lamp);
+    }
 
     // Vintage black lantern cage & glowing bulb
     const cageGeo = new THREE.CylinderGeometry(0.14, 0.18, 0.28, 8, 1, true);
@@ -933,14 +944,14 @@ export class BangladeshProps {
     const seatGeo = new THREE.BoxGeometry(4.4, 0.12, 0.7);
     const seat = new THREE.Mesh(seatGeo, this.woodMat);
     seat.position.set(0, 0.65, 0.5);
-    seat.castShadow = true;
+    this.applyShadow(seat);
     benchGroup.add(seat);
 
     // Ergonomic wooden backrest supporting passengers
     const backrestGeo = new THREE.BoxGeometry(4.4, 0.42, 0.1);
     const backrest = new THREE.Mesh(backrestGeo, this.woodMat);
     backrest.position.set(0, 1.12, 0.82);
-    backrest.castShadow = true;
+    this.applyShadow(backrest);
     benchGroup.add(backrest);
 
     // Sturdy concrete & iron bench supports / armrests
@@ -1189,7 +1200,7 @@ export class BangladeshProps {
     ]);
     const trunkGeo = new THREE.TubeGeometry(trunkCurve, 12, 0.24, 8, false);
     const trunk = new THREE.Mesh(trunkGeo, this.palmTrunkMat);
-    trunk.castShadow = true;
+    this.applyShadow(trunk);
     palm.add(trunk);
 
     // Crown of arching palm fronds
@@ -1204,7 +1215,7 @@ export class BangladeshProps {
       frond.position.copy(crownPos);
       frond.rotation.y = angle;
       frond.rotation.x = 0.85; // arching down
-      frond.castShadow = true;
+      this.applyShadow(frond);
       palm.add(frond);
     }
 
@@ -1245,7 +1256,7 @@ export class BangladeshProps {
       leaf.position.set(0, 2.7, 0);
       leaf.rotation.y = angle;
       leaf.rotation.x = 0.95; // droops down gracefully
-      leaf.castShadow = true;
+      this.applyShadow(leaf);
       banana.add(leaf);
     }
 
@@ -1292,7 +1303,7 @@ export class BangladeshProps {
     const postGeo = new THREE.CylinderGeometry(0.14, 0.18, 8.5, 8);
     const post = new THREE.Mesh(postGeo, this.concreteMat);
     post.position.y = 4.25;
-    post.castShadow = true;
+    this.applyShadow(post);
     pole.add(post);
 
     // Crossarm
@@ -1396,7 +1407,7 @@ export class BangladeshProps {
       const stakeGeo = new THREE.CylinderGeometry(0.05, 0.06, 1.25, 6);
       const stake = new THREE.Mesh(stakeGeo, this.woodMat);
       stake.position.set(0, 0.62, z);
-      stake.castShadow = true;
+      this.applyShadow(stake);
       fence.add(stake);
     }
 
@@ -1430,7 +1441,7 @@ export class BangladeshProps {
     const wallMat = new THREE.MeshStandardMaterial({ color: 0x5d4037, roughness: 0.8 }); // rich warm espresso brick
     const building = new THREE.Mesh(buildingGeo, wallMat);
     building.position.set(0, 1.74, 0.6);
-    building.castShadow = true;
+    this.applyShadow(building);
     cafe.add(building);
 
     // Modern roof cornice / trim
@@ -1470,9 +1481,11 @@ export class BangladeshProps {
     cafe.add(pushBar);
 
     // Warm Interior Ambient Light & Cozy Glow
-    const cafeWarmLight = new THREE.PointLight(0xffedd5, 3.2, 9.0);
-    cafeWarmLight.position.set(0, 2.2, 0.2);
-    cafe.add(cafeWarmLight);
+    if (!this.isMobile) {
+      const cafeWarmLight = new THREE.PointLight(0xffedd5, 3.2, 9.0);
+      cafeWarmLight.position.set(0, 2.2, 0.2);
+      cafe.add(cafeWarmLight);
+    }
 
     // Interior Cafe Counter Silhouette
     const intCounterGeo = new THREE.BoxGeometry(3.6, 1.0, 0.8);
@@ -1795,7 +1808,7 @@ export class BangladeshProps {
     const wallMat = new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.7 });
     const building = new THREE.Mesh(buildingGeo, wallMat);
     building.position.set(0, 1.74, 0.6);
-    building.castShadow = true;
+    this.applyShadow(building);
     bar.add(building);
 
     // Dark walnut wood vertical slats on facade side pillars
@@ -1929,13 +1942,15 @@ export class BangladeshProps {
     });
 
     // 6. Vibrant Neon Mood Lights Inside Lounge
-    const neonCyan = new THREE.PointLight(0x06b6d4, 3.2, 9.0);
-    neonCyan.position.set(-1.2, 2.3, 0.2);
-    bar.add(neonCyan);
+    if (!this.isMobile) {
+      const neonCyan = new THREE.PointLight(0x06b6d4, 3.2, 9.0);
+      neonCyan.position.set(-1.2, 2.3, 0.2);
+      bar.add(neonCyan);
 
-    const neonPurple = new THREE.PointLight(0xd946ef, 2.8, 8.0);
-    neonPurple.position.set(1.2, 2.3, 0.2);
-    bar.add(neonPurple);
+      const neonPurple = new THREE.PointLight(0xd946ef, 2.8, 8.0);
+      neonPurple.position.set(1.2, 2.3, 0.2);
+      bar.add(neonPurple);
+    }
 
     // 7. NEON SIGNBOARD: "HIGHWAY BAR" | মদের বার
     const signCanvas = document.createElement('canvas');
@@ -2231,18 +2246,13 @@ export class BangladeshProps {
     cigBody.position.z = -0.046;
     cigGroup1.add(cigBody);
 
-    // Burning Red/Orange Cherry Ember Tip
+    // Burning Red/Orange Cherry Ember Tip (MeshBasicMaterial glows naturally without expensive GPU light passes)
     const cigEmber = new THREE.Mesh(
       new THREE.SphereGeometry(0.014, 8, 8),
-      new THREE.MeshBasicMaterial({ color: 0xff2200 })
+      new THREE.MeshBasicMaterial({ color: 0xff3b00 })
     );
     cigEmber.position.z = -0.082;
     cigGroup1.add(cigEmber);
-
-    // Mini glowing ember point light illuminating face & hand
-    const emberLight1 = new THREE.PointLight(0xff3b00, 1.2, 1.2);
-    emberLight1.position.z = -0.082;
-    cigGroup1.add(emberLight1);
 
     // Animated Rising Smoke Puffs from cigarette tip
     const smokeGroup1 = new THREE.Group();
@@ -2252,7 +2262,7 @@ export class BangladeshProps {
       maxH: 0.5,
       spd: 0.007,
       drift: 0.004,
-      light: emberLight1,
+      light: null,
       seed: Math.random() * 5
     };
     for (let s = 0; s < 5; s++) {
@@ -2344,14 +2354,10 @@ export class BangladeshProps {
 
     const cigEmber2 = new THREE.Mesh(
       new THREE.SphereGeometry(0.014, 8, 8),
-      new THREE.MeshBasicMaterial({ color: 0xff2200 })
+      new THREE.MeshBasicMaterial({ color: 0xff3b00 })
     );
     cigEmber2.position.z = -0.045;
     cigGroup2.add(cigEmber2);
-
-    const emberLight2 = new THREE.PointLight(0xff3b00, 0.9, 1.0);
-    emberLight2.position.z = -0.045;
-    cigGroup2.add(emberLight2);
 
     // Animated Rising Smoke Puffs for Guy 2's cigarette
     const smokeGroup2 = new THREE.Group();
@@ -2361,7 +2367,7 @@ export class BangladeshProps {
       maxH: 0.45,
       spd: 0.006,
       drift: 0.003,
-      light: emberLight2,
+      light: null,
       seed: Math.random() * 5
     };
     for (let s = 0; s < 4; s++) {
@@ -2659,7 +2665,7 @@ export class BangladeshProps {
       const girderGeo = new THREE.BoxGeometry(0.38, 0.85, bridgeLength);
       const girder = new THREE.Mesh(girderGeo, this.bridgeRedMat);
       girder.position.set(gx, -0.45, 0);
-      girder.castShadow = true;
+      this.applyShadow(girder);
       bridge.add(girder);
 
       // Off-white bottom flange trim
@@ -2735,7 +2741,7 @@ export class BangladeshProps {
         const postGeo = new THREE.BoxGeometry(0.22, 0.96, 0.22);
         const post = new THREE.Mesh(postGeo, this.bridgeRedMat);
         post.position.set(rx, 0.28 + 0.48 + archY, pz);
-        post.castShadow = true;
+        this.applyShadow(post);
         bridge.add(post);
 
         // Pyramid chamfered cap on top of post
@@ -2916,7 +2922,7 @@ export class BangladeshProps {
           this.bollardMat
         );
         bollard.position.set(bx, 0.425, bz);
-        bollard.castShadow = true;
+        this.applyShadow(bollard);
         bridge.add(bollard);
 
         const cap = new THREE.Mesh(
@@ -2933,7 +2939,7 @@ export class BangladeshProps {
           this.bollardMat
         );
         bollard.position.set(bx, 0.425, bz);
-        bollard.castShadow = true;
+        this.applyShadow(bollard);
         bridge.add(bollard);
 
         const cap = new THREE.Mesh(

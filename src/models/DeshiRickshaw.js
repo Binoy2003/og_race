@@ -37,6 +37,7 @@ export class DeshiRickshaw {
     // Collision Bounding Box (tuned for Cycle Rickshaw)
     this.box = new THREE.Box3();
     this.collisionSize = new THREE.Vector3(1.5, 2.1, 3.2);
+    this._boxCenter = new THREE.Vector3();
 
     this.buildRickshaw();
 
@@ -1490,9 +1491,9 @@ export class DeshiRickshaw {
   }
 
   updateBoundingBox() {
-    const center = this.group.position.clone();
-    center.y += 1.15;
-    this.box.setFromCenterAndSize(center, this.collisionSize);
+    this._boxCenter.copy(this.group.position);
+    this._boxCenter.y += 1.15;
+    this.box.setFromCenterAndSize(this._boxCenter, this.collisionSize);
   }
 
   triggerCrash() {

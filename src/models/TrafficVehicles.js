@@ -20,9 +20,10 @@ export class TrafficVehicle {
     this.wheels = [];
     this.wheelRotation = 0;
 
-    // Collision Bounding Box
+    // Collision Bounding Box (pre-allocated vector to prevent per-frame GC allocations)
     this.box = new THREE.Box3();
     this.collisionSize = new THREE.Vector3(1.8, 1.4, 4.5);
+    this._boxCenter = new THREE.Vector3();
 
     this.buildModel();
   }
@@ -474,8 +475,8 @@ export class TrafficVehicle {
   }
 
   updateBoundingBox() {
-    const center = this.group.position.clone();
-    center.y += this.collisionSize.y * 0.5;
-    this.box.setFromCenterAndSize(center, this.collisionSize);
+    this._boxCenter.copy(this.group.position);
+    this._boxCenter.y += this.collisionSize.y * 0.5;
+    this.box.setFromCenterAndSize(this._boxCenter, this.collisionSize);
   }
 }
