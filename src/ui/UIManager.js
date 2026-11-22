@@ -217,81 +217,107 @@ export class UIManager {
       btn.addEventListener('contextmenu', (e) => e.preventDefault());
     });
 
-    // Helper to safely bind holdable touch buttons with pointer capture
+    // Helper to safely bind multi-touch buttons with isolated pointer tracking
     const bindHoldableBtn = (btn, onActiveChange, onSound = null) => {
       if (!btn) return;
-      const setPressed = (active, e) => {
+
+      const activePointers = new Set();
+
+      const activate = (pointerId, e) => {
+        if (e && e.cancelable) e.preventDefault();
+        if (e) e.stopPropagation();
         document.body.classList.add('touch-active');
-        onActiveChange(active);
-        if (active && onSound) onSound();
+
+        const wasEmpty = activePointers.size === 0;
+        activePointers.add(pointerId);
+        btn.classList.add('active');
+
+        if (wasEmpty) {
+          onActiveChange(true);
+          if (onSound) onSound();
+        }
       };
 
-      btn.addEventListener('pointerdown', (e) => {
-        e.preventDefault();
-        if (btn.setPointerCapture) {
-          try { btn.setPointerCapture(e.pointerId); } catch (_) {}
-        }
-        setPressed(true, e);
-      });
+      const deactivate = (pointerId, e) => {
+        if (e && e.cancelable) e.preventDefault();
+        if (e) e.stopPropagation();
 
-      btn.addEventListener('pointerup', (e) => {
-        if (btn.releasePointerCapture) {
-          try { btn.releasePointerCapture(e.pointerId); } catch (_) {}
+        if (activePointers.has(pointerId)) {
+          activePointers.delete(pointerId);
+          if (activePointers.size === 0) {
+            btn.classList.remove('active');
+            onActiveChange(false);
+          }
         }
-        setPressed(false, e);
-      });
+      };
 
-      btn.addEventListener('pointercancel', (e) => {
-        if (btn.releasePointerCapture) {
-          try { btn.releasePointerCapture(e.pointerId); } catch (_) {}
-        }
-        setPressed(false, e);
-      });
+      if (window.PointerEvent) {
+        btn.addEventListener('pointerdown', (e) => {
+          activate(e.pointerId, e);
+          try {
+            if (btn.setPointerCapture) btn.setPointerCapture(e.pointerId);
+          } catch (_) {}
+        }, { passive: false });
+
+        btn.addEventListener('pointerup', (e) => {
+          try {
+            if (btn.releasePointerCapture) btn.releasePointerCapture(e.pointerId);
+          } catch (_) {}
+          deactivate(e.pointerId, e);
+        }, { passive: false });
+
+        btn.addEventListener('pointercancel', (e) => {
+          try {
+            if (btn.releasePointerCapture) btn.releasePointerCapture(e.pointerId);
+          } catch (_) {}
+          deactivate(e.pointerId, e);
+        }, { passive: false });
+
+        btn.addEventListener('lostpointercapture', (e) => {
+          deactivate(e.pointerId, e);
+        }, { passive: false });
+
+        // Global safety: if pointer is released anywhere in window
+        window.addEventListener('pointerup', (e) => {
+          deactivate(e.pointerId, e);
+        }, { passive: true });
+        window.addEventListener('pointercancel', (e) => {
+          deactivate(e.pointerId, e);
+        }, { passive: true });
+      } else {
+        // Fallback for older legacy browsers without PointerEvent
+        btn.addEventListener('touchstart', (e) => {
+          if (e.cancelable) e.preventDefault();
+          e.stopPropagation();
+          for (let i = 0; i < e.changedTouches.length; i++) {
+            activate(e.changedTouches[i].identifier, e);
+          }
+        }, { passive: false });
+
+        btn.addEventListener('touchend', (e) => {
+          if (e.cancelable) e.preventDefault();
+          e.stopPropagation();
+          for (let i = 0; i < e.changedTouches.length; i++) {
+            deactivate(e.changedTouches[i].identifier, e);
+          }
+        }, { passive: false });
+
+        btn.addEventListener('touchcancel', (e) => {
+          for (let i = 0; i < e.changedTouches.length; i++) {
+            deactivate(e.changedTouches[i].identifier, e);
+          }
+        }, { passive: false });
+      }
     };
 
-    // Steer Buttons with Instant Tap + Smooth Auto-Repeat while held
-    const bindSteerBtn = (btn, onSteer) => {
-      if (!btn) return;
-      let steerInterval = null;
-      let steerTimeout = null;
-
-      const triggerSteer = (e) => {
-        if (e) e.preventDefault();
-        document.body.classList.add('touch-active');
-        if (btn.setPointerCapture && e && e.pointerId !== undefined) {
-          try { btn.setPointerCapture(e.pointerId); } catch (_) {}
-        }
-        onSteer();
-
-        clearTimeout(steerTimeout);
-        clearInterval(steerInterval);
-        steerTimeout = setTimeout(() => {
-          steerInterval = setInterval(() => {
-            onSteer();
-          }, 210);
-        }, 260);
-      };
-
-      const stopSteer = (e) => {
-        clearTimeout(steerTimeout);
-        clearInterval(steerInterval);
-        if (btn.releasePointerCapture && e && e.pointerId !== undefined) {
-          try { btn.releasePointerCapture(e.pointerId); } catch (_) {}
-        }
-      };
-
-      btn.addEventListener('pointerdown', triggerSteer);
-      btn.addEventListener('pointerup', stopSteer);
-      btn.addEventListener('pointercancel', stopSteer);
-      btn.addEventListener('pointerleave', stopSteer);
-    };
-
-    bindSteerBtn(btnLeft, () => {
-      if (this.onSteerLeft) this.onSteerLeft();
+    // Steer Left Button (Instant tap lane-shift + continuous hold)
+    bindHoldableBtn(btnLeft, (active) => {
+      if (this.onSteerLeft) this.onSteerLeft(active);
     });
 
-    bindSteerBtn(btnRight, () => {
-      if (this.onSteerRight) this.onSteerRight();
+    // Steer Right Button (Instant tap lane-shift + continuous hold)
+    bindHoldableBtn(btnRight, (active) => {
+      if (this.onSteerRight) this.onSteerRight(active);
     });
 
     // Dedicated BRAKE button on mobile -> Slows down

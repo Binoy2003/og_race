@@ -182,9 +182,9 @@ class BangladeshTruckGame {
     this.inputManager.onHorn = () => this.triggerHorn();
     this.uiManager.onHorn = () => this.triggerHorn();
 
-    // Mobile Virtual Touch Controls
-    this.uiManager.onSteerLeft = () => this.inputManager.triggerSteerLeft();
-    this.uiManager.onSteerRight = () => this.inputManager.triggerSteerRight();
+    // Mobile Virtual Touch Controls (Full multi-touch & simultaneous boost support)
+    this.uiManager.onSteerLeft = (active) => this.inputManager.setSteerLeft(active);
+    this.uiManager.onSteerRight = (active) => this.inputManager.setSteerRight(active);
     this.uiManager.onAccelerate = (active) => this.inputManager.setAccelerate(active);
     this.uiManager.onBrake = (active) => this.inputManager.setBrake(active);
     this.uiManager.onNitro = (active) => this.inputManager.setNitro(active);

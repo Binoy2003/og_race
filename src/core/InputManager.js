@@ -18,10 +18,8 @@ export class InputManager {
     // Discrete lane shift requests
     this.laneChangeRequested = 0; // -1 for left, 1 for right
 
-    // Mobile touch state
-    this.touchStartX = 0;
-    this.touchStartY = 0;
-    this.touchStartTime = 0;
+    // Mobile touch state: Track swipe touches independently by touch identifier
+    this.activeSwipes = new Map();
     this.isTouchDevice = false;
 
     // Callbacks
@@ -149,21 +147,33 @@ export class InputManager {
       }
     });
 
-    // Touch Swipe Gestures
+    // Touch Swipe Gestures (Only for touches directly on gameplay canvas, ignoring UI buttons & controls)
     window.addEventListener('touchstart', (e) => {
       this.isTouchDevice = true;
-      if (e.touches.length > 0) {
-        this.touchStartX = e.touches[0].clientX;
-        this.touchStartY = e.touches[0].clientY;
-        this.touchStartTime = Date.now();
+      for (let i = 0; i < e.changedTouches.length; i++) {
+        const t = e.changedTouches[i];
+        // Safely ignore touches on HUD, on-screen controls, modals, or buttons
+        if (t.target && t.target.closest && t.target.closest('#mobile-controls, #hud-layer, .screen, button, .touch-btn, .hud-icon-btn, .modal-overlay')) {
+          continue;
+        }
+        this.activeSwipes.set(t.identifier, {
+          startX: t.clientX,
+          startY: t.clientY,
+          startTime: Date.now()
+        });
       }
     }, { passive: true });
 
     window.addEventListener('touchend', (e) => {
-      if (e.changedTouches.length > 0) {
-        const deltaX = e.changedTouches[0].clientX - this.touchStartX;
-        const deltaY = e.changedTouches[0].clientY - this.touchStartY;
-        const deltaTime = Date.now() - this.touchStartTime;
+      for (let i = 0; i < e.changedTouches.length; i++) {
+        const t = e.changedTouches[i];
+        const start = this.activeSwipes.get(t.identifier);
+        if (!start) continue;
+        this.activeSwipes.delete(t.identifier);
+
+        const deltaX = t.clientX - start.startX;
+        const deltaY = t.clientY - start.startY;
+        const deltaTime = Date.now() - start.startTime;
 
         if (deltaTime < 350 && Math.abs(deltaX) > 40 && Math.abs(deltaX) > Math.abs(deltaY) * 1.3) {
           if (deltaX < 0) {
@@ -174,6 +184,12 @@ export class InputManager {
         }
       }
     }, { passive: true });
+
+    window.addEventListener('touchcancel', (e) => {
+      for (let i = 0; i < e.changedTouches.length; i++) {
+        this.activeSwipes.delete(e.changedTouches[i].identifier);
+      }
+    }, { passive: true });
   }
 
   consumeLaneChange() {
@@ -182,28 +198,48 @@ export class InputManager {
     return req;
   }
 
+  setSteerLeft(active) {
+    if (active && !this.keys.left) {
+      this.laneChangeRequested = -1;
+    }
+    this.keys.left = !!active;
+  }
+
+  setSteerRight(active) {
+    if (active && !this.keys.right) {
+      this.laneChangeRequested = 1;
+    }
+    this.keys.right = !!active;
+  }
+
   triggerSteerLeft() {
-    this.laneChangeRequested = -1;
+    this.setSteerLeft(true);
+    setTimeout(() => {
+      if (this.keys.left) this.setSteerLeft(false);
+    }, 120);
   }
 
   triggerSteerRight() {
-    this.laneChangeRequested = 1;
+    this.setSteerRight(true);
+    setTimeout(() => {
+      if (this.keys.right) this.setSteerRight(false);
+    }, 120);
   }
 
   setBrake(active) {
-    this.keys.brake = active;
+    this.keys.brake = !!active;
   }
 
   setAccelerate(active) {
-    this.keys.accelerate = active;
+    this.keys.accelerate = !!active;
   }
 
   setNitro(active) {
-    this.keys.boost = active;
+    this.keys.boost = !!active;
   }
 
   setBoost(active) {
-    this.keys.boost = active;
+    this.keys.boost = !!active;
   }
 
   reset() {
@@ -214,5 +250,6 @@ export class InputManager {
     this.keys.boost = false;
     this.keys.horn = false;
     this.laneChangeRequested = 0;
+    this.activeSwipes.clear();
   }
 }

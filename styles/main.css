@@ -769,6 +769,9 @@ canvas {
   align-items: flex-end;
   pointer-events: none;
   z-index: 25;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 body.touch-active.game-playing #mobile-controls,
@@ -796,6 +799,9 @@ body:not(.game-playing) #mobile-controls {
   display: flex;
   gap: 0.65rem;
   pointer-events: auto;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .touch-btn {
@@ -815,11 +821,13 @@ body:not(.game-playing) #mobile-controls {
   font-size: 1.35rem;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.55);
   touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
   transition: transform 0.08s ease, background 0.08s ease, border-color 0.08s ease;
   -webkit-tap-highlight-color: transparent;
 }
 
-.touch-btn:active {
+.touch-btn:active, .touch-btn.active {
   transform: scale(0.90);
   background: rgba(255, 255, 255, 0.28);
 }
@@ -854,6 +862,13 @@ body:not(.game-playing) #mobile-controls {
   padding: 0.15rem;
   text-align: center;
   box-shadow: 0 0 22px rgba(245, 158, 11, 0.5);
+}
+
+.touch-btn.nitro-btn:active, .touch-btn.nitro-btn.active {
+  transform: scale(0.90);
+  background: radial-gradient(circle, rgba(245, 158, 11, 0.55) 0%, rgba(239, 68, 68, 0.95) 75%);
+  border-color: #fde047;
+  box-shadow: 0 0 32px #f59e0b;
 }
 
 /* ---------------- Game Over Screen (Compact, Sleek & Fits Any Screen) ---------------- */
