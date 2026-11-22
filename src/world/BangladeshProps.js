@@ -338,6 +338,169 @@ export class BangladeshProps {
       roughness: 0.9
     });
 
+    // 8. Authentic UIU Permanent Campus Materials (United International University)
+    // A. Multi-Story Concrete Window Grid Facade Texture
+    const uiuGridCanvas = document.createElement('canvas');
+    uiuGridCanvas.width = 512;
+    uiuGridCanvas.height = 512;
+    const uCtx = uiuGridCanvas.getContext('2d');
+    uCtx.fillStyle = '#64748b'; // Architectural concrete grey
+    uCtx.fillRect(0, 0, 512, 512);
+
+    const floors = 8;
+    const bays = 6;
+    const floorH = 512 / floors;
+    const bayW = 512 / bays;
+    for (let f = 0; f < floors; f++) {
+      for (let b = 0; b < bays; b++) {
+        const wx = b * bayW + 8;
+        const wy = f * floorH + 8;
+        const ww = bayW - 16;
+        const wh = floorH - 16;
+
+        uCtx.fillStyle = '#0f172a';
+        uCtx.fillRect(wx, wy, ww, wh);
+
+        const wGrad = uCtx.createLinearGradient(wx, wy, wx, wy + wh);
+        wGrad.addColorStop(0, '#38bdf8');
+        wGrad.addColorStop(0.35, '#1e293b');
+        wGrad.addColorStop(1, '#090d16');
+        uCtx.fillStyle = wGrad;
+        uCtx.fillRect(wx + 2, wy + 2, ww - 4, wh - 4);
+
+        uCtx.strokeStyle = 'rgba(255, 255, 255, 0.25)';
+        uCtx.lineWidth = 1.5;
+        uCtx.beginPath();
+        uCtx.moveTo(wx + ww * 0.5, wy);
+        uCtx.lineTo(wx + ww * 0.5, wy + wh);
+        uCtx.moveTo(wx, wy + wh * 0.5);
+        uCtx.lineTo(wx + ww, wy + wh * 0.5);
+        uCtx.stroke();
+      }
+    }
+    const uiuGridTex = new THREE.CanvasTexture(uiuGridCanvas);
+    uiuGridTex.wrapS = THREE.RepeatWrapping;
+    uiuGridTex.wrapT = THREE.RepeatWrapping;
+    uiuGridTex.repeat.set(2, 4);
+
+    this.uiuFacadeMat = new THREE.MeshStandardMaterial({
+      map: uiuGridTex,
+      metalness: 0.35,
+      roughness: 0.5
+    });
+
+    // B. Iconic UIU Logo Tower Top Facade Texture
+    const uiuLogoCanvas = document.createElement('canvas');
+    uiuLogoCanvas.width = 512;
+    uiuLogoCanvas.height = 512;
+    const lCtx = uiuLogoCanvas.getContext('2d');
+    lCtx.fillStyle = '#1c1917';
+    lCtx.fillRect(0, 0, 512, 220);
+
+    lCtx.strokeStyle = '#f59e0b';
+    lCtx.lineWidth = 4;
+    lCtx.strokeRect(16, 16, 480, 188);
+
+    // Glowing BOLD Golden/Orange "UIU" Logo (Iconic permanent campus branding!)
+    lCtx.fillStyle = '#f59e0b';
+    lCtx.font = '900 120px sans-serif';
+    lCtx.textAlign = 'center';
+    lCtx.textBaseline = 'middle';
+    lCtx.shadowColor = 'rgba(245, 158, 11, 0.85)';
+    lCtx.shadowBlur = 22;
+    lCtx.fillText('UIU', 256, 100);
+    lCtx.shadowBlur = 0;
+
+    lCtx.fillStyle = '#f8fafc';
+    lCtx.font = 'bold 20px sans-serif';
+    lCtx.fillText('UNITED INTERNATIONAL UNIVERSITY', 256, 172);
+
+    lCtx.drawImage(uiuGridCanvas, 0, 0, 512, 292, 0, 220, 512, 292);
+    const uiuLogoTex = new THREE.CanvasTexture(uiuLogoCanvas);
+    this.uiuLogoMat = new THREE.MeshStandardMaterial({
+      map: uiuLogoTex,
+      metalness: 0.25,
+      roughness: 0.45,
+      emissive: 0x221105
+    });
+
+    // C. Campus Entrance Arch Sign Plate
+    const gateSignCanvas = document.createElement('canvas');
+    gateSignCanvas.width = 512;
+    gateSignCanvas.height = 128;
+    const gsCtx = gateSignCanvas.getContext('2d');
+    gsCtx.fillStyle = '#0f172a';
+    gsCtx.fillRect(0, 0, 512, 128);
+    gsCtx.strokeStyle = '#f59e0b';
+    gsCtx.lineWidth = 6;
+    gsCtx.strokeRect(8, 8, 496, 112);
+    gsCtx.fillStyle = '#f59e0b';
+    gsCtx.font = '900 48px sans-serif';
+    gsCtx.textAlign = 'center';
+    gsCtx.textBaseline = 'middle';
+    gsCtx.fillText('UIU', 256, 42);
+    gsCtx.fillStyle = '#ffffff';
+    gsCtx.font = 'bold 18px sans-serif';
+    gsCtx.fillText('UNITED INTERNATIONAL UNIVERSITY', 256, 90);
+    const gateSignTex = new THREE.CanvasTexture(gateSignCanvas);
+    this.uiuGateSignMat = new THREE.MeshStandardMaterial({
+      map: gateSignTex,
+      roughness: 0.4
+    });
+
+    // D. Campus Football Ground / Green Lawn
+    const lawnCanvas = document.createElement('canvas');
+    lawnCanvas.width = 512;
+    lawnCanvas.height = 512;
+    const lwCtx = lawnCanvas.getContext('2d');
+    lwCtx.fillStyle = '#15803d';
+    lwCtx.fillRect(0, 0, 512, 512);
+
+    lwCtx.fillStyle = '#16a34a';
+    for (let y = 0; y < 512; y += 48) {
+      lwCtx.fillRect(0, y, 512, 24);
+    }
+    lwCtx.strokeStyle = 'rgba(255, 255, 255, 0.75)';
+    lwCtx.lineWidth = 5;
+    lwCtx.strokeRect(28, 24, 456, 464);
+    lwCtx.beginPath();
+    lwCtx.moveTo(28, 256);
+    lwCtx.lineTo(484, 256);
+    lwCtx.stroke();
+    lwCtx.beginPath();
+    lwCtx.arc(256, 256, 56, 0, Math.PI * 2);
+    lwCtx.stroke();
+    lwCtx.fillStyle = '#ffffff';
+    lwCtx.beginPath();
+    lwCtx.arc(256, 256, 6, 0, Math.PI * 2);
+    lwCtx.fill();
+    lwCtx.strokeRect(156, 24, 200, 80);
+    lwCtx.strokeRect(156, 408, 200, 80);
+    lwCtx.strokeRect(200, 24, 112, 36);
+    lwCtx.strokeRect(200, 452, 112, 36);
+
+    const lawnTex = new THREE.CanvasTexture(lawnCanvas);
+    this.uiuLawnMat = new THREE.MeshStandardMaterial({
+      map: lawnTex,
+      roughness: 0.85
+    });
+
+    this.uiuConcreteMat = new THREE.MeshStandardMaterial({
+      color: 0x94a3b8,
+      roughness: 0.7
+    });
+
+    this.uiuGlassMat = new THREE.MeshStandardMaterial({
+      color: 0x0f172a,
+      metalness: 0.8,
+      roughness: 0.15
+    });
+
+    this.goalPostMat = new THREE.MeshStandardMaterial({
+      color: 0xf8fafc,
+      roughness: 0.4
+    });
+
     this.skinMat = new THREE.MeshStandardMaterial({ color: 0xf5c396, roughness: 0.65 });
     this.hairMat = new THREE.MeshStandardMaterial({ color: 0x18181b, roughness: 0.45 });
     this.panjabiMat = new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.7 });
@@ -3443,6 +3606,303 @@ export class BangladeshProps {
     complex.add(tongGroup);
 
     return complex;
+  }
+
+  // ========================================================
+  // 16. AUTHENTIC UIU PERMANENT CAMPUS (United International University)
+  // Recreated with 100% precision from User's Reference Photo:
+  // - Multi-Tower Modern Campus Skyscraper Complex
+  // - Right Tower with glowing "UIU" Logo & "UNITED INTERNATIONAL UNIVERSITY"
+  // - Multi-Story Exposed Concrete Window Grid Facade
+  // - Interconnecting Glass Atrium & Bridge Walkways
+  // - Sprawling Green University Football Ground with Goalposts
+  // - Perimeter Security Boundary Fence & Main Campus Gate
+  // - Landscaped Palm Trees & Pathways
+  // ========================================================
+  createUIUCampus(side = 1) {
+    const campus = new THREE.Group();
+    campus.name = 'uiu_permanent_campus';
+
+    // -----------------------------------------------------------
+    // 1. CAMPUS FOOTBALL GROUND & GREEN LAWN (UIU খেলার মাঠ)
+    // Sits in front of the building closer to the highway:
+    // -----------------------------------------------------------
+    const fieldGroup = new THREE.Group();
+    fieldGroup.position.set(20 * side, 0, 0);
+
+    const lawnGeo = new THREE.PlaneGeometry(16, 44);
+    lawnGeo.rotateX(-Math.PI / 2);
+    const lawn = new THREE.Mesh(lawnGeo, this.uiuLawnMat);
+    lawn.position.set(0, 0.015, 0);
+    lawn.receiveShadow = true;
+    fieldGroup.add(lawn);
+
+    // Football Goalposts on the field (North & South ends)
+    [-18, 18].forEach((gz) => {
+      const gp = new THREE.Group();
+      gp.position.set(0, 0, gz);
+
+      // Two vertical posts
+      [-2.4, 2.4].forEach((px) => {
+        const post = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.06, 0.06, 2.44, 6),
+          this.goalPostMat
+        );
+        post.position.set(px, 1.22, 0);
+        gp.add(post);
+      });
+
+      // Horizontal Crossbar
+      const crossbar = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.06, 0.06, 4.92, 6),
+        this.goalPostMat
+      );
+      crossbar.rotateZ(Math.PI / 2);
+      crossbar.position.set(0, 2.44, 0);
+      gp.add(crossbar);
+
+      // Net support struts
+      [-2.4, 2.4].forEach((px) => {
+        const strut = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.035, 0.035, 1.6, 6),
+          this.goalPostMat
+        );
+        strut.position.set(px, 0.8, gz > 0 ? 0.6 : -0.6);
+        strut.rotation.x = gz > 0 ? 0.65 : -0.65;
+        gp.add(strut);
+      });
+
+      fieldGroup.add(gp);
+    });
+
+    // Campus Boundary Security Fence & Curb along the road shoulder
+    const fenceGroup = new THREE.Group();
+    const fenceX = -7.5 * side; // Near the road edge of the lawn
+    const curbGeo = new THREE.BoxGeometry(0.35, 0.45, 44);
+    const curb = new THREE.Mesh(curbGeo, this.concreteMat);
+    curb.position.set(fenceX, 0.225, 0);
+    fenceGroup.add(curb);
+
+    // Steel boundary railings along the highway
+    for (let fz = -21; fz <= 21; fz += 2.8) {
+      const post = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.04, 0.04, 1.6, 6),
+        this.stageTrussMat
+      );
+      post.position.set(fenceX, 1.0, fz);
+      fenceGroup.add(post);
+    }
+    const topRailGeo = new THREE.BoxGeometry(0.08, 0.08, 44);
+    const topRail = new THREE.Mesh(topRailGeo, this.stageTrussMat);
+    topRail.position.set(fenceX, 1.75, 0);
+    fenceGroup.add(topRail);
+
+    // Grand Campus Entrance Gate Archway at center (z = 0)
+    const gateGroup = new THREE.Group();
+    gateGroup.position.set(fenceX, 0, 0);
+
+    [-2.8, 2.8].forEach((gx) => {
+      const pillar = new THREE.Mesh(
+        new THREE.BoxGeometry(0.7, 4.5, 0.7),
+        this.brickMat
+      );
+      pillar.position.set(0, 2.25, gx);
+      gateGroup.add(pillar);
+    });
+
+    // Overhead Entrance Sign Beam
+    const gBeam = new THREE.Mesh(
+      new THREE.BoxGeometry(0.4, 0.9, 6.4),
+      this.stageTrussMat
+    );
+    gBeam.position.set(0, 4.2, 0);
+    gateGroup.add(gBeam);
+
+    // "UNITED INTERNATIONAL UNIVERSITY" Entrance Gate Plate
+    const gPlate = new THREE.Mesh(
+      new THREE.BoxGeometry(0.12, 0.8, 5.6),
+      this.uiuGateSignMat
+    );
+    gPlate.position.set(side > 0 ? -0.1 : 0.1, 4.2, 0);
+    gateGroup.add(gPlate);
+
+    fenceGroup.add(gateGroup);
+    fieldGroup.add(fenceGroup);
+
+    // Football in center of pitch
+    const soccerBall = new THREE.Mesh(
+      new THREE.SphereGeometry(0.25, 8, 8),
+      new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.3 })
+    );
+    soccerBall.position.set(0, 0.25, 0);
+    fieldGroup.add(soccerBall);
+
+    // Students playing football / sports on campus ground
+    const student1 = this.createFigure({ shirtMat: this.shirtRedMat, pantsMat: this.stageTrussMat, isSitting: false });
+    student1.position.set(-1.2, 0, 1.5);
+    student1.rotation.y = -0.5;
+    fieldGroup.add(student1);
+
+    const student2 = this.createFigure({ shirtMat: this.shirtTealMat, pantsMat: this.panjabiMat, isSitting: false });
+    student2.position.set(1.4, 0, -1.2);
+    student2.rotation.y = 2.4;
+    fieldGroup.add(student2);
+
+    // Landscaped Palm Trees lining the university field edge
+    [-18, -10, -2, 6, 14, 20].forEach((tz) => {
+      const palm = this.createCoconutTree();
+      palm.position.set(7.5 * side, 0, tz);
+      fieldGroup.add(palm);
+    });
+
+    campus.add(fieldGroup);
+
+    // -----------------------------------------------------------
+    // 2. THE MAIN MULTI-TOWER CAMPUS BUILDING (UIU ক্যাম্পাস ভবন)
+    // Set back at x = 32m * side, spanning z = -20m to +20m
+    // Faces directly toward the football field and highway!
+    // -----------------------------------------------------------
+    const buildingGroup = new THREE.Group();
+    buildingGroup.position.set(32 * side, 0, 0);
+    // Face toward the highway road!
+    buildingGroup.rotation.y = side > 0 ? -Math.PI / 2 : Math.PI / 2;
+
+    // A. Tower 1 (Right Wing - The Iconic "UIU" Logo Tower!)
+    // Height: 23m, Width along local X: 9.5m, Depth: 11m
+    const t1Group = new THREE.Group();
+    t1Group.position.set(-11.5, 11.5, 0);
+
+    const t1MainGeo = new THREE.BoxGeometry(9.5, 23.0, 11.0);
+    const t1Materials = [
+      this.uiuFacadeMat, // +x right
+      this.uiuFacadeMat, // -x left
+      this.uiuConcreteMat, // +y top
+      this.uiuConcreteMat, // -y bottom
+      this.uiuLogoMat,   // +z front facing field & highway!
+      this.uiuFacadeMat  // -z back
+    ];
+    const t1Mesh = new THREE.Mesh(t1MainGeo, t1Materials);
+    this.applyShadow(t1Mesh);
+    t1Group.add(t1Mesh);
+
+    // Rooftop Elevator / Mechanical Penthouse & Antennas
+    const t1Penthouse = new THREE.Mesh(
+      new THREE.BoxGeometry(4.5, 2.8, 5.0),
+      this.uiuConcreteMat
+    );
+    t1Penthouse.position.set(0, 12.9, 0);
+    t1Group.add(t1Penthouse);
+
+    const antGeo = new THREE.CylinderGeometry(0.04, 0.06, 5.5, 6);
+    const ant = new THREE.Mesh(antGeo, this.goalPostMat);
+    ant.position.set(1.2, 16.5, 1.2);
+    t1Group.add(ant);
+
+    // Parapet safety railings on roof
+    const t1Railing = new THREE.Mesh(
+      new THREE.BoxGeometry(9.6, 0.9, 11.1),
+      this.stageTrussMat
+    );
+    t1Railing.position.set(0, 11.95, 0);
+    t1Group.add(t1Railing);
+
+    buildingGroup.add(t1Group);
+
+    // B. Tower 2 & 3: Central Atrium & Glass Connecting Skybridges (Photo!)
+    const atriumGroup = new THREE.Group();
+    atriumGroup.position.set(-4.5, 9.5, 0);
+
+    const atriumGeo = new THREE.BoxGeometry(4.8, 19.0, 8.5);
+    const atriumMesh = new THREE.Mesh(atriumGeo, this.uiuGlassMat);
+    atriumGroup.add(atriumMesh);
+
+    // Connecting horizontal bridge structural bands across floors
+    [4, 8, 12, 16].forEach((by) => {
+      const bridgeBand = new THREE.Mesh(
+        new THREE.BoxGeometry(5.0, 0.8, 8.7),
+        this.uiuConcreteMat
+      );
+      bridgeBand.position.set(0, by - 9.5, 0);
+      atriumGroup.add(bridgeBand);
+    });
+    buildingGroup.add(atriumGroup);
+
+    // C. Central Main Academic Tower (Tower 3)
+    // Height: 21.5m, Width: 10.5m, Depth: 11.5m
+    const t3Group = new THREE.Group();
+    t3Group.position.set(3.5, 10.75, 0);
+
+    const t3MainGeo = new THREE.BoxGeometry(10.5, 21.5, 11.5);
+    const t3Materials = [
+      this.uiuFacadeMat,
+      this.uiuFacadeMat,
+      this.uiuConcreteMat,
+      this.uiuConcreteMat,
+      this.uiuFacadeMat,
+      this.uiuFacadeMat
+    ];
+    const t3Mesh = new THREE.Mesh(t3MainGeo, t3Materials);
+    this.applyShadow(t3Mesh);
+    t3Group.add(t3Mesh);
+
+    // Rooftop Terrace & Mechanical Core
+    const t3Penthouse = new THREE.Mesh(
+      new THREE.BoxGeometry(5.5, 2.5, 5.5),
+      this.uiuConcreteMat
+    );
+    t3Penthouse.position.set(0, 12.0, 0);
+    t3Group.add(t3Penthouse);
+
+    const t3Railing = new THREE.Mesh(
+      new THREE.BoxGeometry(10.6, 0.9, 11.6),
+      this.stageTrussMat
+    );
+    t3Railing.position.set(0, 11.2, 0);
+    t3Group.add(t3Railing);
+
+    buildingGroup.add(t3Group);
+
+    // D. Tower 4 (Left Wing Academic Block - Photo!)
+    // Height: 20m, Width: 9.5m, Depth: 10.5m
+    const t4Group = new THREE.Group();
+    t4Group.position.set(13.5, 10.0, 0);
+
+    const t4MainGeo = new THREE.BoxGeometry(9.5, 20.0, 10.5);
+    const t4Mesh = new THREE.Mesh(t4MainGeo, t3Materials);
+    this.applyShadow(t4Mesh);
+    t4Group.add(t4Mesh);
+
+    const t4Railing = new THREE.Mesh(
+      new THREE.BoxGeometry(9.6, 0.9, 10.6),
+      this.stageTrussMat
+    );
+    t4Railing.position.set(0, 10.45, 0);
+    t4Group.add(t4Railing);
+
+    buildingGroup.add(t4Group);
+
+    // E. Ground Floor Entrance Colonnade & Glass Lobby (Under the towers)
+    const colonnadeGroup = new THREE.Group();
+    for (let cx = -17; cx <= 15; cx += 3.8) {
+      const col = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.32, 0.35, 3.6, 8),
+        this.uiuConcreteMat
+      );
+      col.position.set(cx, 1.8, 5.5);
+      colonnadeGroup.add(col);
+    }
+    const mainSteps = new THREE.Mesh(
+      new THREE.BoxGeometry(12.0, 0.45, 3.0),
+      this.concreteMat
+    );
+    mainSteps.position.set(3.5, 0.225, 6.8);
+    colonnadeGroup.add(mainSteps);
+
+    buildingGroup.add(colonnadeGroup);
+
+    campus.add(buildingGroup);
+
+    return campus;
   }
 
   // Update animal animations, environmental motion, and smoke every frame

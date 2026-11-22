@@ -238,6 +238,7 @@ export class RoadManager {
   populateBangladeshiScenery(group, index) {
     const p = this.props;
     const isBridge = (index % 4 === 3);
+    const hasUIU = !isBridge && (index % 5 === 1);
 
     // A. Rural Electric Poles (Palli Bidyut) with overhead wires along the right side
     const pole = p.createElectricPole();
@@ -279,7 +280,7 @@ export class RoadManager {
     }
 
     // C. Traditional Village Houses (Tin er Ghor) & Homesteads
-    if (index % 2 === 0) {
+    if (index % 2 === 0 && !hasUIU) {
       const houseSide = -1; // Left side village homestead
       const house = p.createVillageHouse(index % 4 === 0);
       const houseX = (this.roadWidth * 0.5 + 11.5) * houseSide;
@@ -313,7 +314,7 @@ export class RoadManager {
     }
 
     // E. Small Roadside Pond (Pukur) with Swimming Ducks
-    if (index % 3 === 2) {
+    if (index % 3 === 2 && !hasUIU) {
       const pondSide = -1;
       const pond = p.createPond(14, 22);
       pond.position.set((this.roadWidth * 0.5 + 13.0) * pondSide, 0, 5);
@@ -332,7 +333,7 @@ export class RoadManager {
     }
 
     // F. Lush Flora: Coconut Palms, Banana Trees, Bamboo Groves
-    if (!isBridge) {
+    if (!isBridge && !hasUIU) {
       const treeSide = index % 2 === 0 ? 1 : -1;
 
       // Coconut tree
@@ -349,7 +350,7 @@ export class RoadManager {
       const banana = p.createBananaTree();
       banana.position.set((this.roadWidth * 0.5 + 5.8 + Math.random() * 2.5) * treeSide, 0, 4);
       group.add(banana);
-    } else {
+    } else if (isBridge) {
       // Lush vegetation along River Banks (Photo 2)
       [-1, 1].forEach((dir) => {
         const rPalm = p.createCoconutTree();
@@ -365,7 +366,7 @@ export class RoadManager {
     // G. AUTHENTIC BANGLADESHI JATRI CHAWNI (যাত্রী ছাউনি / PASSENGER SHED / BUS STOP)
     // Spawns in regular highway segments (never in the middle of a river bridge!)
     if (!isBridge) {
-      const chawniSide = (index % 2 === 0) ? 1 : -1;
+      const chawniSide = hasUIU ? 1 : ((index % 2 === 0) ? 1 : -1);
       const chawni = p.createJatriChawni(chawniSide);
       const chawniX = (this.roadWidth * 0.5 + 3.4) * chawniSide;
       const chawniZ = (index === 0) ? -14 : -18;
@@ -376,7 +377,7 @@ export class RoadManager {
 
     // H. AUTHENTIC UDDAN OPEN-AIR CULTURAL PARK STAGE & ROADSIDE TONG ADDA (User Reference Photo!)
     // Spawns with background hills and lively roadside tea stall adda
-    if (!isBridge && index % 3 === 0) {
+    if (!isBridge && index % 3 === 0 && !hasUIU) {
       const stageSide = 1;
       const uStage = p.createUddanOpenStageWithTong(stageSide);
       uStage.position.set(0, 0, 0);
@@ -386,7 +387,7 @@ export class RoadManager {
     // I. HIGHWAY CAFE ("HIGHWAY CAFE" / "ক্যাফে ও রেস্তোরাঁ") & HIGHWAY BAR ("HIGHWAY BAR" / "মদের বার")
     if (index % 4 === 1 || index % 4 === 2) {
       // HIGHWAY CAFE
-      const cafeSide = (index % 4 === 2) ? 1 : -1;
+      const cafeSide = (index % 4 === 2) ? 1 : (hasUIU ? 1 : -1);
       const cafe = p.createHighwayCafe(cafeSide);
       const cafeX = (this.roadWidth * 0.5 + 5.6) * cafeSide;
       const cafeZ = (index % 4 === 2) ? 14 : 12;
@@ -420,6 +421,16 @@ export class RoadManager {
       guys.position.set(guysX, 0, guysZ);
       guys.rotation.y = guysSide > 0 ? -0.4 : 0.4;
       group.add(guys);
+    }
+
+    // J. AUTHENTIC UIU PERMANENT CAMPUS (United International University) - User Reference Photo
+    // Modern multi-tower university skyscraper with glowing UIU crown, glass atrium, skybridges,
+    // manicured football pitch with goalposts and students playing, roadside boundary fence & entrance arch!
+    if (hasUIU) {
+      const uiuSide = -1; // Unobstructed panoramic view on left side
+      const uiuCampus = p.createUIUCampus(uiuSide);
+      uiuCampus.position.set(0, 0, 0);
+      group.add(uiuCampus);
     }
   }
 
