@@ -9,7 +9,6 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "msedge-tts": "^2.1.1",
     "three": "^0.160.0"
   },
   "devDependencies": {
