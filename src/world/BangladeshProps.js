@@ -262,6 +262,88 @@ export class BangladeshProps {
       map: bollardTex,
       roughness: 0.5
     });
+
+    // 7. Authentic Cultural Open-Air Amphitheater Stage & Park Materials (User Reference Photo)
+    const blueTinCanvas = document.createElement('canvas');
+    blueTinCanvas.width = 128;
+    blueTinCanvas.height = 128;
+    const btCtx = blueTinCanvas.getContext('2d');
+    btCtx.fillStyle = '#1e40af';
+    btCtx.fillRect(0, 0, 128, 128);
+    for (let x = 0; x < 128; x += 8) {
+      btCtx.fillStyle = '#1d4ed8';
+      btCtx.fillRect(x, 0, 4, 128);
+      btCtx.fillStyle = '#3b82f6';
+      btCtx.fillRect(x + 4, 0, 4, 128);
+    }
+    const blueTinTex = new THREE.CanvasTexture(blueTinCanvas);
+    blueTinTex.wrapS = THREE.RepeatWrapping;
+    blueTinTex.wrapT = THREE.RepeatWrapping;
+    blueTinTex.repeat.set(6, 2);
+
+    this.stageBlueRoofMat = new THREE.MeshStandardMaterial({
+      map: blueTinTex,
+      metalness: 0.4,
+      roughness: 0.45,
+      color: 0x1d4ed8,
+      side: THREE.DoubleSide
+    });
+
+    this.stageTrussMat = new THREE.MeshStandardMaterial({
+      color: 0x334155, // Dark slate steel tubular truss
+      metalness: 0.75,
+      roughness: 0.35
+    });
+
+    this.stageBaseYellowMat = new THREE.MeshStandardMaterial({
+      color: 0xfacc15, // Warm golden yellow stage base (Image)
+      roughness: 0.65
+    });
+
+    this.stageBorderBlueMat = new THREE.MeshStandardMaterial({
+      color: 0x0284c7, // Sky blue border trim & railings (Image)
+      roughness: 0.45
+    });
+
+    this.stageFloorMat = new THREE.MeshStandardMaterial({
+      color: 0x9ca3af, // Smooth concrete stage floor
+      roughness: 0.7
+    });
+
+    this.stageTerracottaMat = new THREE.MeshStandardMaterial({
+      color: 0xc2410c, // Warm terracotta sculpted folk art backdrop
+      roughness: 0.85
+    });
+
+    this.stageGoldEmblemMat = new THREE.MeshStandardMaterial({
+      color: 0xfbbf24, // Golden crest & cultural emblem
+      metalness: 0.65,
+      roughness: 0.25
+    });
+
+    this.hillGreenMat = new THREE.MeshStandardMaterial({
+      color: 0x2e7d32, // Lush tropical hill slope
+      roughness: 0.92,
+      flatShading: true
+    });
+
+    this.hillDarkGreenMat = new THREE.MeshStandardMaterial({
+      color: 0x14532d, // Background rolling ridge
+      roughness: 0.95,
+      flatShading: true
+    });
+
+    this.pavingPlazaMat = new THREE.MeshStandardMaterial({
+      color: 0xd6d3d1, // Paved sand / courtyard tiles
+      roughness: 0.9
+    });
+
+    this.skinMat = new THREE.MeshStandardMaterial({ color: 0xf5c396, roughness: 0.65 });
+    this.hairMat = new THREE.MeshStandardMaterial({ color: 0x18181b, roughness: 0.45 });
+    this.panjabiMat = new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.7 });
+    this.lungiPlaidMat = new THREE.MeshStandardMaterial({ color: 0x0284c7, roughness: 0.8 });
+    this.shirtTealMat = new THREE.MeshStandardMaterial({ color: 0x0d9488, roughness: 0.7 });
+    this.shirtRedMat = new THREE.MeshStandardMaterial({ color: 0xdc2626, roughness: 0.7 });
   }
 
   // ========================================================
@@ -2943,6 +3025,424 @@ export class BangladeshProps {
     });
 
     return bridge;
+  }
+
+  // ========================================================
+  // 14. AUTHENTIC BANGLADESHI HUMAN FIGURE (For Stage & Adda)
+  // Lightweight, expressive, optimized 3D character
+  // ========================================================
+  createFigure({ shirtMat, pantsMat, isSitting = false, isSmoking = false }) {
+    const figure = new THREE.Group();
+    figure.name = 'human_figure';
+    figure.scale.set(1.15, 1.15, 1.15);
+
+    // Torso
+    const torsoGeo = new THREE.BoxGeometry(0.36, 0.52, 0.22);
+    const torso = new THREE.Mesh(torsoGeo, shirtMat || this.shirtTealMat);
+    torso.position.y = isSitting ? 0.72 : 1.12;
+    figure.add(torso);
+
+    // Head
+    const headGeo = new THREE.SphereGeometry(0.12, 8, 8);
+    const head = new THREE.Mesh(headGeo, this.skinMat);
+    head.position.y = isSitting ? 1.08 : 1.48;
+    figure.add(head);
+
+    // Hair cap
+    const hairGeo = new THREE.SphereGeometry(0.126, 8, 8);
+    hairGeo.scale(1.02, 1.05, 1.02);
+    const hair = new THREE.Mesh(hairGeo, this.hairMat);
+    hair.position.set(0, (isSitting ? 1.08 : 1.48) + 0.02, -0.01);
+    figure.add(hair);
+
+    // Arms
+    [-0.22, 0.22].forEach((ax, idx) => {
+      const armGeo = new THREE.CylinderGeometry(0.045, 0.04, 0.48, 6);
+      const arm = new THREE.Mesh(armGeo, shirtMat || this.shirtTealMat);
+      if (isSitting) {
+        arm.position.set(ax, 0.70, 0.10);
+        arm.rotation.x = 0.35;
+      } else if (isSmoking && idx === 1) {
+        // Raised arm holding cigarette
+        arm.position.set(ax * 0.8, 1.25, -0.08);
+        arm.rotation.z = -0.6;
+        arm.rotation.x = -0.5;
+
+        // Cigarette with glowing cherry
+        const cigGeo = new THREE.CylinderGeometry(0.01, 0.01, 0.12, 4);
+        cigGeo.rotateX(Math.PI / 2);
+        const cig = new THREE.Mesh(cigGeo, this.panjabiMat);
+        cig.position.set(0, 0.24, -0.08);
+        arm.add(cig);
+
+        const emberGeo = new THREE.SphereGeometry(0.015, 4, 4);
+        const ember = new THREE.Mesh(emberGeo, new THREE.MeshBasicMaterial({ color: 0xff4400 }));
+        ember.position.set(0, 0, -0.06);
+        cig.add(ember);
+      } else {
+        arm.position.set(ax, 1.08, 0);
+        arm.rotation.z = ax > 0 ? -0.1 : 0.1;
+      }
+      figure.add(arm);
+    });
+
+    // Legs
+    const legPants = pantsMat || this.stageTrussMat;
+    if (isSitting) {
+      // Horizontal thighs + vertical calves
+      [-0.10, 0.10].forEach((lx) => {
+        const thighGeo = new THREE.BoxGeometry(0.11, 0.12, 0.42);
+        const thigh = new THREE.Mesh(thighGeo, legPants);
+        thigh.position.set(lx, 0.48, 0.22);
+        figure.add(thigh);
+
+        const calfGeo = new THREE.BoxGeometry(0.10, 0.44, 0.10);
+        const calf = new THREE.Mesh(calfGeo, legPants);
+        calf.position.set(lx, 0.22, 0.40);
+        figure.add(calf);
+      });
+    } else {
+      [-0.09, 0.09].forEach((lx) => {
+        const legGeo = new THREE.CylinderGeometry(0.055, 0.048, 0.82, 6);
+        const leg = new THREE.Mesh(legGeo, legPants);
+        leg.position.set(lx, 0.41, 0);
+        figure.add(leg);
+      });
+    }
+
+    return figure;
+  }
+
+  // ========================================================
+  // 15. AUTHENTIC UDDAN OPEN-AIR AMPHITHEATER STAGE & ROADSIDE TONG ADDA
+  // Created 100% faithful to User's Reference Artwork:
+  // - Large Semi-Circular Blue Corrugated Steel Truss Canopy Roof
+  // - Tiered Elevated Platform Stage with Golden Ochre Facings & Blue Borders
+  // - Sloping Side Access Ramps with Blue Railings
+  // - Traditional Folk Art Terracotta & Golden Backdrop Mural with Arched Crest
+  // - Front Garden Planter Boxes with Lush Shrubbery
+  // - Performers & People Sitting / Relaxing on Stage Steps
+  // - Scenic Rolling Hills (Pahar) behind the Stage
+  // - Authentic Roadside Tong er Cha er Dokan with Live Adda in Front!
+  // ========================================================
+  createUddanOpenStageWithTong(side = 1) {
+    const complex = new THREE.Group();
+    complex.name = 'uddan_open_stage_complex';
+
+    // -----------------------------------------------------------
+    // 1. SCENIC BACKGROUND HILLS (রোডের পেছনের পাহাড়)
+    // -----------------------------------------------------------
+    const hillsGroup = new THREE.Group();
+    hillsGroup.position.set(33 * side, 0, -4.0);
+
+    // Main towering center hill behind the stage
+    const mainHillGeo = new THREE.ConeGeometry(18, 22, 14);
+    const mainHill = new THREE.Mesh(mainHillGeo, this.hillDarkGreenMat);
+    mainHill.position.set(0, 11, 0);
+    hillsGroup.add(mainHill);
+
+    // Left rolling hill ridge
+    const hillLGeo = new THREE.ConeGeometry(15, 17, 12);
+    const hillL = new THREE.Mesh(hillLGeo, this.hillGreenMat);
+    hillL.position.set(2 * side, 8.5, -18);
+    hillsGroup.add(hillL);
+
+    // Right rolling hill ridge
+    const hillRGeo = new THREE.ConeGeometry(16, 18, 12);
+    const hillR = new THREE.Mesh(hillRGeo, this.hillGreenMat);
+    hillR.position.set(2 * side, 9.0, 15);
+    hillsGroup.add(hillR);
+
+    // Distant ridge trees on the peaks
+    [-14, -6, 6, 14].forEach((tz) => {
+      const tGeo = new THREE.ConeGeometry(2.0, 5.0, 6);
+      const tree = new THREE.Mesh(tGeo, this.treeCrownMat);
+      tree.position.set(-3 * side, 15, tz);
+      hillsGroup.add(tree);
+    });
+    complex.add(hillsGroup);
+
+    // -----------------------------------------------------------
+    // 2. PARK COURTYARD GROUND & ORNAMENTAL TREES (উদ্যান চত্বর)
+    // -----------------------------------------------------------
+    const plazaGroup = new THREE.Group();
+    plazaGroup.position.set(20 * side, 0, -4.0);
+
+    const plazaGeo = new THREE.PlaneGeometry(20, 42);
+    plazaGeo.rotateX(-Math.PI / 2);
+    const plaza = new THREE.Mesh(plazaGeo, this.pavingPlazaMat);
+    plaza.position.set(0, 0.015, 0);
+    plaza.receiveShadow = true;
+    plazaGroup.add(plaza);
+
+    // 2 Grand Shade Trees flanking stage on left & right
+    [-16, 12].forEach((tz) => {
+      const treeGroup = new THREE.Group();
+      treeGroup.position.set(0, 0, tz);
+
+      const trunkGeo = new THREE.CylinderGeometry(0.35, 0.45, 4.5, 8);
+      const trunk = new THREE.Mesh(trunkGeo, this.palmTrunkMat);
+      trunk.position.y = 2.25;
+      treeGroup.add(trunk);
+
+      const crownGeo = new THREE.SphereGeometry(3.8, 8, 8);
+      crownGeo.scale(1.25, 0.85, 1.25);
+      const crown = new THREE.Mesh(crownGeo, this.treeCrownMat);
+      crown.position.y = 5.4;
+      treeGroup.add(crown);
+
+      plazaGroup.add(treeGroup);
+    });
+    complex.add(plazaGroup);
+
+    // -----------------------------------------------------------
+    // 3. THE OPEN-AIR AMPHITHEATER STAGE (উন্মুক্ত মঞ্চ - From User Photo!)
+    // -----------------------------------------------------------
+    const stageGroup = new THREE.Group();
+    stageGroup.position.set(21 * side, 0, -4.0);
+    // Face directly toward the highway road!
+    stageGroup.rotation.y = side > 0 ? -Math.PI / 2 : Math.PI / 2;
+
+    // A. Stage Platform (মঞ্চের ভিত্তি)
+    const stageBaseGeo = new THREE.BoxGeometry(14.0, 0.90, 8.0);
+    const stageBase = new THREE.Mesh(stageBaseGeo, this.stageBaseYellowMat);
+    stageBase.position.set(0, 0.45, 0);
+    this.applyShadow(stageBase);
+    stageGroup.add(stageBase);
+
+    // Stage Top Floor
+    const stageFloorGeo = new THREE.BoxGeometry(14.2, 0.08, 8.2);
+    const stageFloor = new THREE.Mesh(stageFloorGeo, this.stageFloorMat);
+    stageFloor.position.set(0, 0.94, 0);
+    stageGroup.add(stageFloor);
+
+    // Blue Border Trim along front edge (Matching Image!)
+    const borderGeo = new THREE.BoxGeometry(14.3, 0.08, 0.2);
+    const border = new THREE.Mesh(borderGeo, this.stageBorderBlueMat);
+    border.position.set(0, 0.94, 4.1);
+    stageGroup.add(border);
+
+    // Front Steps
+    const step1 = new THREE.Mesh(new THREE.BoxGeometry(11.0, 0.30, 1.4), this.stageBaseYellowMat);
+    step1.position.set(0, 0.30, 4.7);
+    stageGroup.add(step1);
+
+    const step2 = new THREE.Mesh(new THREE.BoxGeometry(9.0, 0.30, 1.2), this.stageBaseYellowMat);
+    step2.position.set(0, 0.15, 5.6);
+    stageGroup.add(step2);
+
+    // Front Planter Box Ledge with Lush Shrubbery
+    const planterGeo = new THREE.BoxGeometry(8.0, 0.35, 0.5);
+    const planter = new THREE.Mesh(planterGeo, this.brickMat);
+    planter.position.set(0, 0.18, 6.4);
+    stageGroup.add(planter);
+
+    for (let s = -3.2; s <= 3.2; s += 1.6) {
+      const shrubGeo = new THREE.SphereGeometry(0.3, 6, 6);
+      shrubGeo.scale(1.3, 0.9, 1.3);
+      const shrub = new THREE.Mesh(shrubGeo, this.bananaLeafMat);
+      shrub.position.set(s, 0.42, 6.4);
+      stageGroup.add(shrub);
+    }
+
+    // Sloping Access Ramps on Left and Right Sides with Blue Railings (Matching Image!)
+    [-7.4, 7.4].forEach((rx) => {
+      const rampGroup = new THREE.Group();
+      rampGroup.position.set(rx, 0, 2.2);
+
+      const rampGeo = new THREE.BoxGeometry(1.6, 0.8, 4.8);
+      const ramp = new THREE.Mesh(rampGeo, this.stageBaseYellowMat);
+      ramp.position.set(0, 0.40, 0);
+      ramp.rotation.x = 0.18;
+      rampGroup.add(ramp);
+
+      // Blue Handrail
+      const railGeo = new THREE.BoxGeometry(0.1, 0.7, 4.8);
+      const rail = new THREE.Mesh(railGeo, this.stageBorderBlueMat);
+      rail.position.set(rx > 0 ? 0.75 : -0.75, 0.75, 0);
+      rail.rotation.x = 0.18;
+      rampGroup.add(rail);
+
+      stageGroup.add(rampGroup);
+    });
+
+    // B. Cultural Terracotta & Golden Backdrop Wall (মঞ্চের টেরাকোটা পটভূমি - Image!)
+    const backdropGroup = new THREE.Group();
+    backdropGroup.position.set(0, 0.9, -3.8);
+
+    // Rear Wall Panel
+    const backWallGeo = new THREE.BoxGeometry(11.5, 4.5, 0.3);
+    const backWall = new THREE.Mesh(backWallGeo, this.stageTerracottaMat);
+    backWall.position.set(0, 2.25, 0);
+    this.applyShadow(backWall);
+    backdropGroup.add(backWall);
+
+    // Center Sculpted Golden Mural (Folk Art Relief)
+    const muralGeo = new THREE.BoxGeometry(7.5, 3.4, 0.38);
+    const mural = new THREE.Mesh(muralGeo, this.stageGoldEmblemMat);
+    mural.position.set(0, 2.0, 0.05);
+    backdropGroup.add(mural);
+
+    // Arched Golden Crest at Top of Backdrop (Sun/Kula motif)
+    const crestGeo = new THREE.CylinderGeometry(2.8, 2.8, 0.4, 16, 1, false, 0, Math.PI);
+    crestGeo.rotateZ(Math.PI / 2);
+    const crest = new THREE.Mesh(crestGeo, this.stageGoldEmblemMat);
+    crest.position.set(0, 4.0, 0.05);
+    backdropGroup.add(crest);
+
+    // Flanking Wooden-Slat Acoustic Screens (Matching Image!)
+    [-5.2, 5.2].forEach((wx) => {
+      const screenGeo = new THREE.BoxGeometry(1.8, 4.2, 0.35);
+      const screen = new THREE.Mesh(screenGeo, this.woodMat);
+      screen.position.set(wx, 2.1, 0.02);
+      backdropGroup.add(screen);
+    });
+    stageGroup.add(backdropGroup);
+
+    // C. Arched Steel Truss Canopy Roof (ইস্পাতের বাঁকানো নীল ছাদ - Hero Feature from Image!)
+    const archRoofGroup = new THREE.Group();
+    archRoofGroup.position.set(0, 0.9, 0);
+
+    const roofRadius = 7.5;
+    const roofDepth = 8.5;
+    const archRoofGeo = new THREE.CylinderGeometry(
+      roofRadius, roofRadius,
+      roofDepth,
+      24, 1,
+      true,
+      Math.PI * 0.12,
+      Math.PI * 0.76
+    );
+    archRoofGeo.rotateX(Math.PI / 2);
+    const archRoof = new THREE.Mesh(archRoofGeo, this.stageBlueRoofMat);
+    archRoof.position.set(0, 0.0, 0);
+    this.applyShadow(archRoof);
+    archRoofGroup.add(archRoof);
+
+    // Front & Rear Heavy Curved Steel Arch Beams
+    [-roofDepth * 0.5, roofDepth * 0.5].forEach((rz) => {
+      const rimArcPoints = [];
+      for (let k = 0; k <= 20; k++) {
+        const theta = Math.PI * 0.12 + (k / 20) * (Math.PI * 0.76);
+        const x = Math.cos(theta) * roofRadius;
+        const y = Math.sin(theta) * roofRadius;
+        rimArcPoints.push(new THREE.Vector3(x, y, rz));
+      }
+      const rimCurve = new THREE.CatmullRomCurve3(rimArcPoints);
+      const rimGeo = new THREE.TubeGeometry(rimCurve, 20, 0.14, 8, false);
+      const rimMesh = new THREE.Mesh(rimGeo, this.stageTrussMat);
+      archRoofGroup.add(rimMesh);
+    });
+
+    // Radial Steel Truss Braces
+    [-roofDepth * 0.5 + 0.1, roofDepth * 0.5 - 0.1].forEach((rz) => {
+      [0.25, 0.40, 0.50, 0.60, 0.75].forEach((t) => {
+        const theta = Math.PI * 0.12 + t * (Math.PI * 0.76);
+        const x = Math.cos(theta) * roofRadius;
+        const y = Math.sin(theta) * roofRadius;
+        const strutPoints = [new THREE.Vector3(0, 0, rz), new THREE.Vector3(x, y, rz)];
+        const strutCurve = new THREE.CatmullRomCurve3(strutPoints);
+        const strutGeo = new THREE.TubeGeometry(strutCurve, 2, 0.06, 6, false);
+        const strutMesh = new THREE.Mesh(strutGeo, this.stageTrussMat);
+        archRoofGroup.add(strutMesh);
+      });
+    });
+
+    // Front Horizontal Fascia Beam with Golden Emblem (Matching Image!)
+    const fasciaGeo = new THREE.BoxGeometry(12.0, 0.75, 0.25);
+    const fascia = new THREE.Mesh(fasciaGeo, this.stageTrussMat);
+    fascia.position.set(0, 5.8, roofDepth * 0.5 + 0.1);
+    archRoofGroup.add(fascia);
+
+    // Golden Circular Emblem on Fascia
+    const emblemGeo = new THREE.CylinderGeometry(0.55, 0.55, 0.12, 16);
+    emblemGeo.rotateX(Math.PI / 2);
+    const emblem = new THREE.Mesh(emblemGeo, this.stageGoldEmblemMat);
+    emblem.position.set(0, 6.4, roofDepth * 0.5 + 0.15);
+    archRoofGroup.add(emblem);
+
+    stageGroup.add(archRoofGroup);
+
+    // D. People on Stage (পারফর্মার ও আড্ডারত মানুষ - Matching Image!)
+    const p1 = this.createFigure({ shirtMat: this.panjabiMat, pantsMat: this.panjabiMat, isSitting: false });
+    p1.position.set(-1.2, 0.94, -0.6);
+    stageGroup.add(p1);
+
+    const p2 = this.createFigure({ shirtMat: this.shirtRedMat, pantsMat: this.stageTrussMat, isSitting: false });
+    p2.position.set(-0.4, 0.94, -0.6);
+    p2.rotation.y = -Math.PI * 0.4;
+    stageGroup.add(p2);
+
+    const p3 = this.createFigure({ shirtMat: this.shirtTealMat, pantsMat: this.stageTrussMat, isSitting: true });
+    p3.position.set(2.4, 0.30, 4.9);
+    stageGroup.add(p3);
+
+    const p4 = this.createFigure({ shirtMat: this.stageBaseYellowMat, pantsMat: this.lungiPlaidMat, isSitting: true });
+    p4.position.set(3.4, 0.30, 4.9);
+    stageGroup.add(p4);
+
+    complex.add(stageGroup);
+
+    // -----------------------------------------------------------
+    // 4. ROADSIDE TONG ER CHA ER DOKAN WITH LIVE ADDA (User requirement!)
+    // Located right by the road edge in front of the stage:
+    // In full, close-up, vivid view of the player as they race by!
+    // -----------------------------------------------------------
+    const tongGroup = new THREE.Group();
+    tongGroup.position.set(11.3 * side, 0, 8.0);
+    tongGroup.rotation.y = side > 0 ? -Math.PI * 0.5 - 0.25 : Math.PI * 0.5 + 0.25;
+
+    // Stall Structure & Tin Roof
+    const tongStall = this.createTeaStall();
+    tongGroup.add(tongStall);
+
+    // Red Stall Signboard: "উদ্যান চা স্টল & স্ন্যাক্স"
+    const signGeo = new THREE.BoxGeometry(2.4, 0.45, 0.08);
+    const signMat = new THREE.MeshStandardMaterial({ color: 0xdc2626, roughness: 0.5 });
+    const sign = new THREE.Mesh(signGeo, signMat);
+    sign.position.set(0, 2.55, 0.85);
+    tongGroup.add(sign);
+
+    // Hanging Yellow Bananas from front stall post
+    const bananaGroup = new THREE.Group();
+    bananaGroup.position.set(1.4, 1.9, 0.9);
+    for (let b = 0; b < 6; b++) {
+      const bGeo = new THREE.CylinderGeometry(0.025, 0.025, 0.22, 6);
+      bGeo.rotateZ(0.2 + (b % 2) * 0.2);
+      const bMesh = new THREE.Mesh(bGeo, this.stageGoldEmblemMat);
+      bMesh.position.set((b % 3) * 0.06 - 0.06, -Math.floor(b / 3) * 0.15, 0);
+      bananaGroup.add(bMesh);
+    }
+    tongGroup.add(bananaGroup);
+
+    // THE ADDA GROUP (টংয়ের দোকানে আড্ডারত মানুষ)
+    // 1. Tea Stall Mama (দোকানি) behind the counter
+    const mama = this.createFigure({ shirtMat: this.shirtTealMat, pantsMat: this.lungiPlaidMat, isSitting: false });
+    mama.position.set(0.2, 0, -0.4);
+    mama.rotation.y = Math.PI;
+    tongGroup.add(mama);
+
+    // 2. Friend 1: Sitting on bench holding tea cup
+    const friend1 = this.createFigure({ shirtMat: this.shirtRedMat, pantsMat: this.stageTrussMat, isSitting: true });
+    friend1.position.set(-0.6, 0.45, 1.8);
+    friend1.rotation.y = 0;
+    tongGroup.add(friend1);
+
+    // 3. Friend 2: Sitting on bench laughing with friend 1
+    const friend2 = this.createFigure({ shirtMat: this.panjabiMat, pantsMat: this.panjabiMat, isSitting: true });
+    friend2.position.set(0.6, 0.45, 1.8);
+    friend2.rotation.y = -0.3;
+    tongGroup.add(friend2);
+
+    // 4. Friend 3: Standing leaning against post smoking cigarette
+    const friend3 = this.createFigure({ shirtMat: this.stageBaseYellowMat, pantsMat: this.stageTrussMat, isSitting: false, isSmoking: true });
+    friend3.position.set(1.65, 0, 1.5);
+    friend3.rotation.y = -Math.PI * 0.4;
+    tongGroup.add(friend3);
+
+    complex.add(tongGroup);
+
+    return complex;
   }
 
   // Update animal animations, environmental motion, and smoke every frame

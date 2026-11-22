@@ -374,7 +374,16 @@ export class RoadManager {
       group.add(chawni);
     }
 
-    // H. HIGHWAY CAFE ("HIGHWAY CAFE" / "ক্যাফে ও রেস্তোরাঁ") & HIGHWAY BAR ("HIGHWAY BAR" / "মদের বার")
+    // H. AUTHENTIC UDDAN OPEN-AIR CULTURAL PARK STAGE & ROADSIDE TONG ADDA (User Reference Photo!)
+    // Spawns with background hills and lively roadside tea stall adda
+    if (!isBridge && index % 3 === 0) {
+      const stageSide = 1;
+      const uStage = p.createUddanOpenStageWithTong(stageSide);
+      uStage.position.set(0, 0, 0);
+      group.add(uStage);
+    }
+
+    // I. HIGHWAY CAFE ("HIGHWAY CAFE" / "ক্যাফে ও রেস্তোরাঁ") & HIGHWAY BAR ("HIGHWAY BAR" / "মদের বার")
     if (index % 4 === 1 || index % 4 === 2) {
       // HIGHWAY CAFE
       const cafeSide = (index % 4 === 2) ? 1 : -1;
@@ -393,7 +402,7 @@ export class RoadManager {
       guys.position.set(guysX, 0, guysZ);
       guys.rotation.y = guysSide > 0 ? -0.4 : 0.4;
       group.add(guys);
-    } else if (index % 4 === 0) {
+    } else if (index % 4 === 0 && index % 3 !== 0 && !isBridge) {
       // HIGHWAY BAR ("মদের বার" / "HIGHWAY BAR & LOUNGE")
       const barSide = 1;
       const bar = p.createHighwayBar(barSide);

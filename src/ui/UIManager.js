@@ -211,7 +211,6 @@ export class UIManager {
     const btnBrake = document.getElementById('btn-touch-brake');
     const btnAccel = document.getElementById('btn-touch-accel');
     const btnNitro = document.getElementById('btn-touch-nitro');
-    const btnHorn = document.getElementById('btn-touch-horn');
 
     // Prevent context menu and text selection on touch buttons
     document.querySelectorAll('.touch-btn, .hud-icon-btn').forEach((btn) => {
@@ -309,14 +308,6 @@ export class UIManager {
     bindHoldableBtn(btnNitro, (active) => {
       if (this.onNitro) this.onNitro(active);
     });
-
-    if (btnHorn) {
-      btnHorn.addEventListener('pointerdown', (e) => {
-        e.preventDefault();
-        if (this.onHorn) this.onHorn();
-        else this.soundManager.playTruckHorn();
-      });
-    }
 
     // Instant Mobile Touch Detection on Android & iPhone
     if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
