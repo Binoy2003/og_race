@@ -338,51 +338,54 @@ export class BangladeshProps {
       roughness: 0.9
     });
 
-    // 8. Authentic UIU Permanent Campus Materials (United International University - Photo Exact Colors)
+    // 8. Authentic UIU Permanent Campus Materials (United International University - 1024x1024 HD Textures)
     // A. Multi-Story Concrete Window Grid Facade Texture with White Sunshades
     const uiuGridCanvas = document.createElement('canvas');
-    uiuGridCanvas.width = 512;
-    uiuGridCanvas.height = 512;
+    uiuGridCanvas.width = 1024;
+    uiuGridCanvas.height = 1024;
     const uCtx = uiuGridCanvas.getContext('2d');
     // Warm architectural stone grey concrete frame (Exact photo color!)
     uCtx.fillStyle = '#8c867e';
-    uCtx.fillRect(0, 0, 512, 512);
+    uCtx.fillRect(0, 0, 1024, 1024);
 
-    const floors = 8;
-    const bays = 6;
-    const floorH = 512 / floors;
-    const bayW = 512 / bays;
+    const floors = 10;
+    const bays = 8;
+    const floorH = 1024 / floors;
+    const bayW = 1024 / bays;
     for (let f = 0; f < floors; f++) {
       for (let b = 0; b < bays; b++) {
-        const wx = b * bayW + 8;
-        const wy = f * floorH + 12;
-        const ww = bayW - 16;
-        const wh = floorH - 18;
+        const wx = b * bayW + 12;
+        const wy = f * floorH + 18;
+        const ww = bayW - 24;
+        const wh = floorH - 26;
 
-        // Dark reflective tinted glass
-        uCtx.fillStyle = '#1e293b';
+        // Dark reflective tinted glass window bay
+        uCtx.fillStyle = '#0f172a';
         uCtx.fillRect(wx, wy, ww, wh);
 
+        // Sky reflection gradient
         const wGrad = uCtx.createLinearGradient(wx, wy, wx, wy + wh);
         wGrad.addColorStop(0, '#38bdf8');
         wGrad.addColorStop(0.35, '#1e293b');
         wGrad.addColorStop(1, '#090d16');
         uCtx.fillStyle = wGrad;
-        uCtx.fillRect(wx + 2, wy + 4, ww - 4, wh - 6);
+        uCtx.fillRect(wx + 3, wy + 6, ww - 6, wh - 9);
 
-        // Window mullions
-        uCtx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
-        uCtx.lineWidth = 1.2;
+        // Vertical and horizontal window mullions
+        uCtx.strokeStyle = 'rgba(226, 232, 240, 0.45)';
+        uCtx.lineWidth = 2.0;
         uCtx.beginPath();
-        uCtx.moveTo(wx + ww * 0.5, wy + 4);
-        uCtx.lineTo(wx + ww * 0.5, wy + wh - 2);
+        uCtx.moveTo(wx + ww * 0.5, wy + 6);
+        uCtx.lineTo(wx + ww * 0.5, wy + wh - 3);
+        uCtx.moveTo(wx + 3, wy + wh * 0.5);
+        uCtx.lineTo(wx + ww - 3, wy + wh * 0.5);
         uCtx.stroke();
 
         // Horizontal white sunshades / louvers / chajja above window (signature UIU photo detail!)
-        uCtx.fillStyle = '#f8fafc';
-        uCtx.fillRect(wx - 2, wy - 3, ww + 4, 5);
-        uCtx.fillStyle = 'rgba(0, 0, 0, 0.25)';
-        uCtx.fillRect(wx - 2, wy + 2, ww + 4, 2);
+        uCtx.fillStyle = '#ffffff';
+        uCtx.fillRect(wx - 4, wy - 5, ww + 8, 8);
+        uCtx.fillStyle = 'rgba(0, 0, 0, 0.35)';
+        uCtx.fillRect(wx - 4, wy + 3, ww + 8, 3);
       }
     }
     const uiuGridTex = new THREE.CanvasTexture(uiuGridCanvas);
@@ -396,109 +399,125 @@ export class BangladeshProps {
       roughness: 0.55
     });
 
-    // B. Iconic UIU Logo Tower Top Facade Texture (Photo: Glowing Neon Red-Orange "UIU" Logo!)
+    // B. Iconic UIU Logo Tower Top Facade Texture (Photo: Glowing Neon Red-Orange "UIU" Logo - 1024x1024 HD!)
     const uiuLogoCanvas = document.createElement('canvas');
-    uiuLogoCanvas.width = 512;
-    uiuLogoCanvas.height = 512;
+    uiuLogoCanvas.width = 1024;
+    uiuLogoCanvas.height = 1024;
     const lCtx = uiuLogoCanvas.getContext('2d');
     lCtx.drawImage(uiuGridCanvas, 0, 0);
 
-    // Upper facade area for the glowing red-orange UIU logo (Exact match from photo!)
-    lCtx.fillStyle = '#1c1917';
-    lCtx.fillRect(24, 16, 464, 160);
+    // Upper facade architectural fascia area for the glowing red-orange UIU logo (Exact match from photo!)
+    lCtx.fillStyle = '#141416';
+    lCtx.fillRect(40, 30, 944, 320);
 
-    // Architectural frame border
+    // Architectural stone frame border
     lCtx.strokeStyle = '#8c867e';
-    lCtx.lineWidth = 6;
-    lCtx.strokeRect(20, 12, 472, 168);
+    lCtx.lineWidth = 12;
+    lCtx.strokeRect(36, 24, 952, 332);
 
     // Glowing Neon Red-Orange "UIU" Logo (Double-tube neon effect as seen in photo)
-    lCtx.strokeStyle = 'rgba(239, 68, 68, 0.9)';
-    lCtx.lineWidth = 26;
-    lCtx.lineCap = 'round';
-    lCtx.lineJoin = 'round';
-    lCtx.font = '900 125px Arial, sans-serif';
+    lCtx.font = '900 240px "Montserrat", sans-serif';
     lCtx.textAlign = 'center';
     lCtx.textBaseline = 'middle';
-    lCtx.shadowColor = '#ef4444';
-    lCtx.shadowBlur = 28;
-    lCtx.strokeText('UIU', 256, 96);
 
-    // Main vibrant neon orange-red stroke
+    // Deep outer neon crimson aura
+    lCtx.shadowColor = '#ef4444';
+    lCtx.shadowBlur = 48;
+    lCtx.strokeStyle = 'rgba(239, 68, 68, 0.95)';
+    lCtx.lineWidth = 44;
+    lCtx.lineCap = 'round';
+    lCtx.lineJoin = 'round';
+    lCtx.strokeText('UIU', 512, 190);
+
+    // Main vibrant neon scarlet-red stroke
+    lCtx.strokeStyle = '#dc2626';
+    lCtx.lineWidth = 26;
+    lCtx.strokeText('UIU', 512, 190);
+
+    // Hot neon orange-red inner stroke
     lCtx.strokeStyle = '#f97316';
     lCtx.lineWidth = 14;
-    lCtx.strokeText('UIU', 256, 96);
+    lCtx.strokeText('UIU', 512, 190);
 
-    // Inner bright core
-    lCtx.fillStyle = '#fee2e2';
+    // Inner bright white-hot core
     lCtx.shadowBlur = 0;
-    lCtx.fillText('UIU', 256, 96);
+    lCtx.fillStyle = '#fff1f2';
+    lCtx.fillText('UIU', 512, 190);
 
     const uiuLogoTex = new THREE.CanvasTexture(uiuLogoCanvas);
     this.uiuLogoMat = new THREE.MeshStandardMaterial({
       map: uiuLogoTex,
-      metalness: 0.25,
-      roughness: 0.45,
-      emissive: 0x441108
+      metalness: 0.2,
+      roughness: 0.35,
+      emissive: 0xdc2626,
+      emissiveIntensity: 0.9
     });
 
-    // C. Central Glass Atrium Facade with MASSIVE STRUCTURAL STEEL DIAGONAL X-TRUSSES (Photo Signature!)
+    // C. Central Glass Atrium Facade (1024x1024 HD Dark Reflective Glass Curtain Wall)
     const atriumCanvas = document.createElement('canvas');
-    atriumCanvas.width = 512;
-    atriumCanvas.height = 512;
+    atriumCanvas.width = 1024;
+    atriumCanvas.height = 1024;
     const aCtx = atriumCanvas.getContext('2d');
     // Dark reflective glass curtain wall
-    aCtx.fillStyle = '#0f172a';
-    aCtx.fillRect(0, 0, 512, 512);
+    aCtx.fillStyle = '#090d16';
+    aCtx.fillRect(0, 0, 1024, 1024);
 
-    // Glass panel grid
-    for (let y = 0; y < 512; y += 64) {
-      aCtx.strokeStyle = 'rgba(255, 255, 255, 0.12)';
-      aCtx.lineWidth = 1.5;
+    // Subtle sky reflection across atrium glass
+    const aGrad = aCtx.createLinearGradient(0, 0, 0, 1024);
+    aGrad.addColorStop(0, '#1e293b');
+    aGrad.addColorStop(0.3, '#0f172a');
+    aGrad.addColorStop(1, '#020617');
+    aCtx.fillStyle = aGrad;
+    aCtx.fillRect(0, 0, 1024, 1024);
+
+    // Fine glass panel grid
+    for (let y = 0; y < 1024; y += 64) {
+      aCtx.strokeStyle = 'rgba(255, 255, 255, 0.14)';
+      aCtx.lineWidth = 2.0;
       aCtx.beginPath();
       aCtx.moveTo(0, y);
-      aCtx.lineTo(512, y);
+      aCtx.lineTo(1024, y);
       aCtx.stroke();
     }
-    for (let x = 0; x < 512; x += 64) {
-      aCtx.strokeStyle = 'rgba(255, 255, 255, 0.12)';
-      aCtx.lineWidth = 1.5;
+    for (let x = 0; x < 1024; x += 64) {
+      aCtx.strokeStyle = 'rgba(255, 255, 255, 0.14)';
+      aCtx.lineWidth = 2.0;
       aCtx.beginPath();
       aCtx.moveTo(x, 0);
-      aCtx.lineTo(x, 512);
+      aCtx.lineTo(x, 1024);
       aCtx.stroke();
     }
 
     // MASSIVE STRUCTURAL STEEL DIAGONAL X-BRACING (UIU Photo signature feature!)
     aCtx.strokeStyle = '#cbd5e1';
-    aCtx.lineWidth = 10;
+    aCtx.lineWidth = 14;
     aCtx.lineCap = 'square';
     const xSegments = 4;
-    const segH = 512 / xSegments;
+    const segH = 1024 / xSegments;
     for (let s = 0; s < xSegments; s++) {
       const topY = s * segH;
       const botY = (s + 1) * segH;
 
       // Diagonal 1
       aCtx.beginPath();
-      aCtx.moveTo(16, topY);
-      aCtx.lineTo(496, botY);
+      aCtx.moveTo(32, topY);
+      aCtx.lineTo(992, botY);
       aCtx.stroke();
 
       // Diagonal 2
       aCtx.beginPath();
-      aCtx.moveTo(496, topY);
-      aCtx.lineTo(16, botY);
+      aCtx.moveTo(992, topY);
+      aCtx.lineTo(32, botY);
       aCtx.stroke();
 
       // Horizontal floor tie beam
-      aCtx.lineWidth = 14;
-      aCtx.strokeStyle = '#8c867e';
+      aCtx.lineWidth = 18;
+      aCtx.strokeStyle = '#94a3b8';
       aCtx.beginPath();
       aCtx.moveTo(0, botY);
-      aCtx.lineTo(512, botY);
+      aCtx.lineTo(1024, botY);
       aCtx.stroke();
-      aCtx.lineWidth = 10;
+      aCtx.lineWidth = 14;
       aCtx.strokeStyle = '#cbd5e1';
     }
     const atriumTex = new THREE.CanvasTexture(atriumCanvas);
@@ -552,58 +571,74 @@ export class BangladeshProps {
 
     // H. Campus Football Ground / Green Lawn (রেক্টেঙ্গুলার চারকোনা মাঠ, গোল করা সার্কেল টাইপের)
     const lawnCanvas = document.createElement('canvas');
-    lawnCanvas.width = 512;
-    lawnCanvas.height = 512;
+    lawnCanvas.width = 1024;
+    lawnCanvas.height = 1024;
     const lwCtx = lawnCanvas.getContext('2d');
     // Base lush grass
     lwCtx.fillStyle = '#15803d';
-    lwCtx.fillRect(0, 0, 512, 512);
+    lwCtx.fillRect(0, 0, 1024, 1024);
 
     // Alternating mowed stripes (Lime green and deep emerald green from aerial photo!)
     lwCtx.fillStyle = '#65a30d';
-    for (let y = 0; y < 512; y += 40) {
-      lwCtx.fillRect(0, y, 512, 20);
+    for (let y = 0; y < 1024; y += 80) {
+      lwCtx.fillRect(0, y, 1024, 40);
     }
 
     // Outer pitch boundary line (Crisp white)
     lwCtx.strokeStyle = '#ffffff';
-    lwCtx.lineWidth = 7;
-    lwCtx.strokeRect(24, 20, 464, 472);
+    lwCtx.lineWidth = 12;
+    lwCtx.strokeRect(48, 40, 928, 944);
 
     // Halfway dividing line
     lwCtx.beginPath();
-    lwCtx.moveTo(24, 256);
-    lwCtx.lineTo(488, 256);
+    lwCtx.moveTo(48, 512);
+    lwCtx.lineTo(976, 512);
     lwCtx.stroke();
 
     // PROMINENT BOLD WHITE CENTER CIRCLE (User: একদম গোল করা সার্কেল টাইপের)
     lwCtx.beginPath();
-    lwCtx.arc(256, 256, 68, 0, Math.PI * 2);
+    lwCtx.arc(512, 512, 136, 0, Math.PI * 2);
     lwCtx.stroke();
 
     // Center kickoff spot
     lwCtx.fillStyle = '#ffffff';
     lwCtx.beginPath();
-    lwCtx.arc(256, 256, 8, 0, Math.PI * 2);
+    lwCtx.arc(512, 512, 16, 0, Math.PI * 2);
     lwCtx.fill();
 
-    // Penalty Areas (North & South)
-    lwCtx.strokeRect(146, 20, 220, 92);
-    lwCtx.strokeRect(146, 400, 220, 92);
+    // Penalty Areas (North & South - 18-yard boxes)
+    lwCtx.strokeRect(292, 40, 440, 184);
+    lwCtx.strokeRect(292, 800, 440, 184);
+
+    // Goal Areas (6-yard boxes)
+    lwCtx.strokeRect(392, 40, 240, 76);
+    lwCtx.strokeRect(392, 908, 240, 76);
 
     // Penalty Arcs
     lwCtx.beginPath();
-    lwCtx.arc(256, 85, 36, 0, Math.PI);
+    lwCtx.arc(512, 170, 72, 0, Math.PI);
     lwCtx.stroke();
     lwCtx.beginPath();
-    lwCtx.arc(256, 427, 36, Math.PI, 0);
+    lwCtx.arc(512, 854, 72, Math.PI, 0);
     lwCtx.stroke();
 
-    // Goal Areas (6-yard boxes)
-    lwCtx.strokeRect(196, 20, 120, 38);
-    lwCtx.strokeRect(196, 454, 120, 38);
+    // Corner Arcs
+    const rCorner = 32;
+    lwCtx.beginPath();
+    lwCtx.arc(48, 40, rCorner, 0, Math.PI * 0.5);
+    lwCtx.stroke();
+    lwCtx.beginPath();
+    lwCtx.arc(976, 40, rCorner, Math.PI * 0.5, Math.PI);
+    lwCtx.stroke();
+    lwCtx.beginPath();
+    lwCtx.arc(48, 984, rCorner, Math.PI * 1.5, Math.PI * 2);
+    lwCtx.stroke();
+    lwCtx.beginPath();
+    lwCtx.arc(976, 984, rCorner, Math.PI, Math.PI * 1.5);
+    lwCtx.stroke();
 
     const lawnTex = new THREE.CanvasTexture(lawnCanvas);
+    lawnTex.anisotropy = 4;
     this.uiuLawnMat = new THREE.MeshStandardMaterial({
       map: lawnTex,
       roughness: 0.85
@@ -3947,17 +3982,29 @@ export class BangladeshProps {
   // 16. AUTHENTIC UIU PERMANENT CAMPUS (United International University)
   // Recreated with 100% precision from User's Reference Photos:
   // - Multi-Tower Modern Campus Skyscraper Complex set back from road for full panoramic visualization
+  // - Open flat green landscape around UIU ("ফাঁকা স্পেসের মাঝখানে বিল্ডিংটা থাকবে, পেছনে ও সামনে কোনো পাহাড় থাকবে না")
   // - Exact photo colors: Warm stone grey concrete frame, terracotta red brick accents, white sunshades
-  // - Right Tower with glowing Neon Red-Orange "UIU" Logo matching the aerial photo
-  // - Central Glass Atrium with massive structural steel diagonal X-trusses / cross-bracing
+  // - Right Tower with glowing Neon Red-Orange "UIU" Logo & 3D illuminated letters matching the aerial photo
+  // - Central Glass Atrium with REAL 3D structural steel diagonal X-trusses / cross-bracing across multiple floors
   // - Sprawling rectangular football ground with bold white center circle, goalposts, and players
   // - White sideline spectator marquee tents (শামিয়ানা / তাঁবু) & sports banners
-  // - Framed on all sides by lush green coconut palms and shade trees
+  // - Scenic natural water canal along the left bank with lush vegetation (Photo match!)
   // - Entrance gate, perimeter boundary fence, and paved grand promenade
   // ========================================================
   createUIUCampus(side = 1) {
     const campus = new THREE.Group();
     campus.name = 'uiu_permanent_campus';
+
+    // -----------------------------------------------------------
+    // 0. VAST EXPANSIVE FLAT GREEN CAMPUS BASE APRON
+    // Pure open green space - NO hills, NO blocking terrain
+    // -----------------------------------------------------------
+    const baseApronGeo = new THREE.PlaneGeometry(136, 112);
+    baseApronGeo.rotateX(-Math.PI / 2);
+    const baseApron = new THREE.Mesh(baseApronGeo, this.paddyFieldMat);
+    baseApron.position.set(62 * side, 0.005, 0);
+    baseApron.receiveShadow = true;
+    campus.add(baseApron);
 
     // -----------------------------------------------------------
     // 1. CAMPUS FOOTBALL GROUND & GREEN LAWN (UIU খেলার মাঠ)
@@ -3978,9 +4025,16 @@ export class BangladeshProps {
     // Surrounding green turf apron
     const apronGeo = new THREE.PlaneGeometry(46, 76);
     apronGeo.rotateX(-Math.PI / 2);
-    const apron = new THREE.Mesh(apronGeo, this.paddyFieldMaterial);
+    const apron = new THREE.Mesh(apronGeo, this.paddyFieldMat);
     apron.position.set(0, 0.01, 0);
     fieldGroup.add(apron);
+
+    // Paved grand promenade between football field and main building
+    const promenadeGeo = new THREE.PlaneGeometry(16, 76);
+    promenadeGeo.rotateX(-Math.PI / 2);
+    const promenade = new THREE.Mesh(promenadeGeo, this.pavingPlazaMat);
+    promenade.position.set(27 * side, 0.015, 0);
+    fieldGroup.add(promenade);
 
     // B. Regulation White Football Goalposts (North & South ends at z = -30m and +30m)
     [-30, 30].forEach((gz) => {
@@ -4106,28 +4160,28 @@ export class BangladeshProps {
     });
 
     // F. Trees Framing the Football Ground (পাশ দিয়ে গাছ থাকবে - Photo Match!)
-    // 1. North end tree line (z = 36m)
+    // North end tree line (z = 37m)
     [-16, -8, 0, 8, 16].forEach((tx) => {
       const palm = this.createCoconutTree();
-      palm.position.set(tx, 0, 36);
+      palm.position.set(tx, 0, 37);
       fieldGroup.add(palm);
     });
 
-    // 2. South end tree line (z = -36m)
+    // South end tree line (z = -37m)
     [-16, -8, 0, 8, 16].forEach((tx) => {
       const palm = this.createCoconutTree();
-      palm.position.set(tx, 0, -36);
+      palm.position.set(tx, 0, -37);
       fieldGroup.add(palm);
     });
 
-    // 3. Roadside front border trees (x = -20 * side) - leaving wide center gap for clean panoramic visualization!
-    [-32, -22, 22, 32].forEach((tz) => {
+    // Extreme outer roadside corners only - KEEPING CENTER COMPLETELY OPEN & UNOBSTRUCTED!
+    [-34, 34].forEach((tz) => {
       const palm = this.createCoconutTree();
       palm.position.set(-20 * side, 0, tz);
       fieldGroup.add(palm);
     });
 
-    // 4. Rear walkway trees between field and building (x = 20 * side)
+    // Rear walkway trees between field promenade and building
     [-28, -14, 14, 28].forEach((tz) => {
       const palm = this.createCoconutTree();
       palm.position.set(20 * side, 0, tz);
@@ -4138,13 +4192,13 @@ export class BangladeshProps {
     const fenceGroup = new THREE.Group();
     const fenceX = -24 * side; // Far back from the road verge (leaves wide open green foreground)
     const curb = new THREE.Mesh(
-      new THREE.BoxGeometry(0.35, 0.45, 72),
+      new THREE.BoxGeometry(0.35, 0.45, 74),
       this.concreteMat
     );
     curb.position.set(fenceX, 0.225, 0);
     fenceGroup.add(curb);
 
-    for (let fz = -34; fz <= 34; fz += 3.2) {
+    for (let fz = -35; fz <= 35; fz += 3.5) {
       const post = new THREE.Mesh(
         new THREE.CylinderGeometry(0.04, 0.04, 1.6, 6),
         this.stageTrussMat
@@ -4153,7 +4207,7 @@ export class BangladeshProps {
       fenceGroup.add(post);
     }
     const topRail = new THREE.Mesh(
-      new THREE.BoxGeometry(0.08, 0.08, 72),
+      new THREE.BoxGeometry(0.08, 0.08, 74),
       this.stageTrussMat
     );
     topRail.position.set(fenceX, 1.75, 0);
@@ -4192,7 +4246,48 @@ export class BangladeshProps {
     campus.add(fieldGroup);
 
     // -----------------------------------------------------------
-    // 2. THE MAIN MULTI-TOWER CAMPUS BUILDING (UIU ক্যাম্পাস ভবন)
+    // 2. NATURAL SCENIC WATER CANAL ALONG LEFT FLANK (Photo Match!)
+    // As seen on the left side of the UIU permanent campus in the aerial photo
+    // -----------------------------------------------------------
+    const canalGroup = new THREE.Group();
+    canalGroup.position.set(50 * side, 0, -45);
+
+    const canalWaterGeo = new THREE.PlaneGeometry(94, 12);
+    canalWaterGeo.rotateX(-Math.PI / 2);
+    const canalWater = new THREE.Mesh(canalWaterGeo, this.riverWaterMat);
+    canalWater.position.set(0, 0.04, 0);
+    canalGroup.add(canalWater);
+
+    // Canal mud banks
+    const bankGeo = new THREE.BoxGeometry(96, 0.35, 1.2);
+    const bankNorth = new THREE.Mesh(bankGeo, this.mudPlinthMat);
+    bankNorth.position.set(0, 0.17, 6.0);
+    canalGroup.add(bankNorth);
+    const bankSouth = new THREE.Mesh(bankGeo, this.mudPlinthMat);
+    bankSouth.position.set(0, 0.17, -6.0);
+    canalGroup.add(bankSouth);
+
+    // Floating water vegetation patches
+    [-28, -10, 10, 28].forEach((cx) => {
+      const lily = new THREE.Mesh(
+        new THREE.CylinderGeometry(1.6, 1.8, 0.05, 7),
+        this.palmLeafMat
+      );
+      lily.position.set(cx, 0.07, (Math.random() - 0.5) * 3);
+      canalGroup.add(lily);
+    });
+
+    // Serene palms on the far canal bank
+    [-36, -18, 0, 18, 36].forEach((cx) => {
+      const cPalm = this.createCoconutTree();
+      cPalm.position.set(cx, 0, -8.5);
+      canalGroup.add(cPalm);
+    });
+
+    campus.add(canalGroup);
+
+    // -----------------------------------------------------------
+    // 3. THE MAIN MULTI-TOWER CAMPUS BUILDING (UIU ক্যাম্পাস ভবন)
     // Set back at x = 78m * side, spanning z = -32m to +32m, height = 38m!
     // Set back far enough so the ENTIRE building and football ground are beautifully visualized!
     // -----------------------------------------------------------
@@ -4243,11 +4338,22 @@ export class BangladeshProps {
     t1RoofGarden.position.set(0, 19.4, 0);
     t1Group.add(t1RoofGarden);
 
-    // Rooftop Communication Antennas
+    // Rooftop Communication Mast with flashing aviation beacon light
     const antGeo = new THREE.CylinderGeometry(0.06, 0.08, 7.5, 6);
     const ant = new THREE.Mesh(antGeo, this.goalPostMat);
     ant.position.set(-2.0, 25.5, 1.5);
     t1Group.add(ant);
+
+    const beacon = new THREE.Mesh(
+      new THREE.SphereGeometry(0.32, 8, 8),
+      new THREE.MeshStandardMaterial({
+        color: 0xff0000,
+        emissive: 0xff0000,
+        emissiveIntensity: 2.2
+      })
+    );
+    beacon.position.set(-2.0, 29.5, 1.5);
+    t1Group.add(beacon);
 
     // Parapet safety railings on roof
     const t1Railing = new THREE.Mesh(
@@ -4257,9 +4363,56 @@ export class BangladeshProps {
     t1Railing.position.set(0, 19.55, 0);
     t1Group.add(t1Railing);
 
+    // 3D ILLUMINATED NEON "UIU" LOGO FIXTURE (Upper Facade)
+    const logoFixture = new THREE.Group();
+    logoFixture.position.set(0, 11.5, 8.1);
+
+    // Dark charcoal fascia backplate
+    const logoBacking = new THREE.Mesh(
+      new THREE.BoxGeometry(11.2, 5.0, 0.25),
+      new THREE.MeshStandardMaterial({ color: 0x090d16, roughness: 0.3 })
+    );
+    logoFixture.add(logoBacking);
+
+    // Glowing scarlet neon tube material
+    const neonMat = new THREE.MeshStandardMaterial({
+      color: 0xff1744,
+      emissive: 0xff1744,
+      emissiveIntensity: 1.8,
+      roughness: 0.2
+    });
+
+    const addTube = (w, h, d, px, py, pz) => {
+      const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), neonMat);
+      m.position.set(px, py, pz);
+      logoFixture.add(m);
+    };
+
+    // 'U' (left, centered at x = -3.2)
+    addTube(0.38, 2.6, 0.25, -4.0, 0, 0.2);
+    addTube(0.38, 2.6, 0.25, -2.4, 0, 0.2);
+    addTube(1.98, 0.38, 0.25, -3.2, -1.15, 0.2);
+
+    // 'I' (middle, centered at x = 0)
+    addTube(0.44, 2.6, 0.25, 0, 0, 0.2);
+    addTube(1.4, 0.35, 0.25, 0, 1.15, 0.2);
+    addTube(1.4, 0.35, 0.25, 0, -1.15, 0.2);
+
+    // 'U' (right, centered at x = +3.2)
+    addTube(0.38, 2.6, 0.25, 2.4, 0, 0.2);
+    addTube(0.38, 2.6, 0.25, 4.0, 0, 0.2);
+    addTube(1.98, 0.38, 0.25, 3.2, -1.15, 0.2);
+
+    // Red neon point light for ambient glow on building facade
+    const logoLight = new THREE.PointLight(0xff1744, 1.6, 18);
+    logoLight.position.set(0, 0, 2.0);
+    logoFixture.add(logoLight);
+
+    t1Group.add(logoFixture);
+
     buildingGroup.add(t1Group);
 
-    // B. Tower 2: Central Glass Atrium with MASSIVE STRUCTURAL STEEL X-TRUSS BRACING! (Photo Signature!)
+    // B. Tower 2: Central Glass Atrium with REAL 3D STRUCTURAL STEEL X-TRUSS BRACING! (Photo Signature!)
     // Height: 32m, Width: 16m, Depth: 13m. Positioned at local x = 0 (world z = 0 -> viewer's CENTER)
     const atriumGroup = new THREE.Group();
     atriumGroup.position.set(0, 16.0, 0);
@@ -4294,6 +4447,66 @@ export class BangladeshProps {
     atriumRoof.position.set(0, 16.3, 0);
     atriumGroup.add(atriumRoof);
 
+    // --- REAL 3D STRUCTURAL STEEL DIAGONAL X-TRUSS SYSTEM ---
+    // 2 massive bays across atrium front (local z = 6.6)
+    // Bay 1: local x = -3.95 (width 6.9m), Bay 2: local x = +3.95 (width 6.9m)
+    // 2 vertically stacked tiers: Tier 1 (y = -11 to +2), Tier 2 (y = +2 to +15)
+    const trussBayWidth = 6.9;
+    const trussTierHeight = 13.0;
+    const diagLen = Math.sqrt(trussBayWidth * trussBayWidth + trussTierHeight * trussTierHeight);
+    const diagAngle = Math.atan2(trussBayWidth, trussTierHeight);
+    const trussZ = 6.6;
+
+    [-3.95, 3.95].forEach((bayX) => {
+      [-4.5, 8.5].forEach((tierY) => {
+        // Diagonal 1 (Bottom-left to Top-right)
+        const d1 = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.24, 0.24, diagLen, 8),
+          this.stageTrussMat
+        );
+        d1.position.set(bayX, tierY, trussZ);
+        d1.rotation.z = -diagAngle;
+        atriumGroup.add(d1);
+
+        // Diagonal 2 (Bottom-right to Top-left)
+        const d2 = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.24, 0.24, diagLen, 8),
+          this.stageTrussMat
+        );
+        d2.position.set(bayX, tierY, trussZ);
+        d2.rotation.z = diagAngle;
+        atriumGroup.add(d2);
+
+        // Center Gusset Plate / Node
+        const centerNode = new THREE.Mesh(
+          new THREE.BoxGeometry(0.85, 0.85, 0.45),
+          this.stageTrussMat
+        );
+        centerNode.position.set(bayX, tierY, trussZ + 0.05);
+        atriumGroup.add(centerNode);
+      });
+    });
+
+    // Horizontal Steel Chord Beams connecting the truss levels
+    [-11, 2, 15].forEach((beamY) => {
+      const hBeam = new THREE.Mesh(
+        new THREE.BoxGeometry(16.3, 0.65, 0.5),
+        this.stageTrussMat
+      );
+      hBeam.position.set(0, beamY, trussZ);
+      atriumGroup.add(hBeam);
+    });
+
+    // Vertical Steel Columns bounding the truss bays
+    [-7.4, 0, 7.4].forEach((colX) => {
+      const vCol = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.24, 0.24, 26.0, 8),
+        this.stageTrussMat
+      );
+      vCol.position.set(colX, 2.0, trussZ);
+      atriumGroup.add(vCol);
+    });
+
     buildingGroup.add(atriumGroup);
 
     // C. Tower 3 & 4: Left Wing Academic Block (Photo Match!)
@@ -4321,6 +4534,16 @@ export class BangladeshProps {
     );
     t3BrickFlank.position.set(9.2, 0, 0);
     t3Group.add(t3BrickFlank);
+
+    // 3D Horizontal Sunshade Louvers across front facade
+    for (let floorY = -12; floorY <= 12; floorY += 3.5) {
+      const louver = new THREE.Mesh(
+        new THREE.BoxGeometry(18.2, 0.35, 1.2),
+        this.uiuConcreteMat
+      );
+      louver.position.set(0, floorY, 8.4);
+      t3Group.add(louver);
+    }
 
     // Rooftop Garden Vegetation
     const t3RoofGarden = new THREE.Mesh(

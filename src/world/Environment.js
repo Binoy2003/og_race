@@ -111,33 +111,34 @@ export class Environment {
   }
 
   initDistantTreeLine() {
-    // Distant tropical tree line silhouettes bordering the paddy fields
+    // Distant tropical tree line silhouettes bordering the paddy fields far on the right horizon.
+    // The left side (side = -1) where the UIU campus sits is kept completely FLAT & OPEN with zero hills/mountains!
     const treeMat = new THREE.MeshStandardMaterial({
       color: 0x1b5e20, // Deep lush foliage green
       roughness: 0.9,
       flatShading: true
     });
 
-    [-1, 1].forEach((side) => {
-      const group = new THREE.Group();
-      const count = 28;
+    // Only add distant gentle tree canopy on the right side far beyond the highway (x = 160m)
+    const rightSide = 1;
+    const group = new THREE.Group();
+    const count = 24;
 
-      for (let i = 0; i < count; i++) {
-        const height = 12 + Math.random() * 18;
-        const radius = 6 + Math.random() * 8;
-        const geo = new THREE.ConeGeometry(radius, height, 6);
-        const tree = new THREE.Mesh(geo, treeMat);
+    for (let i = 0; i < count; i++) {
+      const height = 4.5 + Math.random() * 3.5;
+      const radius = 3.0 + Math.random() * 2.0;
+      const geo = new THREE.ConeGeometry(radius, height, 6);
+      const tree = new THREE.Mesh(geo, treeMat);
 
-        const xPos = (55 + Math.random() * 30) * side;
-        const zPos = -i * 18;
-        tree.position.set(xPos, height * 0.5 - 2, zPos);
-        tree.rotation.y = Math.random() * Math.PI;
-        group.add(tree);
-      }
+      const xPos = 150 + Math.random() * 25;
+      const zPos = -i * 22;
+      tree.position.set(xPos, height * 0.5 - 0.5, zPos);
+      tree.rotation.y = Math.random() * Math.PI;
+      group.add(tree);
+    }
 
-      this.scene.add(group);
-      this.treeLines.push(group);
-    });
+    this.scene.add(group);
+    this.treeLines.push(group);
   }
 
   initFlyingBirds() {
