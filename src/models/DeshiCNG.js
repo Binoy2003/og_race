@@ -819,25 +819,84 @@ export class DeshiCNG {
       rearGroup.add(mudflap);
     });
 
-    // Horizontal Silver/Black Exhaust Tailpipe Underneath (Image 3)
-    const exhaustGeo = new THREE.CylinderGeometry(0.032, 0.032, 0.55, 10);
-    exhaustGeo.rotateZ(Math.PI / 2);
-    const exhaustPipe = new THREE.Mesh(exhaustGeo, chromeMat);
-    exhaustPipe.position.set(0.22, 0.18, 0.02);
-    rearGroup.add(exhaustPipe);
+    // ========================================================
+    // Dual High-Performance Chrome Exhaust Tailpipes & Nitro Flames
+    // Left & Right Symmetrical Exhausts under Rear Bumper ("দুইটা আগুন")
+    // ========================================================
+    [-0.34, 0.34].forEach((ex) => {
+      // 1. Chrome Exhaust Tailpipe Tube
+      const pipeGeo = new THREE.CylinderGeometry(0.042, 0.046, 0.28, 12);
+      pipeGeo.rotateX(Math.PI / 2);
+      const exhaustPipe = new THREE.Mesh(pipeGeo, chromeMat);
+      exhaustPipe.position.set(ex, 0.21, 0.04);
+      rearGroup.add(exhaustPipe);
 
-    // Boost Jet Flame Emitter (at exhaust pipe tip)
-    const flameGeo = new THREE.ConeGeometry(0.075, 0.45, 10);
-    flameGeo.rotateX(-Math.PI / 2);
-    const flameMat = new THREE.MeshBasicMaterial({
-      color: 0x06b6d4,
-      transparent: true,
-      opacity: 0
+      // Tailpipe Dark Soot-Lined Inner Bore
+      const boreGeo = new THREE.CircleGeometry(0.038, 12);
+      const boreMat = new THREE.MeshBasicMaterial({ color: 0x080808 });
+      const bore = new THREE.Mesh(boreGeo, boreMat);
+      bore.position.set(ex, 0.21, 0.181);
+      rearGroup.add(bore);
+
+      // Heavy Metal Mounting Bracket to Chassis
+      const bracketGeo = new THREE.BoxGeometry(0.02, 0.09, 0.04);
+      const bracketMat = new THREE.MeshStandardMaterial({ color: 0x27272a, roughness: 0.8 });
+      const bracket = new THREE.Mesh(bracketGeo, bracketMat);
+      bracket.position.set(ex, 0.265, 0.04);
+      rearGroup.add(bracket);
+
+      // 2. Outer Fiery Flame Jet Cone ("আগুন" - Blazing Fire Jet)
+      // Base attached flush to exhaust mouth (z = 0), sharp tip shoots straight backwards (+Z)
+      const flameLength = 0.95;
+      const flameGeo = new THREE.ConeGeometry(0.14, flameLength, 12);
+      flameGeo.rotateX(Math.PI / 2);
+      flameGeo.translate(0, 0, flameLength * 0.5);
+      const flameMat = new THREE.MeshBasicMaterial({
+        color: 0xff4500,
+        transparent: true,
+        opacity: 0,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false
+      });
+      const flameMesh = new THREE.Mesh(flameGeo, flameMat);
+      flameMesh.position.set(ex, 0.21, 0.182);
+      flameMesh.userData = { isCore: false, isGlow: false };
+      rearGroup.add(flameMesh);
+      this.exhaustFires.push(flameMesh);
+
+      // 3. Inner Superheated Core Flame Jet (Electric Yellow & White-Hot Flame)
+      const coreLength = 0.55;
+      const coreGeo = new THREE.ConeGeometry(0.075, coreLength, 10);
+      coreGeo.rotateX(Math.PI / 2);
+      coreGeo.translate(0, 0, coreLength * 0.5);
+      const coreMat = new THREE.MeshBasicMaterial({
+        color: 0xffea00,
+        transparent: true,
+        opacity: 0,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false
+      });
+      const coreMesh = new THREE.Mesh(coreGeo, coreMat);
+      coreMesh.position.set(ex, 0.21, 0.183);
+      coreMesh.userData = { isCore: true, isGlow: false };
+      rearGroup.add(coreMesh);
+      this.exhaustFires.push(coreMesh);
+
+      // 4. Luminous Exhaust Mouth Halo Glow
+      const glowGeo = new THREE.CircleGeometry(0.18, 12);
+      const glowMat = new THREE.MeshBasicMaterial({
+        color: 0xff6600,
+        transparent: true,
+        opacity: 0,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false
+      });
+      const glowMesh = new THREE.Mesh(glowGeo, glowMat);
+      glowMesh.position.set(ex, 0.21, 0.184);
+      glowMesh.userData = { isCore: false, isGlow: true };
+      rearGroup.add(glowMesh);
+      this.exhaustFires.push(glowMesh);
     });
-    const flameMesh = new THREE.Mesh(flameGeo, flameMat);
-    flameMesh.position.set(0.48, 0.18, 0.28);
-    rearGroup.add(flameMesh);
-    this.exhaustFires.push(flameMesh);
 
     this.bodyGroup.add(rearGroup);
 
@@ -1108,16 +1167,30 @@ export class DeshiCNG {
       bl.material.color.setHex(isBraking ? 0xff0000 : 0xdc2626);
     });
 
-    // 6. Boost Jet Flames
+    // 6. Dual Boost Fire Jets (Left & Right Fiery Flames when Boosting)
     this.exhaustFires.forEach((flame) => {
       if (isBoosting) {
-        flame.material.opacity = 0.95;
-        flame.scale.set(
-          1.2 + Math.random() * 0.4,
-          1.2 + Math.random() * 0.5,
-          1.2 + Math.random() * 0.4
-        );
-        flame.material.color.setHex(Math.random() > 0.4 ? 0x06b6d4 : 0x38bdf8);
+        if (flame.userData.isGlow) {
+          flame.material.opacity = 0.75 + Math.random() * 0.25;
+          const s = 1.0 + Math.random() * 0.45;
+          flame.scale.set(s, s, 1);
+          flame.material.color.setHex(Math.random() > 0.35 ? 0xff5500 : 0xffaa00);
+        } else if (flame.userData.isCore) {
+          // Inner superheated core flame: brilliant white-hot & electric golden yellow
+          flame.material.opacity = 0.98;
+          const flameLength = 1.0 + Math.random() * 0.55;
+          const flameWidth = 0.85 + Math.random() * 0.30;
+          flame.scale.set(flameWidth, flameWidth, flameLength);
+          flame.material.color.setHex(Math.random() > 0.45 ? 0xffea00 : 0xffffff);
+        } else {
+          // Outer blazing fire flame: fiery orange-red, blazing amber, and crimson flame
+          flame.material.opacity = 0.90 + Math.random() * 0.10;
+          const flameLength = 1.0 + Math.random() * 0.70;
+          const flameWidth = 0.90 + Math.random() * 0.35;
+          flame.scale.set(flameWidth, flameWidth, flameLength);
+          const r = Math.random();
+          flame.material.color.setHex(r > 0.6 ? 0xff3300 : (r > 0.25 ? 0xff6600 : 0xff9900));
+        }
       } else {
         flame.material.opacity = 0;
       }
@@ -1158,6 +1231,9 @@ export class DeshiCNG {
     this.currentRoll = 0;
     this.currentPitch = 0;
     this.currentYaw = 0;
+    this.exhaustFires.forEach((flame) => {
+      flame.material.opacity = 0;
+    });
     this.updateBoundingBox();
   }
 }
