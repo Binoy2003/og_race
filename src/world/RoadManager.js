@@ -323,8 +323,8 @@ export class RoadManager {
       }
     }
 
-    // F. Lush Flora: Coconut Palms, Banana Trees, Bamboo Groves (never blocking UIU)
-    if (!isBridge && !isNearUIU) {
+    // F. Lush Flora: Coconut Palms, Banana Trees, Bamboo Groves (never blocking UIU or Police Checkpost)
+    if (!isBridge && !isNearUIU && (index % 4 !== 2)) {
       const treeSide = index % 2 === 0 ? 1 : -1;
 
       // Coconut tree
@@ -356,7 +356,7 @@ export class RoadManager {
 
     // G. AUTHENTIC BANGLADESHI JATRI CHAWNI (যাত্রী ছাউনি / PASSENGER SHED / BUS STOP)
     // Spawns in regular highway segments (on right side when near UIU to keep left open!)
-    if (!isBridge) {
+    if (!isBridge && (index % 4 !== 2)) {
       const chawniSide = isNearUIU ? 1 : ((index % 2 === 0) ? 1 : -1);
       const chawni = p.createJatriChawni(chawniSide);
       const chawniX = (this.roadWidth * 0.5 + 3.4) * chawniSide;
@@ -368,7 +368,7 @@ export class RoadManager {
 
     // H. AUTHENTIC UDDAN OPEN-AIR CULTURAL PARK STAGE & ROADSIDE TONG ADDA (User Reference Photo!)
     // Spawns with background hills and lively roadside tea stall adda (Right side only)
-    if (!isBridge && index % 3 === 0 && !isNearUIU) {
+    if (!isBridge && index % 3 === 0 && !isNearUIU && (index % 4 !== 2)) {
       const stageSide = 1;
       const uStage = p.createUddanOpenStageWithTong(stageSide);
       uStage.position.set(0, 0, 0);
@@ -376,12 +376,12 @@ export class RoadManager {
     }
 
     // I. HIGHWAY CAFE ("HIGHWAY CAFE" / "ক্যাফে ও রেস্তোরাঁ") & HIGHWAY BAR ("HIGHWAY BAR" / "মদের বার")
-    if (index % 4 === 1 || index % 4 === 2) {
+    if (index % 4 === 1) {
       // HIGHWAY CAFE (on right side when near UIU)
-      const cafeSide = (index % 4 === 2) ? 1 : (isNearUIU ? 1 : -1);
+      const cafeSide = isNearUIU ? 1 : -1;
       const cafe = p.createHighwayCafe(cafeSide);
       const cafeX = (this.roadWidth * 0.5 + 5.6) * cafeSide;
-      const cafeZ = (index % 4 === 2) ? 14 : 12;
+      const cafeZ = 12;
       cafe.position.set(cafeX, 0, cafeZ);
       cafe.rotation.y = cafeSide > 0 ? (Math.PI * 0.5 + 0.28) : (-Math.PI * 0.5 - 0.28);
       group.add(cafe);
@@ -434,11 +434,11 @@ export class RoadManager {
 
     // L. AUTHENTIC BANGLADESH POLICE CHECKPOST & TRAFFIC POLICE OFFICER (User Request!)
     // Spawns right in front of the bridge approach ("road ee bridge er shamnee")
-    // Features 3D Bangladeshi police officer on duty with rifle, lamppost with "পুলিশ চেকপোস্ট" signboard & flashing strobes!
+    // Features 3D Bangladeshi police officer on duty with rifle, police box, lamppost with "পুলিশ চেকপোস্ট" signboard & flashing strobes!
     if (!isBridge && index % 4 === 2) {
       const policeSide = 1; // Right side road shoulder where traffic approaches
       const checkpost = p.createPoliceCheckpost(policeSide, this.roadWidth);
-      checkpost.position.set(0, 0, -8);
+      checkpost.position.set(0, 0, -6);
       group.add(checkpost);
     }
   }

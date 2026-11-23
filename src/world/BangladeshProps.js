@@ -991,6 +991,75 @@ export class BangladeshProps {
       roughness: 0.35
     });
 
+    // Authentic Bangladesh Police Box Signboard ("পুলিশ বক্স • POLICE BOX")
+    const pboxCanvas = document.createElement('canvas');
+    pboxCanvas.width = 512;
+    pboxCanvas.height = 192;
+    const pboxCtx = pboxCanvas.getContext('2d');
+    pboxCtx.fillStyle = '#0b192c'; // Bangladesh Police deep navy
+    pboxCtx.fillRect(0, 0, 512, 192);
+
+    pboxCtx.strokeStyle = '#f59e0b';
+    pboxCtx.lineWidth = 10;
+    pboxCtx.strokeRect(6, 6, 500, 180);
+
+    pboxCtx.fillStyle = '#fde047';
+    pboxCtx.font = 'bold 20px sans-serif';
+    pboxCtx.textAlign = 'center';
+    pboxCtx.textBaseline = 'middle';
+    pboxCtx.fillText('★ বাংলাদেশ পুলিশ ★', 256, 36);
+
+    pboxCtx.fillStyle = '#ffffff';
+    pboxCtx.font = '900 48px sans-serif';
+    pboxCtx.fillText('পুলিশ বক্স', 256, 96);
+
+    pboxCtx.fillStyle = '#38bdf8';
+    pboxCtx.font = 'bold 22px sans-serif';
+    pboxCtx.fillText('HIGHWAY POLICE BOX', 256, 150);
+
+    const pboxTex = new THREE.CanvasTexture(pboxCanvas);
+    pboxTex.anisotropy = 4;
+    this.policeBoxSignMat = new THREE.MeshStandardMaterial({
+      map: pboxTex,
+      roughness: 0.35
+    });
+
+    // UIU Shuttle Bus Stand Roadside Signboard
+    const bsSignCanvas = document.createElement('canvas');
+    bsSignCanvas.width = 512;
+    bsSignCanvas.height = 192;
+    const bssCtx = bsSignCanvas.getContext('2d');
+    bssCtx.fillStyle = '#ea580c'; // UIU Orange
+    bssCtx.fillRect(0, 0, 512, 192);
+
+    bssCtx.strokeStyle = '#ffffff';
+    bssCtx.lineWidth = 8;
+    bssCtx.strokeRect(6, 6, 500, 180);
+
+    bssCtx.fillStyle = '#0b192c';
+    bssCtx.fillRect(16, 16, 480, 50);
+
+    bssCtx.fillStyle = '#fde047';
+    bssCtx.font = 'bold 22px sans-serif';
+    bssCtx.textAlign = 'center';
+    bssCtx.textBaseline = 'middle';
+    bssCtx.fillText('UNITED INTERNATIONAL UNIVERSITY', 256, 41);
+
+    bssCtx.fillStyle = '#ffffff';
+    bssCtx.font = '900 36px sans-serif';
+    bssCtx.fillText('UIU SHUTTLE BUS STAND', 256, 105);
+
+    bssCtx.fillStyle = '#0b192c';
+    bssCtx.font = 'bold 20px sans-serif';
+    bssCtx.fillText('ছাত্র-ছাত্রী পরিবহন • QUEST FOR EXCELLENCE', 256, 155);
+
+    const bsSignTex = new THREE.CanvasTexture(bsSignCanvas);
+    bsSignTex.anisotropy = 4;
+    this.uiuBusStandSignMat = new THREE.MeshStandardMaterial({
+      map: bsSignTex,
+      roughness: 0.35
+    });
+
     // Checkpoint barricade texture
     const pbarCanvas = document.createElement('canvas');
     pbarCanvas.width = 512;
@@ -4962,25 +5031,31 @@ export class BangladeshProps {
     campus.add(buildingGroup);
 
     // -----------------------------------------------------------
-    // 4. UIU SHUTTLE BUS PARKING COURTYARD (User Photo Reference 2!)
-    // Two 3D UIU Shuttle Buses parked in the open space beside the building!
+    // 4. UIU ROADSIDE BUS PARKING BAY (ভার্সিটির পাশে রাস্তার সাইডে পার্কিং)
+    // Positioned along the highway shoulder frontage so buses are 100% visible!
     // -----------------------------------------------------------
     const parkingGroup = new THREE.Group();
-    // Positioned in the open space beside Tower 1 (z = 24m to 44m, x = 70m * side)
-    parkingGroup.position.set(70 * side, 0, 0);
+    // Positioned right alongside the highway road frontage (x = 13.5m * side)
+    parkingGroup.position.set(13.5 * side, 0, 0);
 
-    // Paved concrete parking apron
-    const parkingApronGeo = new THREE.PlaneGeometry(16, 22);
+    // Paved concrete & asphalt roadside bus layby apron (8.5m wide x 34m long)
+    const parkingApronGeo = new THREE.PlaneGeometry(8.5, 34);
     parkingApronGeo.rotateX(-Math.PI / 2);
     const parkingApron = new THREE.Mesh(parkingApronGeo, this.pavingPlazaMat);
-    parkingApron.position.set(0, 0.015, 33);
+    parkingApron.position.set(0, 0.015, 21.5);
     parkingApron.receiveShadow = true;
     parkingGroup.add(parkingApron);
 
+    // Black & white safety curb stones around outer parking boundary
+    const curbEastGeo = new THREE.BoxGeometry(0.35, 0.22, 34);
+    const curbEast = new THREE.Mesh(curbEastGeo, this.bwCurbMat);
+    curbEast.position.set(side > 0 ? 4.25 : -4.25, 0.11, 21.5);
+    parkingGroup.add(curbEast);
+
     // White painted parking stall divider lines
-    [23.5, 33, 42.5].forEach((pz) => {
+    [5.5, 21.5, 37.5].forEach((pz) => {
       const lineMesh = new THREE.Mesh(
-        new THREE.PlaneGeometry(16, 0.22),
+        new THREE.PlaneGeometry(8.0, 0.24),
         this.policeSilverMat
       );
       lineMesh.rotateX(-Math.PI / 2);
@@ -4988,16 +5063,31 @@ export class BangladeshProps {
       parkingGroup.add(lineMesh);
     });
 
-    // BUS 1: Parked in Bay 1 (z = 28.2) facing outward toward the field & road
+    // Roadside Bus Stand Signpost: "UIU SHUTTLE BUS STAND • ছাত্র-ছাত্রী পরিবহন"
+    const busSign = new THREE.Mesh(
+      new THREE.BoxGeometry(0.08, 0.85, 2.2),
+      this.uiuBusStandSignMat
+    );
+    busSign.position.set(side > 0 ? 3.8 : -3.8, 2.2, 5.5);
+    parkingGroup.add(busSign);
+
+    const busSignPost = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.04, 0.04, 2.4, 6),
+      this.stageTrussMat
+    );
+    busSignPost.position.set(side > 0 ? 3.8 : -3.8, 1.2, 5.5);
+    parkingGroup.add(busSignPost);
+
+    // BUS 1: Parked in Front Roadside Bay 1 (z = 13.5) facing traffic along the highway!
     const bus1 = this.createUIUShuttleBus();
-    bus1.position.set(0, 0, 28.2);
-    bus1.rotation.y = side > 0 ? -Math.PI / 2 : Math.PI / 2;
+    bus1.position.set(0, 0, 13.5);
+    bus1.rotation.y = Math.PI; // Long passenger side directly faces oncoming player on the highway!
     parkingGroup.add(bus1);
 
-    // BUS 2: Parked in Bay 2 (z = 37.8) parallel to Bus 1
+    // BUS 2: Parked in Roadside Bay 2 (z = 29.5) right behind Bus 1!
     const bus2 = this.createUIUShuttleBus();
-    bus2.position.set(0, 0, 37.8);
-    bus2.rotation.y = side > 0 ? -Math.PI / 2 : Math.PI / 2;
+    bus2.position.set(0, 0, 29.5);
+    bus2.rotation.y = Math.PI;
     parkingGroup.add(bus2);
 
     campus.add(parkingGroup);
@@ -5818,30 +5908,219 @@ export class BangladeshProps {
   }
 
   // ========================================================
+  // 19. AUTHENTIC BANGLADESH POLICE BOX (পুলিশ বক্স / KIOSK)
+  // - High-visibility Bangladesh Police highway observation booth
+  // - Deep navy blue & white paneled cabin with wrap-around observation windows
+  // - Interior desk with VHF police radio transmitter
+  // - Front illuminated signboard: "★ বাংলাদেশ পুলিশ ★ • পুলিশ বক্স • POLICE BOX"
+  // - Pagoda overhanging canopy roof with antenna & emergency flashing strobes
+  // ========================================================
+  createPoliceBox() {
+    const boxGroup = new THREE.Group();
+    boxGroup.name = 'police_box_booth';
+
+    // 1. Concrete Base Plinth (2.4m x 2.4m x 0.22m)
+    const plinth = new THREE.Mesh(
+      new THREE.BoxGeometry(2.4, 0.22, 2.4),
+      this.concreteMat
+    );
+    plinth.position.y = 0.11;
+    boxGroup.add(plinth);
+
+    // Black & Yellow Hazard Curb trim around base
+    const curb = new THREE.Mesh(
+      new THREE.BoxGeometry(2.5, 0.08, 2.5),
+      this.bwCurbMat
+    );
+    curb.position.y = 0.04;
+    boxGroup.add(curb);
+
+    // 2. Main Cabin Lower Walls (Deep Navy Blue, 2.0m x 2.0m x 1.15m)
+    const lowerCabin = new THREE.Mesh(
+      new THREE.BoxGeometry(2.0, 1.15, 2.0),
+      this.policePantsMat
+    );
+    lowerCabin.position.y = 0.795;
+    boxGroup.add(lowerCabin);
+
+    // White horizontal reflective accent band
+    const accentBand = new THREE.Mesh(
+      new THREE.BoxGeometry(2.04, 0.12, 2.04),
+      this.policeSilverMat
+    );
+    accentBand.position.y = 1.32;
+    boxGroup.add(accentBand);
+
+    // 3. Four Corner Steel Posts
+    [-0.95, 0.95].forEach((px) => {
+      [-0.95, 0.95].forEach((pz) => {
+        const post = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.04, 0.04, 1.25, 6),
+          this.stageTrussMat
+        );
+        post.position.set(px, 1.95, pz);
+        boxGroup.add(post);
+      });
+    });
+
+    // 4. Wrap-Around Glass Observation Windows (All 4 Sides)
+    // Front window (faces road / oncoming traffic)
+    const frontWindow = new THREE.Mesh(
+      new THREE.BoxGeometry(1.82, 0.92, 0.04),
+      this.uiuGlassMat
+    );
+    frontWindow.position.set(0, 1.85, 0.95);
+    boxGroup.add(frontWindow);
+
+    // Side windows
+    [-0.95, 0.95].forEach((wx) => {
+      const sWindow = new THREE.Mesh(
+        new THREE.BoxGeometry(0.04, 0.92, 1.82),
+        this.uiuGlassMat
+      );
+      sWindow.position.set(wx, 1.85, 0);
+      boxGroup.add(sWindow);
+    });
+
+    // Back window
+    const backWindow = new THREE.Mesh(
+      new THREE.BoxGeometry(1.82, 0.92, 0.04),
+      this.uiuGlassMat
+    );
+    backWindow.position.set(0, 1.85, -0.95);
+    boxGroup.add(backWindow);
+
+    // Interior Desk & Police Radio
+    const desk = new THREE.Mesh(
+      new THREE.BoxGeometry(1.6, 0.08, 0.6),
+      this.gunWoodMat
+    );
+    desk.position.set(0, 1.35, 0.55);
+    boxGroup.add(desk);
+
+    const radioBox = new THREE.Mesh(
+      new THREE.BoxGeometry(0.28, 0.18, 0.22),
+      this.gunMetalMat
+    );
+    radioBox.position.set(-0.4, 1.48, 0.55);
+    boxGroup.add(radioBox);
+
+    // 5. Overhead Signboard: "★ বাংলাদেশ পুলিশ ★ • পুলিশ বক্স • POLICE BOX"
+    const signBoardMesh = new THREE.Mesh(
+      new THREE.BoxGeometry(1.9, 0.52, 0.06),
+      this.policeBoxSignMat
+    );
+    signBoardMesh.position.set(0, 2.56, 1.01);
+    boxGroup.add(signBoardMesh);
+
+    // Upper navy frieze band
+    const upperFrieze = new THREE.Mesh(
+      new THREE.BoxGeometry(2.08, 0.52, 2.08),
+      this.policePantsMat
+    );
+    upperFrieze.position.y = 2.56;
+    boxGroup.add(upperFrieze);
+
+    // 6. Overhanging Pagoda Canopy Roof with Metal Trim
+    const roofOverhang = new THREE.Mesh(
+      new THREE.BoxGeometry(2.45, 0.12, 2.45),
+      this.gunMetalMat
+    );
+    roofOverhang.position.y = 2.88;
+    boxGroup.add(roofOverhang);
+
+    const roofCapGeo = new THREE.ConeGeometry(1.75, 0.65, 4);
+    roofCapGeo.rotateY(Math.PI / 4);
+    const roofCap = new THREE.Mesh(roofCapGeo, this.policePantsMat);
+    roofCap.position.y = 3.24;
+    boxGroup.add(roofCap);
+
+    // Communications Antenna Mast
+    const antenna = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.015, 0.02, 1.6, 6),
+      this.gunMetalMat
+    );
+    antenna.position.set(0.7, 3.8, 0.7);
+    boxGroup.add(antenna);
+
+    // 7. Roof-Mounted Emergency Flashing Beacon Strobes (Red & Blue)
+    const beaconPlinth = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.12, 0.14, 0.10, 8),
+      this.stageTrussMat
+    );
+    beaconPlinth.position.y = 3.60;
+    boxGroup.add(beaconPlinth);
+
+    const bRed = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.09, 0.09, 0.22, 8),
+      this.strobeRedMat
+    );
+    bRed.position.set(-0.12, 3.74, 0);
+    boxGroup.add(bRed);
+
+    const bBlue = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.09, 0.09, 0.22, 8),
+      this.strobeBlueMat
+    );
+    bBlue.position.set(0.12, 3.74, 0);
+    boxGroup.add(bBlue);
+
+    this.policeStrobes.push({
+      red: bRed,
+      blue: bBlue,
+      light: null,
+      seed: Math.random() * 10
+    });
+
+    this.applyShadow(boxGroup);
+    return boxGroup;
+  }
+
+  // ========================================================
   // 20. AUTHENTIC BANGLADESH POLICE HIGHWAY CHECKPOST
   // - Located directly before the river bridge ("road ee bridge er shamnee")
+  // - Features signature Bangladesh "পুলিশ বক্স" (Police Booth) on roadside pad
   // - 3D Police officer standing on roadside shoulder with service rifle on duty
   // - Lamppost with street floodlight, twin flashing emergency red/blue strobe beacons
-  // - Prominent double-sided signboard: "পুলিশ চেকপোস্ট" (POLICE CHECK POST)
-  // - Red & white diagonal striped checkpoint barricade & traffic cones
+  // - Prominent signboard: "পুলিশ চেকপোস্ট" (POLICE CHECK POST)
+  // - Red & white diagonal striped checkpoint barricade & traffic safety cones
   // ========================================================
   createPoliceCheckpost(side = 1, roadWidth = 13.0) {
     const checkpost = new THREE.Group();
     checkpost.name = 'bangladesh_police_checkpost';
 
-    const shoulderX = (roadWidth * 0.5 + 1.8) * side;
+    // 0. Concrete & Asphalt Checkpoint Safety Island Apron
+    const apronGeo = new THREE.PlaneGeometry(6.4, 15.0);
+    apronGeo.rotateX(-Math.PI / 2);
+    const apron = new THREE.Mesh(apronGeo, this.concreteMat);
+    apron.position.set((roadWidth * 0.5 + 3.8) * side, 0.015, -0.5);
+    apron.receiveShadow = true;
+    checkpost.add(apron);
 
-    // 1. Authentic 3D Bangladeshi Police Officer on Duty
+    // Hazard Curb Stones on the road verge side
+    const curbGeo = new THREE.BoxGeometry(0.35, 0.20, 15.0);
+    const curbMesh = new THREE.Mesh(curbGeo, this.bwCurbMat);
+    curbMesh.position.set((roadWidth * 0.5 + 0.6) * side, 0.10, -0.5);
+    checkpost.add(curbMesh);
+
+    // 1. Signature Bangladesh Police Box ("পুলিশ বক্স")
+    const policeBox = this.createPoliceBox();
+    policeBox.position.set((roadWidth * 0.5 + 4.4) * side, 0, 1.4);
+    // Face directly toward oncoming traffic (+Z)
+    policeBox.rotation.y = side > 0 ? 0 : Math.PI;
+    checkpost.add(policeBox);
+
+    // 2. Authentic 3D Bangladeshi Police Officer on Duty with Rifle ("hat ee gun")
     const officer = this.createTrafficPoliceOfficer();
-    officer.position.set(shoulderX, 0, 0);
+    officer.position.set((roadWidth * 0.5 + 1.8) * side, 0, -0.6);
     // Face oncoming traffic along the road
-    officer.rotation.y = side > 0 ? (Math.PI * 0.88) : (Math.PI * 0.12);
+    officer.rotation.y = side > 0 ? Math.PI : 0;
     checkpost.add(officer);
 
-    // 2. Lamppost with "পুলিশ চেকপোস্ট" Signboard & Flashing Police Strobes
-    const lampX = (roadWidth * 0.5 + 3.2) * side;
+    // 3. Lamppost with "পুলিশ চেকপোস্ট" Signboard & Flashing Police Strobes
+    const lampX = (roadWidth * 0.5 + 3.0) * side;
     const lampGroup = new THREE.Group();
-    lampGroup.position.set(lampX, 0, 1.8);
+    lampGroup.position.set(lampX, 0, -2.4);
 
     // Concrete base pedestal
     const basePlinth = new THREE.Mesh(
@@ -5851,67 +6130,69 @@ export class BangladeshProps {
     basePlinth.position.y = 0.275;
     lampGroup.add(basePlinth);
 
-    // Steel octagonal lamppost mast (4.5m tall)
+    // Steel octagonal lamppost mast (4.8m tall)
     const pole = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.07, 0.10, 4.5, 8),
+      new THREE.CylinderGeometry(0.07, 0.10, 4.8, 8),
       this.stageTrussMat
     );
-    pole.position.y = 2.45;
+    pole.position.y = 2.60;
     lampGroup.add(pole);
 
     // Top curved lamppost arm extending toward road
-    const armGeo = new THREE.CylinderGeometry(0.04, 0.04, 1.6, 6);
+    const armGeo = new THREE.CylinderGeometry(0.04, 0.04, 1.8, 6);
     armGeo.rotateZ(side > 0 ? -Math.PI / 3 : Math.PI / 3);
     const arm = new THREE.Mesh(armGeo, this.stageTrussMat);
-    arm.position.set(side > 0 ? -0.65 : 0.65, 4.8, 0);
+    arm.position.set(side > 0 ? -0.75 : 0.75, 5.0, 0);
     lampGroup.add(arm);
 
-    // Street floodlight head fixture
+    // Street floodlight head fixture (illuminates checkpost, officer & signboard!)
     const lampHead = new THREE.Mesh(
-      new THREE.BoxGeometry(0.35, 0.12, 0.60),
+      new THREE.BoxGeometry(0.38, 0.14, 0.64),
       this.stageTrussMat
     );
-    lampHead.position.set(side > 0 ? -1.3 : 1.3, 4.95, 0);
+    lampHead.position.set(side > 0 ? -1.45 : 1.45, 5.15, 0);
     lampGroup.add(lampHead);
 
     const floodLens = new THREE.Mesh(
-      new THREE.PlaneGeometry(0.30, 0.52),
+      new THREE.PlaneGeometry(0.34, 0.56),
       new THREE.MeshBasicMaterial({ color: 0xfffbeb })
     );
     floodLens.rotateX(Math.PI / 2);
-    floodLens.position.set(side > 0 ? -1.3 : 1.3, 4.88, 0);
+    floodLens.position.set(side > 0 ? -1.45 : 1.45, 5.07, 0);
     lampGroup.add(floodLens);
+
+    // Overhead floodlight source
+    const floodLight = new THREE.PointLight(0xfff7ed, 1.8, 14);
+    floodLight.position.set(side > 0 ? -1.45 : 1.45, 4.8, 0);
+    lampGroup.add(floodLight);
 
     // EMERGENCY FLASHING POLICE STROBE BEACONS (Red & Blue!)
     const strobeCrossbar = new THREE.Mesh(
-      new THREE.BoxGeometry(0.95, 0.06, 0.06),
+      new THREE.BoxGeometry(1.05, 0.06, 0.06),
       this.stageTrussMat
     );
-    strobeCrossbar.position.set(0, 4.45, 0);
+    strobeCrossbar.position.set(0, 4.65, 0);
     lampGroup.add(strobeCrossbar);
 
-    // Red strobe beacon
     const redStrobe = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.08, 0.08, 0.18, 8),
+      new THREE.CylinderGeometry(0.09, 0.09, 0.20, 8),
       this.strobeRedMat
     );
-    redStrobe.position.set(-0.35, 4.56, 0);
+    redStrobe.position.set(-0.38, 4.77, 0);
     lampGroup.add(redStrobe);
 
-    // Blue strobe beacon
     const blueStrobe = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.08, 0.08, 0.18, 8),
+      new THREE.CylinderGeometry(0.09, 0.09, 0.20, 8),
       this.strobeBlueMat
     );
-    blueStrobe.position.set(0.35, 4.56, 0);
+    blueStrobe.position.set(0.38, 4.77, 0);
     lampGroup.add(blueStrobe);
 
     // Ambient police emergency strobe glow
-    const strobeLight = new THREE.PointLight(0x3b82f6, 1.2, 10);
-    strobeLight.position.set(0, 4.4, 0);
+    const strobeLight = new THREE.PointLight(0x3b82f6, 1.4, 12);
+    strobeLight.position.set(0, 4.6, 0);
     lampGroup.add(strobeLight);
 
-    // Track strobe for animated flashing in update()
     this.policeStrobes.push({
       red: redStrobe,
       blue: blueStrobe,
@@ -5919,31 +6200,33 @@ export class BangladeshProps {
       seed: Math.random() * 10
     });
 
-    // THE PROMINENT "পুলিশ চেকপোস্ট" SIGNBOARD MOUNTED ON LAMPPOST
+    // THE PROMINENT "পুলিশ চেকপোস্ট" SIGNBOARD (Double-sided, Facing Oncoming Traffic!)
     const signBoard = new THREE.Mesh(
-      new THREE.BoxGeometry(0.08, 1.25, 2.0),
+      new THREE.BoxGeometry(2.35, 1.40, 0.08),
       this.policeSignMat
     );
-    signBoard.position.set(side > 0 ? -0.25 : 0.25, 2.35, 0);
-    signBoard.rotation.y = side > 0 ? -Math.PI / 2 : Math.PI / 2;
+    signBoard.position.set(0, 2.45, 0);
+    // Face oncoming traffic directly
+    signBoard.rotation.y = side > 0 ? 0 : Math.PI;
     lampGroup.add(signBoard);
 
     // Steel mounting bracket clamps
-    [-0.4, 0.4].forEach((sy) => {
+    [-0.45, 0.45].forEach((sy) => {
       const clamp = new THREE.Mesh(
         new THREE.BoxGeometry(0.24, 0.06, 0.18),
         this.stageTrussMat
       );
-      clamp.position.set(0, 2.35 + sy, 0);
+      clamp.position.set(0, 2.45 + sy, 0);
       lampGroup.add(clamp);
     });
 
     checkpost.add(lampGroup);
 
-    // 3. Roadside Police Barricade ("POLICE • থামুন")
+    // 4. Roadside Police Barricade ("POLICE • থামুন")
     const barX = (roadWidth * 0.5 + 1.2) * side;
     const barricadeGroup = new THREE.Group();
-    barricadeGroup.position.set(barX, 0, -3.2);
+    barricadeGroup.position.set(barX, 0, -4.6);
+    barricadeGroup.rotation.y = side > 0 ? -0.15 : 0.15;
 
     // Tubular A-frame legs
     [-1.0, 1.0].forEach((bx) => {
@@ -5962,7 +6245,7 @@ export class BangladeshProps {
       barricadeGroup.add(foot);
     });
 
-    // Horizontal barrier board with red & white hazard stripes
+    // Horizontal barrier boards with red & white hazard stripes
     const barBoard = new THREE.Mesh(
       new THREE.BoxGeometry(0.06, 0.38, 2.2),
       this.policeBarricadeMat
@@ -5979,10 +6262,10 @@ export class BangladeshProps {
 
     checkpost.add(barricadeGroup);
 
-    // 4. Traffic Safety Cones (Fluorescent orange with white reflective band)
-    [-1.4, 1.4].forEach((cz) => {
+    // 5. Traffic Safety Cones (Fluorescent orange with white reflective band along taper)
+    [-5.8, -4.2, -2.6, -1.0].forEach((cz) => {
       const coneGroup = new THREE.Group();
-      coneGroup.position.set((roadWidth * 0.5 + 0.6) * side, 0, -1.8 + cz);
+      coneGroup.position.set((roadWidth * 0.5 + 0.5) * side, 0, cz);
 
       // Base
       const coneBase = new THREE.Mesh(
