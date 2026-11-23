@@ -11,6 +11,7 @@ export class BangladeshProps {
     this.initMaterials();
     this.animatedAnimals = []; // Cows, ducks, goats for frame updates
     this.smokeEmitters = [];    // Tea stall smoke
+    this.policeStrobes = [];    // Police checkpost flashing emergency strobes
   }
 
   // Optimize mobile GPUs by disabling dynamic shadow passes on roadside background props
@@ -877,6 +878,178 @@ export class BangladeshProps {
     this.lungiPlaidMat = new THREE.MeshStandardMaterial({ color: 0x0284c7, roughness: 0.8 });
     this.shirtTealMat = new THREE.MeshStandardMaterial({ color: 0x0d9488, roughness: 0.7 });
     this.shirtRedMat = new THREE.MeshStandardMaterial({ color: 0xdc2626, roughness: 0.7 });
+
+    // ========================================================
+    // Authentic Bangladesh Police Checkpost & Highway Materials
+    // ========================================================
+    this.policePantsMat = new THREE.MeshStandardMaterial({
+      color: 0x0f172a, // Bangladesh Police dark navy blue
+      roughness: 0.8
+    });
+
+    this.policeVestMat = new THREE.MeshStandardMaterial({
+      color: 0x84cc16, // High-visibility fluorescent neon lime patrol vest
+      roughness: 0.45
+    });
+
+    this.policeShirtMat = new THREE.MeshStandardMaterial({
+      color: 0x475569, // BD Police steel blue duty shirt
+      roughness: 0.7
+    });
+
+    this.policeSilverMat = new THREE.MeshStandardMaterial({
+      color: 0xf1f5f9, // Retro-reflective silver strips
+      roughness: 0.2
+    });
+
+    this.policeCapMat = new THREE.MeshStandardMaterial({
+      color: 0x090d16, // Navy blue peak cap
+      roughness: 0.5
+    });
+
+    this.goldBadgeMat = new THREE.MeshStandardMaterial({
+      color: 0xf59e0b, // Gold cap badge & buckle
+      metalness: 0.85,
+      roughness: 0.2
+    });
+
+    this.gunMetalMat = new THREE.MeshStandardMaterial({
+      color: 0x1e293b, // Gunmetal dark blued steel
+      metalness: 0.85,
+      roughness: 0.25
+    });
+
+    this.gunWoodMat = new THREE.MeshStandardMaterial({
+      color: 0x78350f, // Walnut wooden rifle furniture
+      roughness: 0.6
+    });
+
+    this.strobeRedMat = new THREE.MeshStandardMaterial({
+      color: 0xef4444,
+      emissive: 0xff0000,
+      emissiveIntensity: 2.2,
+      roughness: 0.2
+    });
+
+    this.strobeBlueMat = new THREE.MeshStandardMaterial({
+      color: 0x3b82f6,
+      emissive: 0x0066ff,
+      emissiveIntensity: 2.2,
+      roughness: 0.2
+    });
+
+    // Signboard: "পুলিশ চেকপোস্ট" (POLICE CHECK POST)
+    const policeSignCanvas = document.createElement('canvas');
+    policeSignCanvas.width = 512;
+    policeSignCanvas.height = 320;
+    const psCtx = policeSignCanvas.getContext('2d');
+    psCtx.fillStyle = '#0b192c';
+    psCtx.fillRect(0, 0, 512, 320);
+
+    // Thick retro-reflective yellow hazard border
+    psCtx.strokeStyle = '#f59e0b';
+    psCtx.lineWidth = 14;
+    psCtx.strokeRect(10, 10, 492, 300);
+
+    // Inner fine white accent line
+    psCtx.strokeStyle = '#ffffff';
+    psCtx.lineWidth = 3;
+    psCtx.strokeRect(22, 22, 468, 276);
+
+    // Top sub-banner
+    psCtx.fillStyle = '#1e3a8a';
+    psCtx.fillRect(26, 26, 460, 56);
+
+    // Top header text
+    psCtx.fillStyle = '#f59e0b';
+    psCtx.font = 'bold 24px sans-serif';
+    psCtx.textAlign = 'center';
+    psCtx.textBaseline = 'middle';
+    psCtx.fillText('★ বাংলাদেশ পুলিশ ★', 256, 54);
+
+    // Center MAIN TEXT (পুলিশ চেকপোস্ট)
+    psCtx.fillStyle = '#ffffff';
+    psCtx.font = '900 52px sans-serif';
+    psCtx.fillText('পুলিশ চেকপোস্ট', 256, 146);
+
+    // Subtitle in English
+    psCtx.fillStyle = '#38bdf8';
+    psCtx.font = 'bold 22px sans-serif';
+    psCtx.fillText('POLICE CHECK POST', 256, 202);
+
+    // Bottom warning stripe
+    psCtx.fillStyle = '#dc2626';
+    psCtx.fillRect(26, 235, 460, 58);
+    psCtx.fillStyle = '#ffffff';
+    psCtx.font = '900 24px sans-serif';
+    psCtx.fillText('গতি কমান • SLOW DOWN', 256, 264);
+
+    const policeSignTex = new THREE.CanvasTexture(policeSignCanvas);
+    policeSignTex.anisotropy = 4;
+    this.policeSignMat = new THREE.MeshStandardMaterial({
+      map: policeSignTex,
+      roughness: 0.35
+    });
+
+    // Checkpoint barricade texture
+    const pbarCanvas = document.createElement('canvas');
+    pbarCanvas.width = 512;
+    pbarCanvas.height = 128;
+    const pbarCtx = pbarCanvas.getContext('2d');
+    pbarCtx.fillStyle = '#ffffff';
+    pbarCtx.fillRect(0, 0, 512, 128);
+
+    // Diagonal red hazard stripes
+    pbarCtx.fillStyle = '#dc2626';
+    for (let x = -128; x < 640; x += 64) {
+      pbarCtx.beginPath();
+      pbarCtx.moveTo(x, 0);
+      pbarCtx.lineTo(x + 40, 0);
+      pbarCtx.lineTo(x - 24, 128);
+      pbarCtx.lineTo(x - 64, 128);
+      pbarCtx.fill();
+    }
+
+    // Center navy badge
+    pbarCtx.fillStyle = '#0f172a';
+    pbarCtx.fillRect(160, 24, 192, 80);
+    pbarCtx.strokeStyle = '#f59e0b';
+    pbarCtx.lineWidth = 4;
+    pbarCtx.strokeRect(164, 28, 184, 72);
+
+    pbarCtx.fillStyle = '#ffffff';
+    pbarCtx.font = '900 28px sans-serif';
+    pbarCtx.textAlign = 'center';
+    pbarCtx.textBaseline = 'middle';
+    pbarCtx.fillText('POLICE', 256, 52);
+    pbarCtx.fillStyle = '#f59e0b';
+    pbarCtx.font = 'bold 20px sans-serif';
+    pbarCtx.fillText('থামুন', 256, 82);
+
+    const barTex = new THREE.CanvasTexture(pbarCanvas);
+    this.policeBarricadeMat = new THREE.MeshStandardMaterial({
+      map: barTex,
+      roughness: 0.5
+    });
+
+    // Striped black/white concrete curb
+    const bwCurbCanvas = document.createElement('canvas');
+    bwCurbCanvas.width = 256;
+    bwCurbCanvas.height = 64;
+    const bwCurbCtx = bwCurbCanvas.getContext('2d');
+    bwCurbCtx.fillStyle = '#ffffff';
+    bwCurbCtx.fillRect(0, 0, 256, 64);
+    bwCurbCtx.fillStyle = '#1e293b';
+    for (let x = 0; x < 256; x += 64) {
+      bwCurbCtx.fillRect(x, 0, 32, 64);
+    }
+    const bwCurbTex = new THREE.CanvasTexture(bwCurbCanvas);
+    bwCurbTex.wrapS = THREE.RepeatWrapping;
+    bwCurbTex.repeat.set(8, 1);
+    this.curbStripeMat = new THREE.MeshStandardMaterial({
+      map: bwCurbTex,
+      roughness: 0.8
+    });
   }
 
   // ========================================================
@@ -4188,17 +4361,19 @@ export class BangladeshProps {
       fieldGroup.add(palm);
     });
 
-    // G. Campus Boundary Security Fence & Curb along Highway buffer
+    // G. Campus Boundary Security Fence with Center Gateway Opening
     const fenceGroup = new THREE.Group();
     const fenceX = -24 * side; // Far back from the road verge (leaves wide open green foreground)
-    const curb = new THREE.Mesh(
-      new THREE.BoxGeometry(0.35, 0.45, 74),
+
+    // North wing of fence (z = -35 to -3.8)
+    const curbN = new THREE.Mesh(
+      new THREE.BoxGeometry(0.35, 0.45, 31.2),
       this.concreteMat
     );
-    curb.position.set(fenceX, 0.225, 0);
-    fenceGroup.add(curb);
+    curbN.position.set(fenceX, 0.225, -19.4);
+    fenceGroup.add(curbN);
 
-    for (let fz = -35; fz <= 35; fz += 3.5) {
+    for (let fz = -35; fz <= -4.0; fz += 3.5) {
       const post = new THREE.Mesh(
         new THREE.CylinderGeometry(0.04, 0.04, 1.6, 6),
         this.stageTrussMat
@@ -4206,39 +4381,219 @@ export class BangladeshProps {
       post.position.set(fenceX, 1.0, fz);
       fenceGroup.add(post);
     }
-    const topRail = new THREE.Mesh(
-      new THREE.BoxGeometry(0.08, 0.08, 74),
+    const topRailN = new THREE.Mesh(
+      new THREE.BoxGeometry(0.08, 0.08, 31.2),
       this.stageTrussMat
     );
-    topRail.position.set(fenceX, 1.75, 0);
-    fenceGroup.add(topRail);
+    topRailN.position.set(fenceX, 1.75, -19.4);
+    fenceGroup.add(topRailN);
 
-    // Grand Campus Entrance Gate Archway at center
+    // South wing of fence (z = +3.8 to +35)
+    const curbS = new THREE.Mesh(
+      new THREE.BoxGeometry(0.35, 0.45, 31.2),
+      this.concreteMat
+    );
+    curbS.position.set(fenceX, 0.225, 19.4);
+    fenceGroup.add(curbS);
+
+    for (let fz = 4.0; fz <= 35; fz += 3.5) {
+      const post = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.04, 0.04, 1.6, 6),
+        this.stageTrussMat
+      );
+      post.position.set(fenceX, 1.0, fz);
+      fenceGroup.add(post);
+    }
+    const topRailS = new THREE.Mesh(
+      new THREE.BoxGeometry(0.08, 0.08, 31.2),
+      this.stageTrussMat
+    );
+    topRailS.position.set(fenceX, 1.75, 19.4);
+    fenceGroup.add(topRailS);
+
+    // H. CONNECTING ACCESS ROAD / DRIVEWAY FROM HIGHWAY INTO UIU GATE ("গেটের রাস্তা থেকে গেট দিয়ে ঢোকার একটা ছোট রাস্তা")
+    const accessRoadGroup = new THREE.Group();
+
+    // Driveway asphalt surface (23.5m long along X, 6.4m wide along Z)
+    const drivewayGeo = new THREE.PlaneGeometry(23.5, 6.4);
+    drivewayGeo.rotateX(-Math.PI / 2);
+    const driveway = new THREE.Mesh(drivewayGeo, this.roadMaterial);
+    driveway.position.set(29.75, 0.012, 0);
+    driveway.receiveShadow = true;
+    accessRoadGroup.add(driveway);
+
+    // Yellow center divider line on access road
+    const divLineGeo = new THREE.PlaneGeometry(22.0, 0.20);
+    divLineGeo.rotateX(-Math.PI / 2);
+    const divLine = new THREE.Mesh(divLineGeo, this.stageBaseYellowMat);
+    divLine.position.set(29.75, 0.015, 0);
+    accessRoadGroup.add(divLine);
+
+    // Highway Turn-Off Curved Flares (Flaring out at highway intersection x = 41.5)
+    [-3.8, 3.8].forEach((fz) => {
+      const flareGeo = new THREE.PlaneGeometry(4.0, 1.8);
+      flareGeo.rotateX(-Math.PI / 2);
+      const flare = new THREE.Mesh(flareGeo, this.roadMaterial);
+      flare.position.set(40.0, 0.011, fz);
+      accessRoadGroup.add(flare);
+    });
+
+    // Striped black/white concrete curbs along both sides of the access road (at z = -3.3 and z = +3.3)
+    [-3.3, 3.3].forEach((cz) => {
+      const curbMesh = new THREE.Mesh(
+        new THREE.BoxGeometry(23.5, 0.25, 0.25),
+        this.curbStripeMat
+      );
+      curbMesh.position.set(29.75, 0.125, cz);
+      accessRoadGroup.add(curbMesh);
+    });
+
+    // White painted Stop Line right before the gate (at x = 24.8)
+    const stopLineGeo = new THREE.PlaneGeometry(0.40, 5.8);
+    stopLineGeo.rotateX(-Math.PI / 2);
+    const stopLine = new THREE.Mesh(stopLineGeo, this.policeSilverMat);
+    stopLine.position.set(24.8, 0.015, 0);
+    accessRoadGroup.add(stopLine);
+
+    fieldGroup.add(accessRoadGroup);
+
+    // I. GRAND UIU ENTRANCE ARCH GATE WITH "UIU" ON TOP ("ওই গেটের উপরে লেখা থাকবে UIU")
     const gateGroup = new THREE.Group();
     gateGroup.position.set(fenceX, 0, 0);
 
-    [-3.2, 3.2].forEach((gx) => {
+    // 1. Twin Monumental Brick & Stone Pylons
+    [-3.5, 3.5].forEach((gx) => {
       const pillar = new THREE.Mesh(
-        new THREE.BoxGeometry(0.8, 5.0, 0.8),
+        new THREE.BoxGeometry(1.0, 5.4, 1.0),
         this.brickMat
       );
-      pillar.position.set(0, 2.5, gx);
+      pillar.position.set(0, 2.7, gx);
       gateGroup.add(pillar);
+
+      // Stone base plinth
+      const plinth = new THREE.Mesh(
+        new THREE.BoxGeometry(1.25, 0.8, 1.25),
+        this.concreteMat
+      );
+      plinth.position.set(0, 0.4, gx);
+      gateGroup.add(plinth);
+
+      // Stone capital / cap
+      const cap = new THREE.Mesh(
+        new THREE.BoxGeometry(1.2, 0.35, 1.2),
+        this.concreteMat
+      );
+      cap.position.set(0, 5.5, gx);
+      gateGroup.add(cap);
     });
 
+    // 2. Heavy Arch Crossbeam across the gate
     const gBeam = new THREE.Mesh(
-      new THREE.BoxGeometry(0.45, 1.0, 7.2),
+      new THREE.BoxGeometry(0.55, 1.0, 7.8),
       this.stageTrussMat
     );
-    gBeam.position.set(0, 4.6, 0);
+    gBeam.position.set(0, 4.8, 0);
     gateGroup.add(gBeam);
 
+    // 3. Entrance Signboard Plate under the beam
     const gPlate = new THREE.Mesh(
-      new THREE.BoxGeometry(0.12, 0.9, 6.4),
+      new THREE.BoxGeometry(0.14, 0.95, 6.8),
       this.uiuGateSignMat
     );
-    gPlate.position.set(side > 0 ? -0.1 : 0.1, 4.6, 0);
+    gPlate.position.set(side > 0 ? -0.1 : 0.1, 4.8, 0);
     gateGroup.add(gPlate);
+
+    // 4. THE PROMINENT "UIU" TOP CROWN SIGNAGE ON TOP OF THE GATE ARCH ("ওই গেটের উপরে লেখা থাকবে UIU")
+    const gateCrownGroup = new THREE.Group();
+    gateCrownGroup.position.set(0, 5.9, 0);
+
+    // Charcoal backplate pediment
+    const crownBacking = new THREE.Mesh(
+      new THREE.BoxGeometry(0.35, 1.4, 4.4),
+      new THREE.MeshStandardMaterial({ color: 0x090d16, roughness: 0.3 })
+    );
+    gateCrownGroup.add(crownBacking);
+
+    // Gold decorative border trim
+    const crownTrim = new THREE.Mesh(
+      new THREE.BoxGeometry(0.38, 1.48, 4.48),
+      this.goldBadgeMat
+    );
+    crownTrim.position.set(0, 0, 0);
+    gateCrownGroup.add(crownTrim);
+
+    // 3D GLOWING VIBRANT NEON SCARLET LETTERS: "UIU" ON TOP OF THE GATE!
+    const gateNeonMat = new THREE.MeshStandardMaterial({
+      color: 0xff1744,
+      emissive: 0xff1744,
+      emissiveIntensity: 1.8,
+      roughness: 0.2
+    });
+
+    const addGateTube = (w, h, d, px, py, pz) => {
+      const tube = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), gateNeonMat);
+      tube.position.set(px, py, pz);
+      gateCrownGroup.add(tube);
+    };
+
+    const frontOffset = side > 0 ? -0.22 : 0.22;
+
+    // Letter 'U' (North side, z = -1.3)
+    addGateTube(0.12, 0.85, 0.14, frontOffset, 0, -1.65); // left leg
+    addGateTube(0.12, 0.85, 0.14, frontOffset, 0, -0.95); // right leg
+    addGateTube(0.12, 0.14, 0.84, frontOffset, -0.38, -1.30); // bottom bar
+
+    // Letter 'I' (Center, z = 0)
+    addGateTube(0.12, 0.85, 0.16, frontOffset, 0, 0); // center bar
+    addGateTube(0.12, 0.14, 0.55, frontOffset, 0.38, 0); // top serif
+    addGateTube(0.12, 0.14, 0.55, frontOffset, -0.38, 0); // bottom serif
+
+    // Letter 'U' (South side, z = +1.3)
+    addGateTube(0.12, 0.85, 0.14, frontOffset, 0, 0.95); // left leg
+    addGateTube(0.12, 0.85, 0.14, frontOffset, 0, 1.65); // right leg
+    addGateTube(0.12, 0.14, 0.84, frontOffset, -0.38, 1.30); // bottom bar
+
+    // Red neon point light for ambient gate illumination
+    const gateLight = new THREE.PointLight(0xff1744, 1.4, 12);
+    gateLight.position.set(frontOffset * 2, 0, 0);
+    gateCrownGroup.add(gateLight);
+
+    gateGroup.add(gateCrownGroup);
+
+    // 5. Security Guard Booth & Drop-Arm Boom Barrier
+    const guardBooth = new THREE.Mesh(
+      new THREE.BoxGeometry(1.8, 2.5, 1.8),
+      this.concreteMat
+    );
+    guardBooth.position.set(1.5, 1.25, -4.5);
+    gateGroup.add(guardBooth);
+
+    // Booth window
+    const boothWin = new THREE.Mesh(
+      new THREE.BoxGeometry(0.10, 0.9, 1.2),
+      this.uiuGlassMat
+    );
+    boothWin.position.set(frontOffset, 1.4, -4.5);
+    gateGroup.add(boothWin);
+
+    // Red & white striped drop-arm security barrier pole
+    const boomBarrier = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.045, 0.045, 4.0, 6),
+      this.policeBarricadeMat
+    );
+    boomBarrier.rotateX(Math.PI / 2);
+    boomBarrier.position.set(0.6, 0.95, -1.2);
+    gateGroup.add(boomBarrier);
+
+    // Campus security guard standing on duty
+    const guardFigure = this.createFigure({
+      shirtMat: this.policeShirtMat,
+      pantsMat: this.policePantsMat,
+      isSitting: false
+    });
+    guardFigure.position.set(0.8, 0, -3.2);
+    guardFigure.rotation.y = side > 0 ? -Math.PI / 2 : Math.PI / 2;
+    gateGroup.add(guardFigure);
 
     fenceGroup.add(gateGroup);
     fieldGroup.add(fenceGroup);
@@ -4909,6 +5264,457 @@ export class BangladeshProps {
     return temple;
   }
 
+  // ========================================================
+  // 19. AUTHENTIC 3D BANGLADESHI TRAFFIC POLICE OFFICER
+  // - Alert duty stance on highway road shoulder
+  // - Authentic Bangladesh Police uniform: Navy blue trousers, light steel-blue shirt
+  // - Fluorescent high-visibility neon patrol vest with retro-reflective silver stripes
+  // - Bangladesh Police peaked cap with gold emblem crest & aviator sunglasses
+  // - Duty leather belt, pistol holster, ammo pouch, and service boots
+  // - Standard service rifle / submachine gun ("hat ee gun") held alertly across chest on duty!
+  // ========================================================
+  createTrafficPoliceOfficer() {
+    const officer = new THREE.Group();
+    officer.name = 'bangladeshi_police_officer';
+    officer.scale.set(1.15, 1.15, 1.15);
+
+    // 1. Black Combat Boots
+    [-0.10, 0.10].forEach((bx) => {
+      const boot = new THREE.Mesh(
+        new THREE.BoxGeometry(0.12, 0.16, 0.24),
+        this.policeCapMat
+      );
+      boot.position.set(bx, 0.08, 0.02);
+      officer.add(boot);
+    });
+
+    // 2. Navy Blue Trousers / Legs
+    [-0.09, 0.09].forEach((lx) => {
+      const leg = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.065, 0.055, 0.80, 6),
+        this.policePantsMat
+      );
+      leg.position.set(lx, 0.52, 0);
+      officer.add(leg);
+    });
+
+    // 3. Duty Belt with Buckle & Holster
+    const belt = new THREE.Mesh(
+      new THREE.BoxGeometry(0.38, 0.08, 0.24),
+      this.policeCapMat
+    );
+    belt.position.set(0, 0.94, 0);
+    officer.add(belt);
+
+    const buckle = new THREE.Mesh(
+      new THREE.BoxGeometry(0.08, 0.07, 0.02),
+      this.goldBadgeMat
+    );
+    buckle.position.set(0, 0.94, 0.125);
+    officer.add(buckle);
+
+    // Pistol holster on right hip
+    const holster = new THREE.Mesh(
+      new THREE.BoxGeometry(0.07, 0.18, 0.09),
+      this.policeCapMat
+    );
+    holster.position.set(0.20, 0.88, 0);
+    officer.add(holster);
+
+    // Ammo pouch on left hip
+    const pouch = new THREE.Mesh(
+      new THREE.BoxGeometry(0.06, 0.10, 0.08),
+      this.policeCapMat
+    );
+    pouch.position.set(-0.20, 0.92, 0);
+    officer.add(pouch);
+
+    // 4. Torso with High-Visibility Neon Patrol Vest
+    // Inner shirt (steel blue sleeves/collar)
+    const torso = new THREE.Mesh(
+      new THREE.BoxGeometry(0.38, 0.52, 0.23),
+      this.policeShirtMat
+    );
+    torso.position.set(0, 1.20, 0);
+    officer.add(torso);
+
+    // Fluorescent neon yellow-green reflective patrol vest
+    const vest = new THREE.Mesh(
+      new THREE.BoxGeometry(0.39, 0.44, 0.24),
+      this.policeVestMat
+    );
+    vest.position.set(0, 1.18, 0);
+    officer.add(vest);
+
+    // Silver retro-reflective stripes across chest and waist
+    [1.10, 1.28].forEach((ry) => {
+      const stripe = new THREE.Mesh(
+        new THREE.BoxGeometry(0.40, 0.045, 0.245),
+        this.policeSilverMat
+      );
+      stripe.position.set(0, ry, 0);
+      officer.add(stripe);
+    });
+
+    // Shoulder rank epaulets
+    [-0.18, 0.18].forEach((ex) => {
+      const epaulet = new THREE.Mesh(
+        new THREE.BoxGeometry(0.08, 0.02, 0.14),
+        this.policePantsMat
+      );
+      epaulet.position.set(ex, 1.45, 0);
+      officer.add(epaulet);
+
+      const pip = new THREE.Mesh(
+        new THREE.SphereGeometry(0.015, 4, 4),
+        this.goldBadgeMat
+      );
+      pip.position.set(ex, 1.465, 0);
+      officer.add(pip);
+    });
+
+    // 5. Head, Sunglasses & Police Peaked Cap
+    const head = new THREE.Mesh(
+      new THREE.SphereGeometry(0.12, 8, 8),
+      this.skinMat
+    );
+    head.position.set(0, 1.54, 0);
+    officer.add(head);
+
+    // Sunglasses
+    const glasses = new THREE.Mesh(
+      new THREE.BoxGeometry(0.16, 0.04, 0.06),
+      this.policeCapMat
+    );
+    glasses.position.set(0, 1.56, 0.10);
+    officer.add(glasses);
+
+    // Police Cap
+    const capBase = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.135, 0.13, 0.07, 8),
+      this.policeCapMat
+    );
+    capBase.position.set(0, 1.63, 0);
+    officer.add(capBase);
+
+    // Cap Visor / Peak
+    const visor = new THREE.Mesh(
+      new THREE.BoxGeometry(0.16, 0.02, 0.09),
+      this.policeCapMat
+    );
+    visor.position.set(0, 1.60, 0.13);
+    visor.rotation.x = 0.25;
+    officer.add(visor);
+
+    // Gold Police Cap Badge
+    const badge = new THREE.Mesh(
+      new THREE.BoxGeometry(0.04, 0.05, 0.015),
+      this.goldBadgeMat
+    );
+    badge.position.set(0, 1.65, 0.125);
+    officer.add(badge);
+
+    // 6. 3D DUTY SERVICE RIFLE ("hat ee gun") & ALERT POSTURE
+    // Rifle held alertly across the chest with both hands
+    const gunGroup = new THREE.Group();
+    gunGroup.position.set(0, 1.15, 0.22);
+    gunGroup.rotation.set(-0.25, 0.25, -0.45);
+
+    // Receiver body
+    const receiver = new THREE.Mesh(
+      new THREE.BoxGeometry(0.06, 0.10, 0.44),
+      this.gunMetalMat
+    );
+    gunGroup.add(receiver);
+
+    // Wooden stock
+    const stock = new THREE.Mesh(
+      new THREE.BoxGeometry(0.05, 0.09, 0.24),
+      this.gunWoodMat
+    );
+    stock.position.set(0, -0.01, 0.32);
+    gunGroup.add(stock);
+
+    // Barrel with flash hider
+    const barrel = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.016, 0.016, 0.40, 6),
+      this.gunMetalMat
+    );
+    barrel.rotateX(Math.PI / 2);
+    barrel.position.set(0, 0.015, -0.40);
+    gunGroup.add(barrel);
+
+    // Front sight post
+    const frontSight = new THREE.Mesh(
+      new THREE.BoxGeometry(0.012, 0.04, 0.02),
+      this.gunMetalMat
+    );
+    frontSight.position.set(0, 0.04, -0.52);
+    gunGroup.add(frontSight);
+
+    // Wooden foregrip / handguard
+    const foregrip = new THREE.Mesh(
+      new THREE.BoxGeometry(0.055, 0.07, 0.22),
+      this.gunWoodMat
+    );
+    foregrip.position.set(0, -0.01, -0.20);
+    gunGroup.add(foregrip);
+
+    // Curved banana magazine
+    const magazine = new THREE.Mesh(
+      new THREE.BoxGeometry(0.04, 0.16, 0.08),
+      this.gunMetalMat
+    );
+    magazine.position.set(0, -0.11, -0.06);
+    magazine.rotation.x = -0.25;
+    gunGroup.add(magazine);
+
+    // Rifle sling strap
+    const sling = new THREE.Mesh(
+      new THREE.BoxGeometry(0.02, 0.02, 0.60),
+      this.policePantsMat
+    );
+    sling.position.set(0, -0.06, 0.05);
+    gunGroup.add(sling);
+
+    officer.add(gunGroup);
+
+    // Arms holding rifle:
+    // Right arm on pistol grip/trigger
+    const rightArm = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.045, 0.04, 0.42, 6),
+      this.policeShirtMat
+    );
+    rightArm.position.set(0.18, 1.18, 0.10);
+    rightArm.rotation.set(-0.85, 0.20, -0.40);
+    officer.add(rightArm);
+
+    // Right hand gripping
+    const rightHand = new THREE.Mesh(
+      new THREE.SphereGeometry(0.04, 6, 6),
+      this.skinMat
+    );
+    rightHand.position.set(0.08, 1.08, 0.24);
+    officer.add(rightHand);
+
+    // Left arm reaching across to support foregrip
+    const leftArm = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.045, 0.04, 0.44, 6),
+      this.policeShirtMat
+    );
+    leftArm.position.set(-0.16, 1.14, 0.12);
+    leftArm.rotation.set(-0.75, -0.35, 0.70);
+    officer.add(leftArm);
+
+    // Left hand gripping barrel/foregrip
+    const leftHand = new THREE.Mesh(
+      new THREE.SphereGeometry(0.04, 6, 6),
+      this.skinMat
+    );
+    leftHand.position.set(-0.06, 1.20, 0.28);
+    officer.add(leftHand);
+
+    this.applyShadow(officer);
+    return officer;
+  }
+
+  // ========================================================
+  // 20. AUTHENTIC BANGLADESH POLICE HIGHWAY CHECKPOST
+  // - Located directly before the river bridge ("road ee bridge er shamnee")
+  // - 3D Police officer standing on roadside shoulder with service rifle on duty
+  // - Lamppost with street floodlight, twin flashing emergency red/blue strobe beacons
+  // - Prominent double-sided signboard: "পুলিশ চেকপোস্ট" (POLICE CHECK POST)
+  // - Red & white diagonal striped checkpoint barricade & traffic cones
+  // ========================================================
+  createPoliceCheckpost(side = 1, roadWidth = 13.0) {
+    const checkpost = new THREE.Group();
+    checkpost.name = 'bangladesh_police_checkpost';
+
+    const shoulderX = (roadWidth * 0.5 + 1.8) * side;
+
+    // 1. Authentic 3D Bangladeshi Police Officer on Duty
+    const officer = this.createTrafficPoliceOfficer();
+    officer.position.set(shoulderX, 0, 0);
+    // Face oncoming traffic along the road
+    officer.rotation.y = side > 0 ? (Math.PI * 0.88) : (Math.PI * 0.12);
+    checkpost.add(officer);
+
+    // 2. Lamppost with "পুলিশ চেকপোস্ট" Signboard & Flashing Police Strobes
+    const lampX = (roadWidth * 0.5 + 3.2) * side;
+    const lampGroup = new THREE.Group();
+    lampGroup.position.set(lampX, 0, 1.8);
+
+    // Concrete base pedestal
+    const basePlinth = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.32, 0.38, 0.55, 8),
+      this.concreteMat
+    );
+    basePlinth.position.y = 0.275;
+    lampGroup.add(basePlinth);
+
+    // Steel octagonal lamppost mast (4.5m tall)
+    const pole = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.07, 0.10, 4.5, 8),
+      this.stageTrussMat
+    );
+    pole.position.y = 2.45;
+    lampGroup.add(pole);
+
+    // Top curved lamppost arm extending toward road
+    const armGeo = new THREE.CylinderGeometry(0.04, 0.04, 1.6, 6);
+    armGeo.rotateZ(side > 0 ? -Math.PI / 3 : Math.PI / 3);
+    const arm = new THREE.Mesh(armGeo, this.stageTrussMat);
+    arm.position.set(side > 0 ? -0.65 : 0.65, 4.8, 0);
+    lampGroup.add(arm);
+
+    // Street floodlight head fixture
+    const lampHead = new THREE.Mesh(
+      new THREE.BoxGeometry(0.35, 0.12, 0.60),
+      this.stageTrussMat
+    );
+    lampHead.position.set(side > 0 ? -1.3 : 1.3, 4.95, 0);
+    lampGroup.add(lampHead);
+
+    const floodLens = new THREE.Mesh(
+      new THREE.PlaneGeometry(0.30, 0.52),
+      new THREE.MeshBasicMaterial({ color: 0xfffbeb })
+    );
+    floodLens.rotateX(Math.PI / 2);
+    floodLens.position.set(side > 0 ? -1.3 : 1.3, 4.88, 0);
+    lampGroup.add(floodLens);
+
+    // EMERGENCY FLASHING POLICE STROBE BEACONS (Red & Blue!)
+    const strobeCrossbar = new THREE.Mesh(
+      new THREE.BoxGeometry(0.95, 0.06, 0.06),
+      this.stageTrussMat
+    );
+    strobeCrossbar.position.set(0, 4.45, 0);
+    lampGroup.add(strobeCrossbar);
+
+    // Red strobe beacon
+    const redStrobe = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.08, 0.08, 0.18, 8),
+      this.strobeRedMat
+    );
+    redStrobe.position.set(-0.35, 4.56, 0);
+    lampGroup.add(redStrobe);
+
+    // Blue strobe beacon
+    const blueStrobe = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.08, 0.08, 0.18, 8),
+      this.strobeBlueMat
+    );
+    blueStrobe.position.set(0.35, 4.56, 0);
+    lampGroup.add(blueStrobe);
+
+    // Ambient police emergency strobe glow
+    const strobeLight = new THREE.PointLight(0x3b82f6, 1.2, 10);
+    strobeLight.position.set(0, 4.4, 0);
+    lampGroup.add(strobeLight);
+
+    // Track strobe for animated flashing in update()
+    this.policeStrobes.push({
+      red: redStrobe,
+      blue: blueStrobe,
+      light: strobeLight,
+      seed: Math.random() * 10
+    });
+
+    // THE PROMINENT "পুলিশ চেকপোস্ট" SIGNBOARD MOUNTED ON LAMPPOST
+    const signBoard = new THREE.Mesh(
+      new THREE.BoxGeometry(0.08, 1.25, 2.0),
+      this.policeSignMat
+    );
+    signBoard.position.set(side > 0 ? -0.25 : 0.25, 2.35, 0);
+    signBoard.rotation.y = side > 0 ? -Math.PI / 2 : Math.PI / 2;
+    lampGroup.add(signBoard);
+
+    // Steel mounting bracket clamps
+    [-0.4, 0.4].forEach((sy) => {
+      const clamp = new THREE.Mesh(
+        new THREE.BoxGeometry(0.24, 0.06, 0.18),
+        this.stageTrussMat
+      );
+      clamp.position.set(0, 2.35 + sy, 0);
+      lampGroup.add(clamp);
+    });
+
+    checkpost.add(lampGroup);
+
+    // 3. Roadside Police Barricade ("POLICE • থামুন")
+    const barX = (roadWidth * 0.5 + 1.2) * side;
+    const barricadeGroup = new THREE.Group();
+    barricadeGroup.position.set(barX, 0, -3.2);
+
+    // Tubular A-frame legs
+    [-1.0, 1.0].forEach((bx) => {
+      const bLeg = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.03, 0.03, 1.05, 6),
+        this.stageTrussMat
+      );
+      bLeg.position.set(0, 0.52, bx);
+      barricadeGroup.add(bLeg);
+
+      const foot = new THREE.Mesh(
+        new THREE.BoxGeometry(0.40, 0.04, 0.08),
+        this.stageTrussMat
+      );
+      foot.position.set(0, 0.02, bx);
+      barricadeGroup.add(foot);
+    });
+
+    // Horizontal barrier board with red & white hazard stripes
+    const barBoard = new THREE.Mesh(
+      new THREE.BoxGeometry(0.06, 0.38, 2.2),
+      this.policeBarricadeMat
+    );
+    barBoard.position.set(0, 0.72, 0);
+    barricadeGroup.add(barBoard);
+
+    const barBoardLower = new THREE.Mesh(
+      new THREE.BoxGeometry(0.05, 0.22, 2.2),
+      this.policeBarricadeMat
+    );
+    barBoardLower.position.set(0, 0.34, 0);
+    barricadeGroup.add(barBoardLower);
+
+    checkpost.add(barricadeGroup);
+
+    // 4. Traffic Safety Cones (Fluorescent orange with white reflective band)
+    [-1.4, 1.4].forEach((cz) => {
+      const coneGroup = new THREE.Group();
+      coneGroup.position.set((roadWidth * 0.5 + 0.6) * side, 0, -1.8 + cz);
+
+      // Base
+      const coneBase = new THREE.Mesh(
+        new THREE.BoxGeometry(0.36, 0.03, 0.36),
+        this.marigoldOrangeMat
+      );
+      coneBase.position.y = 0.015;
+      coneGroup.add(coneBase);
+
+      // Orange Cone
+      const coneBody = new THREE.Mesh(
+        new THREE.ConeGeometry(0.14, 0.62, 8),
+        this.marigoldOrangeMat
+      );
+      coneBody.position.y = 0.32;
+      coneGroup.add(coneBody);
+
+      // Reflective white band
+      const whiteBand = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.085, 0.105, 0.15, 8),
+        this.policeSilverMat
+      );
+      whiteBand.position.y = 0.32;
+      coneGroup.add(whiteBand);
+
+      checkpost.add(coneGroup);
+    });
+
+    return checkpost;
+  }
+
   // Update animal animations, environmental motion, and smoke every frame
   update(time) {
     // 1. Animals & Figures (Cows chewing/grazing, ducks, romantic couple, smoking guys, dingi boats)
@@ -4971,6 +5777,19 @@ export class BangladeshProps {
       if (group.userData && group.userData.light) {
         const seed = group.userData.seed || 0;
         group.userData.light.intensity = 0.85 + Math.sin(time * 7.5 + seed) * 0.35;
+      }
+    });
+
+    // 3. Police Checkpost Flashing Emergency Strobes (Alternating Red & Blue)
+    this.policeStrobes.forEach((strobe) => {
+      const flash = Math.sin(time * 12.0 + strobe.seed);
+      if (strobe.red && strobe.blue) {
+        strobe.red.material.emissiveIntensity = flash > 0 ? 2.5 : 0.2;
+        strobe.blue.material.emissiveIntensity = flash <= 0 ? 2.5 : 0.2;
+      }
+      if (strobe.light) {
+        strobe.light.color.setHex(flash > 0 ? 0xef4444 : 0x3b82f6);
+        strobe.light.intensity = 0.8 + Math.abs(flash) * 0.8;
       }
     });
   }

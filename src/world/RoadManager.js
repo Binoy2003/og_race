@@ -431,6 +431,16 @@ export class RoadManager {
       gantry.position.set(0, 0, -20);
       group.add(gantry);
     }
+
+    // L. AUTHENTIC BANGLADESH POLICE CHECKPOST & TRAFFIC POLICE OFFICER (User Request!)
+    // Spawns right in front of the bridge approach ("road ee bridge er shamnee")
+    // Features 3D Bangladeshi police officer on duty with rifle, lamppost with "পুলিশ চেকপোস্ট" signboard & flashing strobes!
+    if (!isBridge && index % 4 === 2) {
+      const policeSide = 1; // Right side road shoulder where traffic approaches
+      const checkpost = p.createPoliceCheckpost(policeSide, this.roadWidth);
+      checkpost.position.set(0, 0, -8);
+      group.add(checkpost);
+    }
   }
 
   // Update segments and rural animations as player moves forward along -Z
