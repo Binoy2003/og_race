@@ -795,7 +795,7 @@ body:not(.game-playing) #mobile-controls {
   display: none !important;
 }
 
-/* Three-Zone Layout: Left (Steer Left), Center (Boost/Gas), Right (Steer Right) */
+/* Two-Zone Layout: Left (Boost/Gas), Right (Steer Left & Right) */
 .touch-col {
   display: flex;
   align-items: center;
@@ -809,12 +809,10 @@ body:not(.game-playing) #mobile-controls {
   justify-content: flex-start;
 }
 
-.touch-col-center {
-  justify-content: center;
-  flex: 1;
-}
-
 .touch-col-right {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
   justify-content: flex-end;
 }
 
@@ -1169,10 +1167,13 @@ body:not(.game-playing) #mobile-controls {
     height: 7px;
   }
 
-  /* Mobile Touch Buttons: Ergonomic 3-Zone Layout */
+  /* Mobile Touch Buttons: Left (Boost) & Right (Steer Left & Right) */
   #mobile-controls {
     bottom: max(0.9rem, env(safe-area-inset-bottom));
     padding: 0 max(0.6rem, env(safe-area-inset-right)) 0 max(0.6rem, env(safe-area-inset-left));
+  }
+  .touch-col-right {
+    gap: 0.65rem;
   }
   .touch-btn.steer-btn {
     width: 64px;
@@ -1181,10 +1182,10 @@ body:not(.game-playing) #mobile-controls {
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.55);
   }
   .touch-btn.nitro-btn {
-    width: 82px;
-    height: 58px;
-    font-size: 0.76rem;
-    border-radius: 29px;
+    width: 84px;
+    height: 62px;
+    font-size: 0.78rem;
+    border-radius: 31px;
     border-width: 1.8px;
   }
 
@@ -1353,10 +1354,13 @@ body:not(.game-playing) #mobile-controls {
     width: 110px;
   }
 
-  /* Touch controls in Landscape: Ergonomic 3-Zone */
+  /* Touch controls in Landscape: Left (Boost) & Right (Steer Left & Right) */
   #mobile-controls {
     bottom: max(0.5rem, env(safe-area-inset-bottom));
     padding: 0 max(0.8rem, env(safe-area-inset-right)) 0 max(0.8rem, env(safe-area-inset-left));
+  }
+  .touch-col-right {
+    gap: 0.5rem;
   }
   .touch-btn.steer-btn {
     width: 56px;
@@ -1364,9 +1368,9 @@ body:not(.game-playing) #mobile-controls {
     font-size: 1.3rem;
   }
   .touch-btn.nitro-btn {
-    width: 74px;
-    height: 50px;
+    width: 76px;
+    height: 52px;
     font-size: 0.72rem;
-    border-radius: 25px;
+    border-radius: 26px;
   }
 }

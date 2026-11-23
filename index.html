@@ -244,7 +244,7 @@
             <div class="ctrl-keys"><kbd>P</kbd> or <kbd>Esc</kbd></div>
           </div>
           <div class="ctrl-row" style="border-bottom: none; margin-top: 0.8rem; font-size: 0.82rem; color: var(--text-secondary);">
-            <span>📱 On Mobile: Left (◀), Right (▶) and Center BOOST (🔥) buttons!</span>
+            <span>📱 On Mobile: Left thumb BOOST (🔥), Right thumb Steering (◀ ▶)!</span>
           </div>
         </div>
       </div>
@@ -355,20 +355,16 @@
       </div>
     </div>
 
-    <!-- 5. ON-SCREEN TOUCH BUTTONS FOR MOBILE (Left: Left, Center: Boost/Gas, Right: Right) -->
+    <!-- 5. ON-SCREEN TOUCH BUTTONS FOR MOBILE (Left: Boost, Right: Steer Left & Steer Right) -->
     <div id="mobile-controls">
-      <!-- Left side: Steer Left Button -->
+      <!-- Left side: Boost / Gas Button ONLY -->
       <div class="touch-col touch-col-left">
-        <button id="btn-touch-left" class="touch-btn steer-btn" aria-label="Steer Left">◀</button>
-      </div>
-
-      <!-- Center: Boost / Gas Button -->
-      <div class="touch-col touch-col-center">
         <button id="btn-touch-nitro" class="touch-btn nitro-btn" aria-label="Nitro Boost">🔥 BOOST</button>
       </div>
 
-      <!-- Right side: Steer Right Button -->
+      <!-- Right side: Both Steer Left (◀) and Steer Right (▶) Buttons -->
       <div class="touch-col touch-col-right">
+        <button id="btn-touch-left" class="touch-btn steer-btn" aria-label="Steer Left">◀</button>
         <button id="btn-touch-right" class="touch-btn steer-btn" aria-label="Steer Right">▶</button>
       </div>
     </div>

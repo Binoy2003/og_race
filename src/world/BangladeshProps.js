@@ -1050,6 +1050,98 @@ export class BangladeshProps {
       map: bwCurbTex,
       roughness: 0.8
     });
+
+    // ========================================================
+    // Authentic UIU Shuttle Bus Materials (Photo Reference!)
+    // ========================================================
+    this.uiuBusOrangeMat = new THREE.MeshStandardMaterial({
+      color: 0xea580c, // Official UIU Shuttle Bus vibrant orange
+      roughness: 0.35,
+      metalness: 0.1
+    });
+
+    this.uiuBusGlassMat = new THREE.MeshStandardMaterial({
+      color: 0x090d16, // Dark tinted panoramic bus windows
+      roughness: 0.12,
+      metalness: 0.85
+    });
+
+    this.uiuBusBumperMat = new THREE.MeshStandardMaterial({
+      color: 0x1f2937, // Charcoal bumper
+      roughness: 0.65
+    });
+
+    this.tireMat = new THREE.MeshStandardMaterial({
+      color: 0x111827, // Rubber tires
+      roughness: 0.9
+    });
+
+    this.rimMat = new THREE.MeshStandardMaterial({
+      color: 0x94a3b8, // Silver alloy rims
+      metalness: 0.8,
+      roughness: 0.3
+    });
+
+    // Side livery decal canvas (1024x256 HD)
+    const busSideCanvas = document.createElement('canvas');
+    busSideCanvas.width = 1024;
+    busSideCanvas.height = 256;
+    const bsCtx = busSideCanvas.getContext('2d');
+    // Base vibrant orange
+    bsCtx.fillStyle = '#ea580c';
+    bsCtx.fillRect(0, 0, 1024, 256);
+
+    // Aerodynamic curved white swoosh wave along lower body
+    bsCtx.fillStyle = '#ffffff';
+    bsCtx.beginPath();
+    bsCtx.moveTo(0, 190);
+    bsCtx.bezierCurveTo(300, 190, 600, 160, 1024, 130);
+    bsCtx.lineTo(1024, 150);
+    bsCtx.bezierCurveTo(600, 180, 300, 210, 0, 210);
+    bsCtx.closePath();
+    bsCtx.fill();
+
+    // Secondary silver-grey accent swoosh wave
+    bsCtx.fillStyle = '#cbd5e1';
+    bsCtx.beginPath();
+    bsCtx.moveTo(0, 205);
+    bsCtx.bezierCurveTo(320, 205, 620, 175, 1024, 145);
+    bsCtx.lineTo(1024, 162);
+    bsCtx.bezierCurveTo(620, 192, 320, 222, 0, 222);
+    bsCtx.closePath();
+    bsCtx.fill();
+
+    // UIU Emblem Shield Crest (at x = 440, y = 136)
+    bsCtx.fillStyle = '#ffffff';
+    bsCtx.beginPath();
+    bsCtx.arc(440, 136, 22, 0, Math.PI * 2);
+    bsCtx.fill();
+    bsCtx.strokeStyle = '#dc2626';
+    bsCtx.lineWidth = 4;
+    bsCtx.stroke();
+    bsCtx.fillStyle = '#dc2626';
+    bsCtx.font = '900 16px sans-serif';
+    bsCtx.textAlign = 'center';
+    bsCtx.textBaseline = 'middle';
+    bsCtx.fillText('UIU', 440, 136);
+
+    // Text: UNITED INTERNATIONAL UNIVERSITY (Photo Match!)
+    bsCtx.fillStyle = '#ffffff';
+    bsCtx.font = 'bold 24px sans-serif';
+    bsCtx.textAlign = 'left';
+    bsCtx.fillText('UNITED INTERNATIONAL UNIVERSITY', 475, 130);
+
+    // Text: QUEST FOR EXCELLENCE
+    bsCtx.fillStyle = '#fde047';
+    bsCtx.font = 'bold 15px sans-serif';
+    bsCtx.fillText('QUEST FOR EXCELLENCE • UIU SHUTTLE BUS', 475, 154);
+
+    const busSideTex = new THREE.CanvasTexture(busSideCanvas);
+    busSideTex.anisotropy = 4;
+    this.uiuBusSideMat = new THREE.MeshStandardMaterial({
+      map: busSideTex,
+      roughness: 0.35
+    });
   }
 
   // ========================================================
@@ -4411,55 +4503,17 @@ export class BangladeshProps {
     topRailS.position.set(fenceX, 1.75, 19.4);
     fenceGroup.add(topRailS);
 
-    // H. CONNECTING ACCESS ROAD / DRIVEWAY FROM HIGHWAY INTO UIU GATE ("গেটের রাস্তা থেকে গেট দিয়ে ঢোকার একটা ছোট রাস্তা")
-    const accessRoadGroup = new THREE.Group();
-
-    // Driveway asphalt surface (23.5m long along X, 6.4m wide along Z)
-    const drivewayGeo = new THREE.PlaneGeometry(23.5, 6.4);
-    drivewayGeo.rotateX(-Math.PI / 2);
-    const driveway = new THREE.Mesh(drivewayGeo, this.roadMaterial);
-    driveway.position.set(29.75, 0.012, 0);
-    driveway.receiveShadow = true;
-    accessRoadGroup.add(driveway);
-
-    // Yellow center divider line on access road
-    const divLineGeo = new THREE.PlaneGeometry(22.0, 0.20);
-    divLineGeo.rotateX(-Math.PI / 2);
-    const divLine = new THREE.Mesh(divLineGeo, this.stageBaseYellowMat);
-    divLine.position.set(29.75, 0.015, 0);
-    accessRoadGroup.add(divLine);
-
-    // Highway Turn-Off Curved Flares (Flaring out at highway intersection x = 41.5)
-    [-3.8, 3.8].forEach((fz) => {
-      const flareGeo = new THREE.PlaneGeometry(4.0, 1.8);
-      flareGeo.rotateX(-Math.PI / 2);
-      const flare = new THREE.Mesh(flareGeo, this.roadMaterial);
-      flare.position.set(40.0, 0.011, fz);
-      accessRoadGroup.add(flare);
-    });
-
-    // Striped black/white concrete curbs along both sides of the access road (at z = -3.3 and z = +3.3)
-    [-3.3, 3.3].forEach((cz) => {
-      const curbMesh = new THREE.Mesh(
-        new THREE.BoxGeometry(23.5, 0.25, 0.25),
-        this.curbStripeMat
-      );
-      curbMesh.position.set(29.75, 0.125, cz);
-      accessRoadGroup.add(curbMesh);
-    });
-
-    // White painted Stop Line right before the gate (at x = 24.8)
-    const stopLineGeo = new THREE.PlaneGeometry(0.40, 5.8);
-    stopLineGeo.rotateX(-Math.PI / 2);
-    const stopLine = new THREE.Mesh(stopLineGeo, this.policeSilverMat);
-    stopLine.position.set(24.8, 0.015, 0);
-    accessRoadGroup.add(stopLine);
-
-    fieldGroup.add(accessRoadGroup);
-
-    // I. GRAND UIU ENTRANCE ARCH GATE WITH "UIU" ON TOP ("ওই গেটের উপরে লেখা থাকবে UIU")
+    // Grand Campus Entrance Gate Archway at center (x = fenceX = 24.0)
     const gateGroup = new THREE.Group();
     gateGroup.position.set(fenceX, 0, 0);
+
+    // Concrete base threshold beneath the gate arch
+    const gateSill = new THREE.Mesh(
+      new THREE.BoxGeometry(1.2, 0.12, 7.0),
+      this.concreteMat
+    );
+    gateSill.position.set(0, 0.06, 0);
+    gateGroup.add(gateSill);
 
     // 1. Twin Monumental Brick & Stone Pylons
     [-3.5, 3.5].forEach((gx) => {
@@ -4907,7 +4961,252 @@ export class BangladeshProps {
 
     campus.add(buildingGroup);
 
+    // -----------------------------------------------------------
+    // 4. UIU SHUTTLE BUS PARKING COURTYARD (User Photo Reference 2!)
+    // Two 3D UIU Shuttle Buses parked in the open space beside the building!
+    // -----------------------------------------------------------
+    const parkingGroup = new THREE.Group();
+    // Positioned in the open space beside Tower 1 (z = 24m to 44m, x = 70m * side)
+    parkingGroup.position.set(70 * side, 0, 0);
+
+    // Paved concrete parking apron
+    const parkingApronGeo = new THREE.PlaneGeometry(16, 22);
+    parkingApronGeo.rotateX(-Math.PI / 2);
+    const parkingApron = new THREE.Mesh(parkingApronGeo, this.pavingPlazaMat);
+    parkingApron.position.set(0, 0.015, 33);
+    parkingApron.receiveShadow = true;
+    parkingGroup.add(parkingApron);
+
+    // White painted parking stall divider lines
+    [23.5, 33, 42.5].forEach((pz) => {
+      const lineMesh = new THREE.Mesh(
+        new THREE.PlaneGeometry(16, 0.22),
+        this.policeSilverMat
+      );
+      lineMesh.rotateX(-Math.PI / 2);
+      lineMesh.position.set(0, 0.02, pz);
+      parkingGroup.add(lineMesh);
+    });
+
+    // BUS 1: Parked in Bay 1 (z = 28.2) facing outward toward the field & road
+    const bus1 = this.createUIUShuttleBus();
+    bus1.position.set(0, 0, 28.2);
+    bus1.rotation.y = side > 0 ? -Math.PI / 2 : Math.PI / 2;
+    parkingGroup.add(bus1);
+
+    // BUS 2: Parked in Bay 2 (z = 37.8) parallel to Bus 1
+    const bus2 = this.createUIUShuttleBus();
+    bus2.position.set(0, 0, 37.8);
+    bus2.rotation.y = side > 0 ? -Math.PI / 2 : Math.PI / 2;
+    parkingGroup.add(bus2);
+
+    campus.add(parkingGroup);
+
     return campus;
+  }
+
+  // ========================================================
+  // 17. AUTHENTIC UIU SHUTTLE BUS (User Photo Reference 2)
+  // - Official University Commuter Shuttle Bus
+  // - Vibrant UIU orange aerodynamic coach body
+  // - Streamlined rooftop air conditioning (AC) pod unit
+  // - Continuous dark tinted panoramic passenger windows
+  // - Aerodynamic white & silver wave swoosh livery on lower skirt
+  // - "UNITED INTERNATIONAL UNIVERSITY" crest & branding on side
+  // - Dual front LED headlights, front chrome grille, rear taillights
+  // - 4 heavy-duty wheels with rubber tires and silver steel rims
+  // ========================================================
+  createUIUShuttleBus() {
+    const bus = new THREE.Group();
+    bus.name = 'uiu_shuttle_bus';
+
+    const busLength = 10.6;
+    const busWidth = 2.6;
+
+    // 1. Lower Main Body / Chassis (Vibrant UIU Orange)
+    const lowerBodyGeo = new THREE.BoxGeometry(busWidth, 1.35, busLength);
+    const lowerBody = new THREE.Mesh(lowerBodyGeo, this.uiuBusOrangeMat);
+    lowerBody.position.y = 1.15;
+    this.applyShadow(lowerBody);
+    bus.add(lowerBody);
+
+    // 2. Side Livery Decals with UIU Swoosh & Branding (+X and -X sides)
+    [-busWidth * 0.5 - 0.01, busWidth * 0.5 + 0.01].forEach((dx) => {
+      const decalGeo = new THREE.PlaneGeometry(busLength * 0.94, 1.25);
+      const decal = new THREE.Mesh(decalGeo, this.uiuBusSideMat);
+      decal.position.set(dx, 1.15, 0);
+      decal.rotation.y = dx > 0 ? Math.PI / 2 : -Math.PI / 2;
+      bus.add(decal);
+    });
+
+    // 3. Dark Tinted Panoramic Window Band
+    const windowGeo = new THREE.BoxGeometry(busWidth * 0.98, 1.05, busLength * 0.98);
+    const windows = new THREE.Mesh(windowGeo, this.uiuBusGlassMat);
+    windows.position.y = 2.25;
+    bus.add(windows);
+
+    // Window Mullions / Vertical Pillars
+    for (let wz = -4.5; wz <= 4.5; wz += 1.5) {
+      [-busWidth * 0.5 - 0.005, busWidth * 0.5 + 0.005].forEach((wx) => {
+        const pillar = new THREE.Mesh(
+          new THREE.BoxGeometry(0.04, 1.05, 0.08),
+          this.uiuBusOrangeMat
+        );
+        pillar.position.set(wx, 2.25, wz);
+        bus.add(pillar);
+      });
+    }
+
+    // 4. Roof Panel & Streamlined Rooftop AC Pod Unit (Signature from Photo!)
+    const roof = new THREE.Mesh(
+      new THREE.BoxGeometry(busWidth, 0.22, busLength),
+      this.uiuBusOrangeMat
+    );
+    roof.position.y = 2.86;
+    bus.add(roof);
+
+    // Rooftop AC Pod
+    const acPod = new THREE.Mesh(
+      new THREE.BoxGeometry(1.6, 0.38, 3.2),
+      this.uiuBusOrangeMat
+    );
+    acPod.position.set(0, 3.08, -0.6);
+    bus.add(acPod);
+
+    // AC unit black intake vent louvers
+    const acVent = new THREE.Mesh(
+      new THREE.BoxGeometry(1.3, 0.06, 2.6),
+      this.uiuBusGlassMat
+    );
+    acVent.position.set(0, 3.28, -0.6);
+    bus.add(acVent);
+
+    // 5. Front Windshield & Destination Board ("UIU SHUTTLE BUS")
+    const destBoard = new THREE.Mesh(
+      new THREE.BoxGeometry(1.8, 0.30, 0.10),
+      this.policeCapMat
+    );
+    destBoard.position.set(0, 2.65, busLength * 0.5 + 0.02);
+    bus.add(destBoard);
+
+    // Front Windshield Wipers
+    [-0.45, 0.45].forEach((wpx) => {
+      const wiper = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.012, 0.012, 0.48, 4),
+        this.policeCapMat
+      );
+      wiper.position.set(wpx, 1.95, busLength * 0.5 + 0.03);
+      wiper.rotation.z = 0.35;
+      bus.add(wiper);
+    });
+
+    // 6. Front & Rear Bumpers
+    const fBumper = new THREE.Mesh(
+      new THREE.BoxGeometry(busWidth + 0.05, 0.44, 0.35),
+      this.uiuBusBumperMat
+    );
+    fBumper.position.set(0, 0.52, busLength * 0.5 + 0.12);
+    bus.add(fBumper);
+
+    const rBumper = new THREE.Mesh(
+      new THREE.BoxGeometry(busWidth + 0.05, 0.44, 0.35),
+      this.uiuBusBumperMat
+    );
+    rBumper.position.set(0, 0.52, -busLength * 0.5 - 0.12);
+    bus.add(rBumper);
+
+    // 7. Headlights, Grille & Taillights
+    [-0.95, 0.95].forEach((hx) => {
+      const headlight = new THREE.Mesh(
+        new THREE.BoxGeometry(0.38, 0.18, 0.06),
+        new THREE.MeshBasicMaterial({ color: 0xffffff })
+      );
+      headlight.position.set(hx, 0.88, busLength * 0.5 + 0.04);
+      bus.add(headlight);
+
+      const turnSignal = new THREE.Mesh(
+        new THREE.BoxGeometry(0.12, 0.18, 0.06),
+        new THREE.MeshBasicMaterial({ color: 0xf59e0b })
+      );
+      turnSignal.position.set(hx > 0 ? hx + 0.26 : hx - 0.26, 0.88, busLength * 0.5 + 0.04);
+      bus.add(turnSignal);
+    });
+
+    // Front Grille
+    const grille = new THREE.Mesh(
+      new THREE.BoxGeometry(1.2, 0.32, 0.06),
+      this.uiuBusBumperMat
+    );
+    grille.position.set(0, 0.85, busLength * 0.5 + 0.04);
+    bus.add(grille);
+
+    // Front UIU Emblem on Grille
+    const frontEmblem = new THREE.Mesh(
+      new THREE.SphereGeometry(0.08, 6, 6),
+      this.goldBadgeMat
+    );
+    frontEmblem.position.set(0, 0.85, busLength * 0.5 + 0.08);
+    bus.add(frontEmblem);
+
+    // Rear Taillights
+    [-1.0, 1.0].forEach((rx) => {
+      const tailLight = new THREE.Mesh(
+        new THREE.BoxGeometry(0.20, 0.52, 0.06),
+        this.shirtRedMat
+      );
+      tailLight.position.set(rx, 1.15, -busLength * 0.5 - 0.04);
+      bus.add(tailLight);
+    });
+
+    // 8. Aerodynamic Side-View Mirrors
+    [-busWidth * 0.5 - 0.22, busWidth * 0.5 + 0.22].forEach((mx) => {
+      const arm = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.02, 0.02, 0.35, 4),
+        this.policeCapMat
+      );
+      arm.rotateZ(mx > 0 ? -Math.PI / 4 : Math.PI / 4);
+      arm.position.set(mx > 0 ? mx - 0.1 : mx + 0.1, 2.3, busLength * 0.5 - 0.2);
+      bus.add(arm);
+
+      const mirror = new THREE.Mesh(
+        new THREE.BoxGeometry(0.06, 0.42, 0.20),
+        this.policeCapMat
+      );
+      mirror.position.set(mx, 2.2, busLength * 0.5 - 0.05);
+      bus.add(mirror);
+    });
+
+    // 9. Four Heavy-Duty 3D Wheels
+    const wheelZPositions = [busLength * 0.5 - 2.0, -busLength * 0.5 + 2.2];
+    wheelZPositions.forEach((wz) => {
+      [-busWidth * 0.5 - 0.02, busWidth * 0.5 + 0.02].forEach((wx) => {
+        const wheelGroup = new THREE.Group();
+        wheelGroup.position.set(wx, 0.52, wz);
+
+        // Black Rubber Tire
+        const tireGeo = new THREE.CylinderGeometry(0.50, 0.50, 0.28, 12);
+        tireGeo.rotateZ(Math.PI / 2);
+        const tire = new THREE.Mesh(tireGeo, this.tireMat);
+        wheelGroup.add(tire);
+
+        // Silver Alloy Rim Hub
+        const rimGeo = new THREE.CylinderGeometry(0.32, 0.32, 0.30, 8);
+        rimGeo.rotateZ(Math.PI / 2);
+        const rim = new THREE.Mesh(rimGeo, this.rimMat);
+        wheelGroup.add(rim);
+
+        // Black Center Hub Cap
+        const capGeo = new THREE.CylinderGeometry(0.10, 0.10, 0.32, 6);
+        capGeo.rotateZ(Math.PI / 2);
+        const hubCap = new THREE.Mesh(capGeo, this.policeCapMat);
+        wheelGroup.add(hubCap);
+
+        bus.add(wheelGroup);
+      });
+    });
+
+    this.applyShadow(bus);
+    return bus;
   }
 
   // ========================================================
