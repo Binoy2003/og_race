@@ -3997,12 +3997,12 @@ export class BangladeshProps {
 
     // -----------------------------------------------------------
     // 0. VAST EXPANSIVE FLAT GREEN CAMPUS BASE APRON
-    // Pure open green space - NO hills, NO blocking terrain
+    // Pure open green space - safely set back from highway road
     // -----------------------------------------------------------
-    const baseApronGeo = new THREE.PlaneGeometry(136, 112);
+    const baseApronGeo = new THREE.PlaneGeometry(88, 112);
     baseApronGeo.rotateX(-Math.PI / 2);
     const baseApron = new THREE.Mesh(baseApronGeo, this.paddyFieldMat);
-    baseApron.position.set(62 * side, 0.005, 0);
+    baseApron.position.set(60 * side, 0.005, 0);
     baseApron.receiveShadow = true;
     campus.add(baseApron);
 
@@ -4246,48 +4246,7 @@ export class BangladeshProps {
     campus.add(fieldGroup);
 
     // -----------------------------------------------------------
-    // 2. NATURAL SCENIC WATER CANAL ALONG LEFT FLANK (Photo Match!)
-    // As seen on the left side of the UIU permanent campus in the aerial photo
-    // -----------------------------------------------------------
-    const canalGroup = new THREE.Group();
-    canalGroup.position.set(50 * side, 0, -45);
-
-    const canalWaterGeo = new THREE.PlaneGeometry(94, 12);
-    canalWaterGeo.rotateX(-Math.PI / 2);
-    const canalWater = new THREE.Mesh(canalWaterGeo, this.riverWaterMat);
-    canalWater.position.set(0, 0.04, 0);
-    canalGroup.add(canalWater);
-
-    // Canal mud banks
-    const bankGeo = new THREE.BoxGeometry(96, 0.35, 1.2);
-    const bankNorth = new THREE.Mesh(bankGeo, this.mudPlinthMat);
-    bankNorth.position.set(0, 0.17, 6.0);
-    canalGroup.add(bankNorth);
-    const bankSouth = new THREE.Mesh(bankGeo, this.mudPlinthMat);
-    bankSouth.position.set(0, 0.17, -6.0);
-    canalGroup.add(bankSouth);
-
-    // Floating water vegetation patches
-    [-28, -10, 10, 28].forEach((cx) => {
-      const lily = new THREE.Mesh(
-        new THREE.CylinderGeometry(1.6, 1.8, 0.05, 7),
-        this.palmLeafMat
-      );
-      lily.position.set(cx, 0.07, (Math.random() - 0.5) * 3);
-      canalGroup.add(lily);
-    });
-
-    // Serene palms on the far canal bank
-    [-36, -18, 0, 18, 36].forEach((cx) => {
-      const cPalm = this.createCoconutTree();
-      cPalm.position.set(cx, 0, -8.5);
-      canalGroup.add(cPalm);
-    });
-
-    campus.add(canalGroup);
-
-    // -----------------------------------------------------------
-    // 3. THE MAIN MULTI-TOWER CAMPUS BUILDING (UIU ক্যাম্পাস ভবন)
+    // 2. THE MAIN MULTI-TOWER CAMPUS BUILDING (UIU ক্যাম্পাস ভবন)
     // Set back at x = 78m * side, spanning z = -32m to +32m, height = 38m!
     // Set back far enough so the ENTIRE building and football ground are beautifully visualized!
     // -----------------------------------------------------------
