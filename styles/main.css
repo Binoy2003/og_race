@@ -795,41 +795,62 @@ body:not(.game-playing) #mobile-controls {
   display: none !important;
 }
 
-.touch-group-left, .touch-group-right {
+/* Three-Zone Layout: Left (Steer Left), Center (Boost/Gas), Right (Steer Right) */
+.touch-col {
   display: flex;
-  gap: 0.65rem;
+  align-items: center;
   pointer-events: auto;
   touch-action: none;
   user-select: none;
   -webkit-user-select: none;
 }
 
+.touch-col-left {
+  justify-content: flex-start;
+}
+
+.touch-col-center {
+  justify-content: center;
+  flex: 1;
+}
+
+.touch-col-right {
+  justify-content: flex-end;
+}
+
 .touch-btn {
-  width: 68px;
-  height: 68px;
   border-radius: 50%;
   background: rgba(15, 23, 19, 0.88);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
-  border: 2px solid rgba(255, 255, 255, 0.24);
+  border: 2px solid rgba(255, 255, 255, 0.28);
   color: #fff;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   font-weight: 900;
-  font-size: 1.35rem;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.55);
   touch-action: none;
   user-select: none;
   -webkit-user-select: none;
-  transition: transform 0.08s ease, background 0.08s ease, border-color 0.08s ease;
+  transition: transform 0.08s ease, background 0.08s ease, border-color 0.08s ease, box-shadow 0.08s ease;
   -webkit-tap-highlight-color: transparent;
 }
 
-.touch-btn:active, .touch-btn.active {
-  transform: scale(0.90);
-  background: rgba(255, 255, 255, 0.28);
+/* Steer Buttons (◀ on Left, ▶ on Right) */
+.touch-btn.steer-btn {
+  width: 72px;
+  height: 72px;
+  font-size: 1.6rem;
+  border-color: rgba(255, 255, 255, 0.32);
+}
+
+.touch-btn.steer-btn:active, .touch-btn.steer-btn.active {
+  transform: scale(0.88);
+  background: rgba(56, 189, 248, 0.25);
+  border-color: #38bdf8;
+  box-shadow: 0 0 24px rgba(56, 189, 248, 0.6);
 }
 
 .touch-btn.horn-btn {
@@ -852,23 +873,27 @@ body:not(.game-playing) #mobile-controls {
   letter-spacing: 0.04em;
 }
 
+/* Center Boost / Gas Button (Ergonomic Pill Shape in Middle) */
 .touch-btn.nitro-btn {
+  width: 90px;
+  height: 64px;
+  border-radius: 32px;
   border-color: #f59e0b;
   color: #fbbf24;
-  background: radial-gradient(circle, rgba(245, 158, 11, 0.35) 0%, rgba(15, 23, 19, 0.92) 75%);
-  font-size: 0.74rem;
+  background: radial-gradient(circle, rgba(245, 158, 11, 0.38) 0%, rgba(15, 23, 19, 0.94) 75%);
+  font-size: 0.82rem;
   font-weight: 900;
-  letter-spacing: 0.03em;
-  padding: 0.15rem;
+  letter-spacing: 0.04em;
+  padding: 0.2rem 0.6rem;
   text-align: center;
   box-shadow: 0 0 22px rgba(245, 158, 11, 0.5);
 }
 
 .touch-btn.nitro-btn:active, .touch-btn.nitro-btn.active {
   transform: scale(0.90);
-  background: radial-gradient(circle, rgba(245, 158, 11, 0.55) 0%, rgba(239, 68, 68, 0.95) 75%);
+  background: radial-gradient(circle, rgba(245, 158, 11, 0.65) 0%, rgba(239, 68, 68, 0.95) 75%);
   border-color: #fde047;
-  box-shadow: 0 0 32px #f59e0b;
+  box-shadow: 0 0 34px #f59e0b;
 }
 
 /* ---------------- Game Over Screen (Compact, Sleek & Fits Any Screen) ---------------- */
@@ -1144,34 +1169,22 @@ body:not(.game-playing) #mobile-controls {
     height: 7px;
   }
 
-  /* Mobile Touch Buttons: Ergonomic & Easy to Tap */
+  /* Mobile Touch Buttons: Ergonomic 3-Zone Layout */
   #mobile-controls {
     bottom: max(0.9rem, env(safe-area-inset-bottom));
     padding: 0 max(0.6rem, env(safe-area-inset-right)) 0 max(0.6rem, env(safe-area-inset-left));
   }
-  .touch-group-left, .touch-group-right {
-    gap: 0.45rem;
-  }
-  .touch-btn {
-    width: 58px;
-    height: 58px;
-    font-size: 1.25rem;
+  .touch-btn.steer-btn {
+    width: 64px;
+    height: 64px;
+    font-size: 1.45rem;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.55);
   }
-  .touch-group-left .touch-btn {
-    width: 62px;
-    height: 62px;
-    font-size: 1.4rem;
-  }
-  .touch-btn.brake-btn,
-  .touch-btn.accel-btn,
   .touch-btn.nitro-btn {
-    font-size: 0.72rem;
-    letter-spacing: 0.03em;
-    padding: 0.2rem;
-  }
-  .touch-btn.nitro-btn {
-    font-size: 0.70rem;
+    width: 82px;
+    height: 58px;
+    font-size: 0.76rem;
+    border-radius: 29px;
     border-width: 1.8px;
   }
 
@@ -1340,17 +1353,20 @@ body:not(.game-playing) #mobile-controls {
     width: 110px;
   }
 
-  /* Touch controls in Landscape */
+  /* Touch controls in Landscape: Ergonomic 3-Zone */
   #mobile-controls {
     bottom: max(0.5rem, env(safe-area-inset-bottom));
     padding: 0 max(0.8rem, env(safe-area-inset-right)) 0 max(0.8rem, env(safe-area-inset-left));
   }
-  .touch-btn {
-    width: 54px;
-    height: 54px;
-    font-size: 1.15rem;
+  .touch-btn.steer-btn {
+    width: 56px;
+    height: 56px;
+    font-size: 1.3rem;
   }
-  .touch-group-left, .touch-group-right {
-    gap: 0.45rem;
+  .touch-btn.nitro-btn {
+    width: 74px;
+    height: 50px;
+    font-size: 0.72rem;
+    border-radius: 25px;
   }
 }

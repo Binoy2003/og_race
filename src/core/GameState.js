@@ -135,16 +135,25 @@ export class GameState {
     const currentMaxNormal = currentBaseSpeed + 45; // When pressing Up Arrow / W, goes fast!
     const currentBoostTarget = CONFIG.SPEED.BOOST + progressiveBonus * 0.4; // When Spacebar is pressed, rockets!
 
-    // Nitro BOOST activation when Spacebar (desktop) or Boost button (mobile) is pressed
-    if (wantsBoost && this.nitro > 5) {
-      this.isBoosting = true;
-      this.nitro = Math.max(0, this.nitro - CONFIG.NITRO.CONSUMPTION_RATE * delta);
+    // Nitro BOOST / GAS activation when Spacebar (desktop) or Center Boost/Gas button (mobile) is pressed
+    if (wantsBoost) {
+      if (this.nitro > 5) {
+        this.isBoosting = true;
+        this.nitro = Math.max(0, this.nitro - CONFIG.NITRO.CONSUMPTION_RATE * delta);
 
-      // Accelerate towards dynamic BOOST speed
-      this.speedKmh = Math.min(
-        currentBoostTarget,
-        this.speedKmh + CONFIG.SPEED.BOOST_ACCEL * delta
-      );
+        // Accelerate towards dynamic BOOST speed
+        this.speedKmh = Math.min(
+          currentBoostTarget,
+          this.speedKmh + CONFIG.SPEED.BOOST_ACCEL * delta
+        );
+      } else {
+        // When nitro tank is depleted, center button seamlessly acts as Gas (maximum normal acceleration)
+        this.isBoosting = false;
+        this.speedKmh = Math.min(
+          currentMaxNormal,
+          this.speedKmh + CONFIG.SPEED.ACCELERATION * 1.6 * delta
+        );
+      }
     } else {
       this.isBoosting = false;
 

@@ -311,29 +311,39 @@ export class UIManager {
     };
 
     // Steer Left Button (Instant tap lane-shift + continuous hold)
-    bindHoldableBtn(btnLeft, (active) => {
-      if (this.onSteerLeft) this.onSteerLeft(active);
-    });
+    if (btnLeft) {
+      bindHoldableBtn(btnLeft, (active) => {
+        if (this.onSteerLeft) this.onSteerLeft(active);
+      });
+    }
 
     // Steer Right Button (Instant tap lane-shift + continuous hold)
-    bindHoldableBtn(btnRight, (active) => {
-      if (this.onSteerRight) this.onSteerRight(active);
-    });
+    if (btnRight) {
+      bindHoldableBtn(btnRight, (active) => {
+        if (this.onSteerRight) this.onSteerRight(active);
+      });
+    }
 
-    // Dedicated BRAKE button on mobile -> Slows down
-    bindHoldableBtn(btnBrake, (active) => {
-      if (this.onBrake) this.onBrake(active);
-    }, () => this.soundManager.playAirBrake());
+    // Dedicated BRAKE button on mobile -> Slows down (if present)
+    if (btnBrake) {
+      bindHoldableBtn(btnBrake, (active) => {
+        if (this.onBrake) this.onBrake(active);
+      }, () => this.soundManager.playAirBrake());
+    }
 
-    // Dedicated GAS / ACCEL button on mobile -> Goes fast forward
-    bindHoldableBtn(btnAccel, (active) => {
-      if (this.onAccelerate) this.onAccelerate(active);
-    });
+    // Dedicated GAS / ACCEL button on mobile -> Goes fast forward (if present)
+    if (btnAccel) {
+      bindHoldableBtn(btnAccel, (active) => {
+        if (this.onAccelerate) this.onAccelerate(active);
+      });
+    }
 
-    // Dedicated BOOST button on mobile -> Triggers Rocket Speed!
-    bindHoldableBtn(btnNitro, (active) => {
-      if (this.onNitro) this.onNitro(active);
-    });
+    // Dedicated BOOST / GAS button in center -> Triggers Rocket Speed!
+    if (btnNitro) {
+      bindHoldableBtn(btnNitro, (active) => {
+        if (this.onNitro) this.onNitro(active);
+      });
+    }
 
     // Instant Mobile Touch Detection on Android & iPhone
     if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
